@@ -123,7 +123,7 @@ class CdpBase:
 
         :param dict data: event as a JSON dictionary
         '''
-        domain, method, event = cdp.parse_json_event(data)
+        domain, method, event = cdp.util.parse_json_event(data)
         for sender in self.channels[type(event)]:
             try:
                 sender.send_nowait(event)
