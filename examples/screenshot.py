@@ -3,9 +3,8 @@ import logging
 import os
 import sys
 
-import trio
-
 from cdp import emulation, page, target
+import trio
 from trio_cdp import open_cdp_connection
 
 

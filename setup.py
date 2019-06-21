@@ -25,7 +25,7 @@ setup(
     package_data={'trio_cdp': ['py.typed']},
     packages=find_packages(exclude=['build', 'docs', 'examples', 'tests']),
     install_requires=[
-        'python-chrome-devtools-protocol',
+        'chrome-devtools-protocol',
         'trio',
         'trio_websocket',
     ],
