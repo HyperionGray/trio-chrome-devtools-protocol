@@ -204,7 +204,7 @@ class CdpSession(CdpBase):
 
 @asynccontextmanager
 async def open_cdp_connection(url) -> typing.AsyncIterator[CdpConnection]:
-    async with open_websocket_url(url) as ws:
+    async with open_websocket_url(url, max_message_size=2**24) as ws:
         async with trio.open_nursery() as nursery:
             cdp_conn = CdpConnection(ws)
             nursery.start_soon(cdp_conn._reader_task)
