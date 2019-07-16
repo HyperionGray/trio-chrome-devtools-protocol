@@ -65,14 +65,21 @@ class CdpBase:
             raise response
         return response
 
+    def listen(self, *event_types):
+        ''' Return an async iterator that iterates over events matching the
+        indicated types. '''
+        sender, receiver = trio.open_memory_channel(10)
+        for event_type in event_types:
+            self.channels[event_type].add(sender)
+        return receiver
+
     async def wait_for(self, event_type: typing.Type[T]) -> T:
         '''
         Wait for an event of the given type and return it.
         '''
-        sender, receiver = trio.open_memory_channel(0)
+        sender, receiver = trio.open_memory_channel(1)
         self.channels[event_type].add(sender)
         event = await receiver.receive()
-        self.channels[event_type].remove(sender)
         await receiver.aclose()
         return event
 
@@ -124,13 +131,17 @@ class CdpBase:
         :param dict data: event as a JSON dictionary
         '''
         domain, method, event = cdp.util.parse_json_event(data)
+        to_remove = set()
         for sender in self.channels[type(event)]:
             try:
                 sender.send_nowait(event)
             except trio.WouldBlock:
                 logger.error('Unable to send event "%r" due to full channel %s',
                     event, sender)
-
+            except trio.BrokenResourceError:
+                to_remove.add(sender)
+        if to_remove:
+            self.channels[type(event)] -= to_remove
 
 class CdpConnection(CdpBase):
     '''
