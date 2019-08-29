@@ -8,9 +8,10 @@ with (here / 'README.md').open(encoding='utf8') as f:
 
 setup(
     name='trio-chrome-devtools-protocol',
-    version='0.1.0-dev',
+    version='0.1.0',
     description='Trio driver for Chrome DevTools Protocol (CDP)',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     url='https://github.com/HyperionGray/trio-chrome-devtools-protocol',
     author='Mark E. Haase <mehaase@gmail.com>',
     classifiers=[
@@ -23,7 +24,7 @@ setup(
     python_requires='>=3.7',
     keywords='trio chrome devtools protocol cdp',
     package_data={'trio_cdp': ['py.typed']},
-    packages=find_packages(exclude=['build', 'docs', 'examples', 'tests']),
+    packages=find_packages(exclude=['examples', 'test']),
     install_requires=[
         'chrome-devtools-protocol',
         'trio',

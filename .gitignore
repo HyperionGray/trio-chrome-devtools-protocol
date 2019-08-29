@@ -1,5 +1,6 @@
 *.egg-info
 .mypy_cache
 __pycache__
+dist
 test.png
 venv

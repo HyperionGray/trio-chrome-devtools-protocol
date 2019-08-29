@@ -1,5 +1,5 @@
 '''
-Make a screenshot of a target web page.
+Get the title of a target web page.
 
 To use this example, run Chrome (or any other browser that supports CDP) with
 the option `--remote-debugging-port=9000` and replace the `cdp_url` in the
@@ -9,7 +9,7 @@ terminal after Chrome starts up.)
 Then run this script with the browser URL as the first argument and the target
 website URL as the second argument:
 
-$ python examples/screenshot.py \
+$ python examples/get_title.py \
     ws://localhost:9000/devtools/browser/facfb2295-... \
     https://www.hyperiongray.coim
 '''
@@ -18,7 +18,7 @@ import logging
 import os
 import sys
 
-from cdp import emulation, page, target
+from cdp import dom, page, target
 import trio
 from trio_cdp import open_cdp_connection
 
@@ -39,31 +39,21 @@ async def main():
         logger.info('Attaching to target id=%s', target_id)
         session = await conn.open_session(target_id)
 
-        logger.info('Setting device emulation')
-        await session.execute(emulation.set_device_metrics_override(
-            width=800, height=600, device_scale_factor=1, mobile=False
-        ))
-
-        logger.info('Enabling page events')
-        await session.execute(page.enable())
-
         logger.info('Navigating to %s', sys.argv[2])
-        await session.execute(page.navigate(url=sys.argv[2]))
-
-        logger.info('Waiting for navigation to finish…')
+        await session.execute(page.enable())
+        await session.execute(page.navigate(sys.argv[2]))
         event = await session.wait_for(page.LoadEventFired)
 
-        logger.info('Making a screenshot')
-        img_data = await session.execute(page.capture_screenshot(
-            format='png'
-        ))
-        screenshot_file = await trio.open_file('test.png', 'wb')
-        async with screenshot_file:
-            await screenshot_file.write(b64decode(img_data))
+        logger.info('Extracting page title')
+        root_node = await session.execute(dom.get_document())
+        title_node_id = await session.execute(dom.query_selector(root_node.node_id,
+            'title'))
+        html = await session.execute(dom.get_outer_html(title_node_id))
+        print(html)
 
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        sys.stderr.write('Usage: screenshot.py <browser url> <target url>')
+        sys.stderr.write('Usage: get_title.py <browser url> <target url>')
         sys.exit(1)
     trio.run(main, restrict_keyboard_interrupt_to_checkpoints=True)

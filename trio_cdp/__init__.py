@@ -6,9 +6,8 @@ import logging
 import typing
 
 import cdp
-import inflection
-import trio
-from trio_websocket import open_websocket_url
+import trio # type: ignore
+from trio_websocket import open_websocket_url # type: ignore
 
 
 logger = logging.getLogger('trio_cdp')
@@ -42,7 +41,7 @@ class CdpBase:
         self.session_id = session_id
         self.ws = ws
 
-    async def execute(self, cmd: typing.Generator[dict,T,None]) -> T:
+    async def execute(self, cmd: typing.Generator[dict,T,typing.Any]) -> T:
         '''
         Execute a command on the server and wait for the result.
 
@@ -130,7 +129,7 @@ class CdpBase:
 
         :param dict data: event as a JSON dictionary
         '''
-        domain, method, event = cdp.util.parse_json_event(data)
+        event = cdp.util.parse_json_event(data)
         to_remove = set()
         for sender in self.channels[type(event)]:
             try:
@@ -142,6 +141,7 @@ class CdpBase:
                 to_remove.add(sender)
         if to_remove:
             self.channels[type(event)] -= to_remove
+
 
 class CdpConnection(CdpBase):
     '''
@@ -165,11 +165,11 @@ class CdpConnection(CdpBase):
         super().__init__(ws, session_id=None)
         self.sessions = dict()
 
-    async def open_session(self, target_id: cdp.target.types.TargetID) -> None:
+    async def open_session(self, target_id: cdp.target.TargetID) -> 'CdpSession':
         '''
         Open a :class:`CdpSession` with the specified target.
         '''
-        session_id = await self.execute(cdp.target.commands.attach_to_target(
+        session_id = await self.execute(cdp.target.attach_to_target(
             target_id, True))
         session = CdpSession(self.ws, session_id)
         self.sessions[session_id] = session
@@ -185,7 +185,7 @@ class CdpConnection(CdpBase):
             data = json.loads(message)
             logger.debug('Received message %r', data)
             if 'sessionId' in data:
-                session_id = cdp.target.types.SessionID(data['sessionId'])
+                session_id = cdp.target.SessionID(data['sessionId'])
                 try:
                     session = self.sessions[session_id]
                 except KeyError:
@@ -208,7 +208,7 @@ class CdpSession(CdpBase):
         Constructor.
 
         :param trio_websocket.WebSocketConnection ws:
-        :param cdp.target.types.SessionID session_id:
+        :param cdp.target.SessionID session_id:
         '''
         super().__init__(ws, session_id)
 
