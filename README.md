@@ -3,14 +3,14 @@
 [![PyPI](https://img.shields.io/pypi/v/trio-chrome-devtools-protocol.svg)](https://pypi.org/project/trio-chrome-devtools-protocol/)
 ![Python Versions](https://img.shields.io/pypi/pyversions/trio-chrome-devtools-protocol)
 ![MIT License](https://img.shields.io/github/license/HyperionGray/trio-chrome-devtools-protocol.svg)
+[![Build Status](https://img.shields.io/travis/com/HyperionGray/trio-chrome-devtools-protocol.svg?branch=master)](https://travis-ci.com/HyperionGray/trio-chrome-devtools-protocol)
 
 This Python library performs remote control of any web browser that implements
 the Chrome DevTools Protocol. It is built using the type wrappers in
-[python-chrome-devtools-protocol](https://github.com/hyperiongray/python-chrome-devtools-protocol)
-and implements I/O using [Python Trio](https://trio.readthedocs.io/). This
-library handles the WebSocket negotiation and session management, allowing you
-to transparently multiplex commands, responses, and events over a single
-connection.
+[python-chrome-devtools-protocol](https://py-cdp.readthedocs.io) and implements
+I/O using [Trio](https://trio.readthedocs.io/). This library handles the
+WebSocket negotiation and session management, allowing you to transparently
+multiplex commands, responses, and events over a single connection.
 
 The example demonstrates the salient features of the library.
 
@@ -106,4 +106,7 @@ mechanics of sending commands and getting responses are the same as the previous
 snippets.
 
 A more complete version of this example can be found in `examples/get_title.py`.
-There is also a screenshot example in `examples/screenshot.py`.
+There is also a screenshot example in `examples/screenshot.py`. The unit tests
+in `test/` also provide more examples.
+
+<a href="https://www.hyperiongray.com/?pk_campaign=github&pk_kwd=trio-cdp"><img alt="define hyperion gray" width="500px" src="https://hyperiongray.s3.amazonaws.com/define-hg.svg"></a>

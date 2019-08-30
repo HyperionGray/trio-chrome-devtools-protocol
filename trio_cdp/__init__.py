@@ -108,8 +108,8 @@ class CdpBase:
                 ' not exist: {}'.format(data))
             return
         if 'error' in data:
-            # If it's an error, store the error and do not process the
-            # response.
+            # If the server reported an error, convert it to an exception and do
+            # not process the response any further.
             self.inflight_result[cmd_id] = BrowserError(data['error'])
         else:
             # Otherwise, continue the generator to parse the JSON result
@@ -182,7 +182,14 @@ class CdpConnection(CdpBase):
         '''
         while True:
             message = await self.ws.get_message()
-            data = json.loads(message)
+            try:
+                data = json.loads(message)
+            except json.JSONDecodeError:
+                raise BrowserError({
+                    'code': -32700,
+                    'message': 'Client received invalid JSON',
+                    'data': message
+                })
             logger.debug('Received message %r', data)
             if 'sessionId' in data:
                 session_id = cdp.target.SessionID(data['sessionId'])
@@ -190,7 +197,7 @@ class CdpConnection(CdpBase):
                     session = self.sessions[session_id]
                 except KeyError:
                     raise BrowserError('Browser sent a message for an invalid '
-                    'session: {!r}'.format(session_id))
+                        'session: {!r}'.format(session_id))
                 session._handle_data(data)
             else:
                 self._handle_data(data)
