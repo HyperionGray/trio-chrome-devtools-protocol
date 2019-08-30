@@ -2,3 +2,4 @@ mypy
 pytest
 pytest-cov
 pytest-trio
+twine
