@@ -1,5 +1,6 @@
 from collections import defaultdict
 from contextlib import asynccontextmanager
+from dataclasses import dataclass
 import itertools
 import json
 import logging
@@ -27,6 +28,14 @@ class BrowserError(Exception):
 
 class InternalError(Exception):
     pass
+
+
+@dataclass
+class CmEventProxy:
+    ''' A proxy object returned by :meth:`CdpBase.wait_for()``. After the
+    context manager executes, this proxy object will have a value set that
+    contains the returned event. '''
+    value: typing.Any = None
 
 
 class CdpBase:
@@ -65,23 +74,30 @@ class CdpBase:
             raise response
         return response
 
-    def listen(self, *event_types):
+    def listen(self, *event_types, buffer_size=10):
         ''' Return an async iterator that iterates over events matching the
         indicated types. '''
-        sender, receiver = trio.open_memory_channel(10)
+        sender, receiver = trio.open_memory_channel(buffer_size)
         for event_type in event_types:
             self.channels[event_type].add(sender)
         return receiver
 
-    async def wait_for(self, event_type: typing.Type[T]) -> T:
+    @asynccontextmanager
+    async def wait_for(self, event_type: typing.Type[T], buffer_size=10) -> T:
         '''
         Wait for an event of the given type and return it.
+
+        This is an async context manager, so you should open it inside an async
+        with block. The block will not exit until the indicated event is
+        received.
         '''
-        sender, receiver = trio.open_memory_channel(1)
+        sender, receiver = trio.open_memory_channel(buffer_size)
         self.channels[event_type].add(sender)
+        proxy = CmEventProxy()
+        yield proxy
         event = await receiver.receive()
         await receiver.aclose()
-        return event
+        proxy.value = event
 
     def _handle_data(self, data):
         '''

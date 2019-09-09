@@ -25,8 +25,8 @@ async with open_cdp_connection(cdp_url) as conn:
 
     # Navigate to a website.
     await session.execute(page.enable())
-    await session.execute(page.navigate(target_url))
-    event = await session.wait_for(page.events.LoadEventFired)
+    async with session.wait_for(page.LoadEventFired):
+        await session.execute(page.navigate(target_url))
 
     # Extract the page title.
     root_node = await session.execute(dom.get_document())
@@ -72,8 +72,8 @@ In order to connect to a target, we open a session based on the target ID.
 
 ```python
 await session.execute(page.enable())
-await session.execute(page.navigate(target_url))
-event = await session.wait_for(page.LoadEventFired)
+async with session.wait_for(page.LoadEventFired):
+    await session.execute(page.navigate(target_url))
 ```
 
 Here we use the session (remember, it corresponds to a tab in the browser) to
@@ -90,6 +90,15 @@ We first have to enable page-level events by calling `page.enable()`. Then we
 use `session.wait_for(...)` to wait for an event of the desired type. In this
 example, the script will suspend until it receives a `page.LoadEventFired`
 event.
+
+Note that we wait for the event inside an `async with` block, and we do this
+_before_ executing the command that will trigger this event. This order of
+operations may be surprising, but it avoids race conditions. If we executed a
+command and then tried to listen for an event, the browser might fire the event
+very quickly before we have had a chance to set up our event listener, and then
+we would miss it! The `async with` block sets up the listener before we run the
+command, so that no matter how fast the event fires, we are guaranteed to catch
+it.
 
 ```python
 root_node = await session.execute(dom.get_document())
