@@ -33,12 +33,13 @@ class CdpBase:
     '''
     Contains shared functionality between the CDP connection and session.
     '''
-    def __init__(self, ws, session_id=None):
+    def __init__(self, ws, session_id=None, target_id=None):
         self.channels = defaultdict(set)
         self.id_iter = itertools.count()
         self.inflight_cmd = dict()
         self.inflight_result = dict()
         self.session_id = session_id
+        self.target_id = target_id
         self.ws = ws
 
     async def execute(self, cmd: typing.Generator[dict,T,typing.Any]) -> T:
@@ -171,7 +172,7 @@ class CdpConnection(CdpBase):
         '''
         session_id = await self.execute(cdp.target.attach_to_target(
             target_id, True))
-        session = CdpSession(self.ws, session_id)
+        session = CdpSession(self.ws, session_id, target_id)
         self.sessions[session_id] = session
         return session
 
@@ -210,14 +211,15 @@ class CdpSession(CdpBase):
     Generally you should not instantiate this object yourself; you should call
     :meth:`CdpConnection.open_session`.
     '''
-    def __init__(self, ws, session_id):
+    def __init__(self, ws, session_id, target_id):
         '''
         Constructor.
 
         :param trio_websocket.WebSocketConnection ws:
         :param cdp.target.SessionID session_id:
+        :param cdp.target.TargetID target_id:
         '''
-        super().__init__(ws, session_id)
+        super().__init__(ws, session_id, target_id)
 
 
 @asynccontextmanager
