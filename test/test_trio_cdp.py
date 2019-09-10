@@ -197,9 +197,12 @@ async def test_wait_for_event(nursery):
     server = await start_server(nursery, handler)
 
     async with open_cdp_connection(server) as conn:
-        event = await conn.wait_for(page.LoadEventFired)
-        assert isinstance(event, page.LoadEventFired)
-        assert event.timestamp == 2
+        async with conn.wait_for(page.LoadEventFired) as event:
+            # In real code we would do something here to trigger a load event,
+            # e.g. clicking a link.
+            pass
+        assert isinstance(event.value, page.LoadEventFired)
+        assert event.value.timestamp == 2
 
 
 async def test_listen_for_events(nursery):

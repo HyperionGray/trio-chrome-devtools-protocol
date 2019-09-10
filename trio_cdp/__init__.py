@@ -83,7 +83,7 @@ class CdpBase:
         return receiver
 
     @asynccontextmanager
-    async def wait_for(self, event_type: typing.Type[T], buffer_size=10) -> T:
+    async def wait_for(self, event_type: typing.Type[T], buffer_size=10) -> CmEventProxy:
         '''
         Wait for an event of the given type and return it.
 
