@@ -44,7 +44,7 @@ async with open_cdp_connection(cdp_url) as conn:
 ```
 
 This context manager opens a connection to the browser when the block is entered
-and closes the connection automatically when the block exists. Now we have a
+and closes the connection automatically when the block exits. Now we have a
 connection to the browser, but the browser has multiple targets that can be
 operated independently. For example, each browser tab is a separate target. In
 order to interact with one of them, we have to create a session for it.
@@ -83,7 +83,7 @@ response, and returns a value (if any).
 
 This snippet also introduces another concept: events. When we ask the browser to
 navigate to a URL, it acknowledges our request with a response, then starts the
-navigation process. How do we know when the page is actually loaded, thought?
+navigation process. How do we know when the page is actually loaded, though?
 Easy: the browser can send us an event!
 
 We first have to enable page-level events by calling `page.enable()`. Then we
@@ -102,8 +102,8 @@ it.
 
 ```python
 root_node = await session.execute(dom.get_document())
-title_node_id = await session.execute(dom.query_selector(root_node.node_id,
-    'title'))
+title_node_id = await session.execute(
+    dom.query_selector(root_node.node_id, 'title'))
 html = await session.execute(dom.get_outer_html(title_node_id))
 print(html)
 ```
