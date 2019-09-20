@@ -11,7 +11,7 @@ website URL as the second argument:
 
 $ python examples/get_title.py \
     ws://localhost:9000/devtools/browser/facfb2295-... \
-    https://www.hyperiongray.coim
+    https://www.hyperiongray.com
 '''
 from base64 import b64decode
 import logging
