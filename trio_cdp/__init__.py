@@ -147,6 +147,7 @@ class CdpBase:
         :param dict data: event as a JSON dictionary
         '''
         event = cdp.util.parse_json_event(data)
+        logger.debug('Received event: %s', event)
         to_remove = set()
         for sender in self.channels[type(event)]:
             try:
@@ -236,6 +237,53 @@ class CdpSession(CdpBase):
         :param cdp.target.TargetID target_id:
         '''
         super().__init__(ws, session_id, target_id)
+
+        self._dom_enable_count = 0
+        self._dom_enable_lock = trio.Lock()
+        self._page_enable_count = 0
+        self._page_enable_lock = trio.Lock()
+
+    @asynccontextmanager
+    async def dom_enable(self):
+        '''
+        A context manager that executes ``dom.enable()`` when it enters and then
+        calls ``dom.disable()``.
+
+        This keeps track of concurrent callers and only disables DOM events when
+        all callers have exited.
+        '''
+        async with self._dom_enable_lock:
+            self._dom_enable_count += 1
+            if self._dom_enable_count == 1:
+                await self.execute(cdp.dom.enable())
+
+        yield
+
+        async with self._dom_enable_lock:
+            self._dom_enable_count -= 1
+            if self._dom_enable_count == 0:
+                await self.execute(cdp.dom.disable())
+
+    @asynccontextmanager
+    async def page_enable(self):
+        '''
+        A context manager that executes ``page.enable()`` when it enters and
+        then calls ``page.disable()`` when it exits.
+
+        This keeps track of concurrent callers and only disables page events
+        when all callers have exited.
+        '''
+        async with self._page_enable_lock:
+            self._page_enable_count += 1
+            if self._page_enable_count == 1:
+                await self.execute(cdp.page.enable())
+
+        yield
+
+        async with self._page_enable_lock:
+            self._page_enable_count -= 1
+            if self._page_enable_count == 0:
+                await self.execute(cdp.page.disable())
 
 
 @asynccontextmanager
