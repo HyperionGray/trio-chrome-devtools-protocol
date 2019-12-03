@@ -89,7 +89,10 @@ Easy: the browser can send us an event!
 We first have to enable page-level events by calling `page.enable()`. Then we
 use `session.wait_for(...)` to wait for an event of the desired type. In this
 example, the script will suspend until it receives a `page.LoadEventFired`
-event.
+event. (After this block finishes executing, you can run `page.disable()` to
+turn off page-level events if you want to save some bandwidth and processing
+power, or you can the context manager `async with session.page_enable(): ...`
+to automatically enable page-level events just for a specific block.)
 
 Note that we wait for the event inside an `async with` block, and we do this
 _before_ executing the command that will trigger this event. This order of
