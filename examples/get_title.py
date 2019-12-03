@@ -41,8 +41,8 @@ async def main():
 
         logger.info('Navigating to %s', sys.argv[2])
         await session.execute(page.enable())
-        await session.execute(page.navigate(sys.argv[2]))
-        event = await session.wait_for(page.LoadEventFired)
+        async with session.wait_for(page.LoadEventFired):
+            await session.execute(page.navigate(sys.argv[2]))
 
         logger.info('Extracting page title')
         root_node = await session.execute(dom.get_document())

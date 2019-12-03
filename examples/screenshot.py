@@ -48,10 +48,8 @@ async def main():
         await session.execute(page.enable())
 
         logger.info('Navigating to %s', sys.argv[2])
-        await session.execute(page.navigate(url=sys.argv[2]))
-
-        logger.info('Waiting for navigation to finish…')
-        event = await session.wait_for(page.LoadEventFired)
+        async with session.wait_for(page.LoadEventFired):
+            await session.execute(page.navigate(url=sys.argv[2]))
 
         logger.info('Making a screenshot')
         img_data = await session.execute(page.capture_screenshot(
