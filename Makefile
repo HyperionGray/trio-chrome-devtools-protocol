@@ -1,8 +1,6 @@
 .PHONY: test
 
-all:
-
-publish:
+publish: test
 	rm -fr dist trio_chrome_devtools_protocol.egg-info
 	python setup.py sdist
 	twine upload dist/*
