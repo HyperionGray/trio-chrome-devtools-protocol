@@ -13,7 +13,6 @@ $ python examples/get_title.py \
     ws://localhost:9000/devtools/browser/facfb2295-... \
     https://www.hyperiongray.com
 '''
-from base64 import b64decode
 import logging
 import os
 import sys
@@ -25,7 +24,7 @@ from trio_cdp import open_cdp_connection
 
 log_level = os.environ.get('LOG_LEVEL', 'info').upper()
 logging.basicConfig(level=getattr(logging, log_level))
-logger = logging.getLogger('screenshot')
+logger = logging.getLogger('get_title')
 logging.getLogger('trio-websocket').setLevel(logging.WARNING)
 
 
