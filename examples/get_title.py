@@ -44,8 +44,8 @@ async def main():
 
         logger.info('Extracting page title')
         root_node = await session.execute(dom.get_document())
-        title_node_id = await session.execute(dom.query_selector(root_node.node_id,
-            'title'))
+        title_node_id = await session.execute(
+                dom.query_selector(root_node.node_id, 'title'))
         html = await session.execute(dom.get_outer_html(title_node_id))
         print(html)
 
