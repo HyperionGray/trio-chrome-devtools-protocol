@@ -1,12 +1,11 @@
 '''
 Make a screenshot of a target web page.
 
-To use this example, run Chrome (or any other browser that supports CDP) with
-the option `--remote-debugging-port=9000` and replace the `cdp_url` in the
-script with the URL that Chrome is listening on. (This is displayed in the
-terminal after Chrome starts up.)
+To use this example, start Chrome (or any other browser that supports CDP) with
+the option `--remote-debugging-port=9000`. The URL that Chrome is listening on
+is displayed in the terminal after Chrome starts up.
 
-Then run this script with the browser URL as the first argument and the target
+Then run this script with the Chrome URL as the first argument and the target
 website URL as the second argument:
 
 $ python examples/screenshot.py \

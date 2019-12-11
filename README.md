@@ -91,7 +91,7 @@ use `session.wait_for(...)` to wait for an event of the desired type. In this
 example, the script will suspend until it receives a `page.LoadEventFired`
 event. (After this block finishes executing, you can run `page.disable()` to
 turn off page-level events if you want to save some bandwidth and processing
-power, or you can the context manager `async with session.page_enable(): ...`
+power, or you can use the context manager `async with session.page_enable(): ...`
 to automatically enable page-level events just for a specific block.)
 
 Note that we wait for the event inside an `async with` block, and we do this

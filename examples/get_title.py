@@ -1,19 +1,17 @@
 '''
 Get the title of a target web page.
 
-To use this example, run Chrome (or any other browser that supports CDP) with
-the option `--remote-debugging-port=9000` and replace the `cdp_url` in the
-script with the URL that Chrome is listening on. (This is displayed in the
-terminal after Chrome starts up.)
+To use this example, start Chrome (or any other browser that supports CDP) with
+the option `--remote-debugging-port=9000`. The URL that Chrome is listening on
+is displayed in the terminal after Chrome starts up.
 
-Then run this script with the browser URL as the first argument and the target
+Then run this script with the Chrome URL as the first argument and the target
 website URL as the second argument:
 
 $ python examples/get_title.py \
     ws://localhost:9000/devtools/browser/facfb2295-... \
     https://www.hyperiongray.com
 '''
-from base64 import b64decode
 import logging
 import os
 import sys
@@ -25,7 +23,7 @@ from trio_cdp import open_cdp_connection
 
 log_level = os.environ.get('LOG_LEVEL', 'info').upper()
 logging.basicConfig(level=getattr(logging, log_level))
-logger = logging.getLogger('screenshot')
+logger = logging.getLogger('get_title')
 logging.getLogger('trio-websocket').setLevel(logging.WARNING)
 
 
@@ -46,8 +44,8 @@ async def main():
 
         logger.info('Extracting page title')
         root_node = await session.execute(dom.get_document())
-        title_node_id = await session.execute(dom.query_selector(root_node.node_id,
-            'title'))
+        title_node_id = await session.execute(
+                dom.query_selector(root_node.node_id, 'title'))
         html = await session.execute(dom.get_outer_html(title_node_id))
         print(html)
 
