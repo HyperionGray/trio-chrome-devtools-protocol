@@ -121,4 +121,51 @@ A more complete version of this example can be found in `examples/get_title.py`.
 There is also a screenshot example in `examples/screenshot.py`. The unit tests
 in `test/` also provide more examples.
 
+To run the examples, you need a Chrome binary in your system. You can get one like this:
+
+#### FOR MAC
+
+**Terminal 1**
+
+This sets up the chrome browser in a specific version, and runs it in debug mode with Tor proxy for network traffic.
+
+```
+wget https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2F678035%2Fchrome-mac.zip?generation=1563322360871926&alt=media
+unzip chrome-mac.zip && rm chrome-mac.zip
+./chrome-mac/Chromium.app/Contents/MacOS/Chromium --remote-debugging-port=9000 
+> DevTools listening on ws://127.0.0.1:9000/devtools/browser/<DEV_SESSION_GUID>
+```
+
+**Terminal 2**
+
+This runs the example browser automation script on the instantiated browser window.
+
+```bash
+python examples/get_title.py ws://127.0.0.1:9000/devtools/browser/<DEV_SESSION_GUID> https://hyperiongray.com
+```
+
+#### FOR LINUX
+
+**Terminal 1**
+
+This sets up the chrome browser in a specific version, and runs it in debug mode with Tor proxy for network traffic.
+
+```
+wget https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/678025/chrome-linux.zip
+unzip chrome-linux.zip && rm chrome-linux.zip
+./chrome-linux/chrome --remote-debugging-port=9000 
+> DevTools listening on ws://127.0.0.1:9000/devtools/browser/<DEV_SESSION_GUID>
+```
+
+**Terminal 2**
+
+This runs the example browser automation script on the instantiated browser window.
+
+```bash
+python examples/get_title.py ws://127.0.0.1:9000/devtools/browser/<DEV_SESSION_GUID> https://hyperiongray.com
+```
+
 <a href="https://www.hyperiongray.com/?pk_campaign=github&pk_kwd=trio-cdp"><img alt="define hyperion gray" width="500px" src="https://hyperiongray.s3.amazonaws.com/define-hg.svg"></a>
+
+id=E89C70427E6B7D2F56365B3E4C2268AA
+id=CC6E9EA42D2FFBABEDCC4E3282EF2A74

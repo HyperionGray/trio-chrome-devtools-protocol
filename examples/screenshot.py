@@ -33,7 +33,13 @@ async def main():
     async with open_cdp_connection(sys.argv[1]) as conn:
         logger.info('Listing targets')
         targets = await conn.execute(target.get_targets())
-        target_id = targets[0].target_id
+        
+        for t in targets:
+            if (t.type == 'page' and
+                not t.url.startswith('devtools://') and
+                not t.attached):
+                target_id = t.target_id
+                break
 
         logger.info('Attaching to target id=%s', target_id)
         session = await conn.open_session(target_id)
@@ -54,6 +60,7 @@ async def main():
         img_data = await session.execute(page.capture_screenshot(
             format='png'
         ))
+        logger.info('Saving to file')
         screenshot_file = await trio.open_file('test.png', 'wb')
         async with screenshot_file:
             await screenshot_file.write(b64decode(img_data))
