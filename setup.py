@@ -13,7 +13,8 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/HyperionGray/trio-chrome-devtools-protocol',
-    author='Mark E. Haase <mehaase@gmail.com>',
+    author='Mark E. Haase',
+    author_email='mehaase@gmail.com',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
