@@ -186,7 +186,7 @@ class CdpConnection(CdpBase, trio.abc.AsyncResource):
         super().__init__(ws, session_id=None)
         self.sessions = dict()
 
-    async def aclose():
+    async def aclose(self):
         await self.ws.aclose()
 
     async def open_session(self, target_id: cdp.target.TargetID) -> 'CdpSession':
