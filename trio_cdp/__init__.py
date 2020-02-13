@@ -8,7 +8,7 @@ import typing
 
 import cdp
 import trio # type: ignore
-from trio_websocket import open_websocket_url # type: ignore
+from trio_websocket import connect_websocket_url, open_websocket_url # type: ignore
 
 
 logger = logging.getLogger('trio_cdp')
@@ -161,7 +161,7 @@ class CdpBase:
             self.channels[type(event)] -= to_remove
 
 
-class CdpConnection(CdpBase):
+class CdpConnection(CdpBase, trio.abc.AsyncResource):
     '''
     Contains the connection state for a Chrome DevTools Protocol server.
 
@@ -182,6 +182,9 @@ class CdpConnection(CdpBase):
         '''
         super().__init__(ws, session_id=None)
         self.sessions = dict()
+
+    async def aclose():
+        await self.ws.aclose()
 
     async def open_session(self, target_id: cdp.target.TargetID) -> 'CdpSession':
         '''
@@ -288,9 +291,34 @@ class CdpSession(CdpBase):
 
 @asynccontextmanager
 async def open_cdp_connection(url) -> typing.AsyncIterator[CdpConnection]:
+    '''
+    This async context manager opens a connection to the browser specified by
+    ``url`` before entering the block, then closes the connection when the block
+    exits.
+    '''
     async with open_websocket_url(url, max_message_size=2**24) as ws:
         async with trio.open_nursery() as nursery:
             cdp_conn = CdpConnection(ws)
-            nursery.start_soon(cdp_conn._reader_task)
-            yield cdp_conn
-            nursery.cancel_scope.cancel()
+            async with cdp_conn:
+                nursery.start_soon(cdp_conn._reader_task)
+                yield cdp_conn
+
+
+async def connect_cdp(nursery, url) -> CdpConnection:
+    '''
+    Connect to the browser specified by ``url`` and spawn a background task in
+    the specified nursery.
+
+    The ``open_cdp_connection()`` context manager is preferred in most
+    situations. You should only use this function if you need to specify a
+    custom nursery.
+
+    This connection is not automatically closed! You can either use the
+    connection object as an async context manager, or else call `aclose()` on it
+    when you are done with it.
+    '''
+    ws = await connect_websocket_url(nursery, url,
+        max_message_size=2**24)
+    cdp_conn = CdpConnection(ws)
+    nursery.start_soon(cdp_conn._reader_task)
+    return cdp_conn
