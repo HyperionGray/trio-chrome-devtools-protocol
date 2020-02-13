@@ -16,6 +16,8 @@ T = typing.TypeVar('T')
 
 
 class BrowserError(Exception):
+    ''' This exception is raised when the browser's response to a command
+    indicates that an error occurred. '''
     def __init__(self, obj):
         self.code = obj['code']
         self.message = obj['message']
@@ -27,7 +29,8 @@ class BrowserError(Exception):
 
 
 class InternalError(Exception):
-    pass
+    ''' This exception is only raised when there is faulty logic in TrioCDP or
+    the integration with PyCDP. '''
 
 
 @dataclass
