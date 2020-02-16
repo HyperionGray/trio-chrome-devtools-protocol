@@ -6,6 +6,4 @@ dist
 test.png
 venv
 chrome-mac
-bin
-lib
-pyvenv.cfg
+build
