@@ -1,6 +1,9 @@
 '''
 Get the title of a target web page.
 
+This example is the same as the examples/get_title.py but demonstrates the 
+simplified calls to relevant CDP domain functions
+
 To use this example, start Chrome (or any other browser that supports CDP) with
 the option `--remote-debugging-port=9000`. The URL that Chrome is listening on
 is displayed in the terminal after Chrome starts up.
@@ -19,6 +22,9 @@ import sys
 from cdp import dom, page, target
 import trio
 from trio_cdp import open_cdp_connection
+#Additional trio_cdp imports to support simplified CDP domain function call, no session.execute(....)
+from trio_cdp import CDP_Active_Session_Manager
+from trio_cdp import simplify_cdp_domain_calls
 
 
 log_level = os.environ.get('LOG_LEVEL', 'info').upper()
@@ -43,16 +49,22 @@ async def main():
         logger.info('Attaching to target id=%s', target_id)
         session = await conn.open_session(target_id)
 
+        active_session_manager = CDP_Active_Session_Manager() # Create instance of Manager
+        CDP_Active_Session_Manager.getInstance().session = session #update the mananger with the current session
+
+        # Notify the wish to use simple domain function calls
+        simplify_cdp_domain_calls(page)
+        simplify_cdp_domain_calls(dom)
+
         logger.info('Navigating to %s', sys.argv[2])
-        await session.execute(page.enable())
+        await page.enable()
         async with session.wait_for(page.LoadEventFired):
-            await session.execute(page.navigate(sys.argv[2]))
+            await page.navigate(sys.argv[2])
 
         logger.info('Extracting page title')
-        root_node = await session.execute(dom.get_document())
-        title_node_id = await session.execute(
-                dom.query_selector(root_node.node_id, 'title'))
-        html = await session.execute(dom.get_outer_html(title_node_id))
+        root_node = await dom.get_document()
+        title_node_id = await dom.query_selector(root_node.node_id, 'title')
+        html = await dom.get_outer_html(title_node_id)
         print(html)
 
 
