@@ -29,5 +29,6 @@ setup(
         'chrome-devtools-protocol',
         'trio',
         'trio_websocket',
+        'wrapt'
     ],
 )

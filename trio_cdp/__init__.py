@@ -6,6 +6,8 @@ import json
 import logging
 import typing
 
+import types, wrapt, inspect
+
 import cdp
 import trio # type: ignore
 from trio_websocket import connect_websocket_url, open_websocket_url # type: ignore
@@ -325,3 +327,138 @@ async def connect_cdp(nursery, url) -> CdpConnection:
     cdp_conn = CdpConnection(ws)
     nursery.start_soon(cdp_conn._reader_task)
     return cdp_conn
+
+class CDP_Active_Session_Manager:
+    """
+    a Singleton class to serve the simplified domain function calls. Not having to do session.execute(...) is enabled via
+    the decoration of the `cdp` modules 
+
+    USAGE:
+    from cdp import page,network
+    simplify_cdp_domain_calls(page)
+    simplify_cdp_domain_calls(network)
+    active_session = CDP_Active_Session_Manager()
+    .... # acquire target_id
+    active_session.session = await conn.open_session(target_id)
+    ....
+    ....
+    page.navigate("http://example.com")  #These function call are wrapped by the call to `simplify_cdp_domain_calls(domain)`
+    network.enable()
+    ....
+    ...
+
+
+    """
+    __instance = None
+    session = None
+    @staticmethod
+    def getInstance():
+        """ Static access method. """
+        if CDP_Active_Session_Manager.__instance == None:
+            CDP_Active_Session_Manager()
+        return CDP_Active_Session_Manager.__instance
+    def __init__(self):
+        """ Virtually private constructor. """
+        if CDP_Active_Session_Manager.__instance != None:
+            raise Exception("This class is a singleton!")
+        else:
+            CDP_Active_Session_Manager.__instance = self
+
+
+@wrapt.decorator
+def decorator_cdp_session_execute(wrapped, instance, args, kwargs):
+    """
+    A Decorator to simplify cdp command execution
+    Essentially take away the need to wrap a domain command
+    in session.execute(<SOME CDP DOMAIN FUNCTION>)
+
+    Inspired by : https://hynek.me/articles/decorators/
+                : Universal Decorators : https://wrapt.readthedocs.io/en/latest/decorators.html#universal-decorators
+
+    EXAMPLE cdp_trio pre 2020-03-01
+    ```
+    #utilize the Jupyter Notebook support added in commit a8cbe893c59398c4df5cf3a62394b294d61d5ae1
+    # also requires IPython>=7.12 and IPykernerl with PR #479 (Trio-loop) a PR for milestone ipykernel==5.2
+    # available from:  https://github.com/HyperionGray/ipykernel.git@trio-loop commit 3bb1bf518d5b103ac02babdaf8143a8c9e84dc9f
+
+    from trio-cdp import connect_cdp
+    from cdp import pages
+
+    conn = await connect_cdp(GLOBAL_NURSERY,browser.web_socket_debugger_url)
+    session = await conn.open_session(target_id)
+    await session.execute(page.reload())
+
+    ```
+
+    EXAMPLE NEW
+    ```
+    # introspection and decorating support for cdp
+
+    from trio_cdp import simplify_cdp_domain_calls
+    from trio_cdp import CDP_Active_Session_Manager
+
+    # import the cdp domains
+    from cdp import pages,dom
+
+
+    simplify_cdp_domain_calls(page)
+    simplify_cdp_domain_calls(dom)
+
+    active_session = CDP_Active_Session_Manager()
+
+    conn = await connect_cdp(GLOBAL_NURSERY,browser.web_socket_debugger_url)
+    active_session.session = await conn.open_session(target_id)
+
+    #now possible to just do the simplified domain function calls under the last lodged session
+
+    await page.reload() # utilizes the current session
+    search_id,result_count = await dom.perform_search(query=some_XPath_string)
+
+    ```
+
+    To change a session on a domain function <domain>.<function>
+    CDP_Active_Session_Manager.get_instance.session = <new session>
+    This will change the session for all <domain>.<function> calls.
+    ```
+    page.navigate.session await conn.open_session(target_id)
+
+    ```
+
+    for modules/packages trio-cdp and trio
+    """
+    def wrapper(*args, **kwargs):
+        active_session = CDP_Active_Session_Manager.getInstance().session
+        logging.debug(f" Decorator_CDP_Session_Execute, wrapper; session:{active_session}, "\
+                    f"wrapped:{wrapped.__name__}, instance:{instance}")
+        return active_session.execute(wrapped(*args,**kwargs))
+    if instance is None:
+        if not inspect.isclass(wrapped):
+            # Decorator was applied to a function or staticmethod.
+            return wrapper(*args, **kwargs)
+    raise Exception (f"Invalid item for CDP domain function decorating(wrapping)"\
+                    f" instance:{instance}, wrapped name:{wrapped.__name__} wrapped:{wrapped}")
+
+
+def simplify_cdp_domain_calls(domain):
+    """ Applies the session.execute(<...>) wrapper to all functions in a supplied cdp domain module
+        The wrapper is applied to only Function Calls in the domain module
+        using the python @decorator model
+        A further arg: session,  is taken as the session in which to execute the function
+
+        Inspired by # https://stackoverflow.com/questions/39184338/how-can-i-decorate-all-functions-imported-from-a-file
+
+        Prevention of decorators being applied twice,  inspired from https://stackoverflow.com/questions/1547222/prevent-decorator-from-being-used-twice-on-the-same-function-in-python?answertab=votes#tab-top
+
+    """
+    logging.debug(f"Applying Decorator to domain:{domain}")
+    for name in dir(domain):
+        obj = getattr(domain, name)
+        # TODO: do we need to do anything with types or events ?
+
+        if isinstance(obj, types.FunctionType):
+            # logging.debug(f"----- {obj},{domain}, {name} {dir(obj)}")
+            # attribute to prevent  decorator being applied more than once
+            if getattr(domain, '_decorated_with_simplify_cdp_domain_calls__'+f"{name}", False):
+                raise Exception(f'Already Decorated,  name:{name}, in domain:{domain}')
+            setattr(domain,  '_decorated_with_simplify_cdp_domain_calls__'+f"{name}", True)
+            setattr(domain, name, decorator_cdp_session_execute(obj))
