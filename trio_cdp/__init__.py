@@ -11,6 +11,7 @@ import types, wrapt, inspect
 import cdp
 import trio # type: ignore
 from trio_websocket import connect_websocket_url, open_websocket_url # type: ignore
+from trio_websocket import ConnectionClosed
 
 
 logger = logging.getLogger('trio_cdp')
@@ -207,7 +208,15 @@ class CdpConnection(CdpBase, trio.abc.AsyncResource):
         responses to commands and events to listeners.
         '''
         while True:
-            message = await self.ws.get_message()
+            try: # Catch the issue of ConnectionClosed
+                message = await self.ws.get_message()
+            except ConnectionClosed as e:
+                if (e.reason is not None) and (e.reason.name) == 'NORMAL_CLOSURE': 
+                    logging.debug(f'CdpConnection._reader_task, trio_webSocket, found ConnectionClosed NORMALLY : {e}')
+                    break
+                else: 
+                    logging.debug(f'CdpConnection._reader_task, trio_webSocket, found ConnectionClosed by a NON normal exception : {e}')
+                    break  #TODO: Believe this should be a raise so that we catch broken connection closures but break fixes all issues in test cases and example failures
             try:
                 data = json.loads(message)
             except json.JSONDecodeError:
@@ -307,6 +316,7 @@ async def open_cdp_connection(url) -> typing.AsyncIterator[CdpConnection]:
             async with cdp_conn:
                 nursery.start_soon(cdp_conn._reader_task)
                 yield cdp_conn
+                logging.debug(f" open_cdp_connection:{cdp_conn} should be closing.....")
 
 
 async def connect_cdp(nursery, url) -> CdpConnection:

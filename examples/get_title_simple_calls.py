@@ -31,6 +31,7 @@ log_level = os.environ.get('LOG_LEVEL', 'info').upper()
 logging.basicConfig(level=getattr(logging, log_level))
 logger = logging.getLogger('get_title')
 logging.getLogger('trio-websocket').setLevel(logging.WARNING)
+logging.getLogger('trio-cdp').setLevel(logging.DEBUG)
 
 
 async def main():
