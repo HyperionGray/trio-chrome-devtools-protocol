@@ -305,6 +305,7 @@ async def open_cdp_connection(url) -> typing.AsyncIterator[CdpConnection]:
             async with cdp_conn:
                 nursery.start_soon(cdp_conn._reader_task)
                 yield cdp_conn
+                nursery.cancel_scope.cancel()
 
 
 async def connect_cdp(nursery, url) -> CdpConnection:
