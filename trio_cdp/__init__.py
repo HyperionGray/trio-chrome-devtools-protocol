@@ -8,11 +8,16 @@ import typing
 
 import cdp
 import trio # type: ignore
-from trio_websocket import connect_websocket_url, open_websocket_url # type: ignore
+from trio_websocket import (
+    ConnectionClosed as WsConnectionClosed,
+    connect_websocket_url,
+    open_websocket_url
+) # type: ignore
 
 
 logger = logging.getLogger('trio_cdp')
 T = typing.TypeVar('T')
+MAX_WS_MESSAGE_SIZE = 2**24
 
 
 class BrowserError(Exception):
@@ -26,6 +31,21 @@ class BrowserError(Exception):
     def __str__(self):
         return 'BrowserError<code={} message={}> {}'.format(self.code,
             self.message, self.detail)
+
+
+class CdpConnectionClosed(WsConnectionClosed):
+    ''' Raised when a public method is called on a closed CDP connection. '''
+    def __init__(self, reason):
+        '''
+        Constructor.
+        :param reason:
+        :type reason: wsproto.frame_protocol.CloseReason
+        '''
+        self.reason = reason
+
+    def __repr__(self):
+        ''' Return representation. '''
+        return '{}<{}>'.format(self.__class__.__name__, self.reason)
 
 
 class InternalError(Exception):
@@ -45,7 +65,7 @@ class CdpBase:
     '''
     Contains shared functionality between the CDP connection and session.
     '''
-    def __init__(self, ws, session_id=None, target_id=None):
+    def __init__(self, ws, session_id, target_id):
         self.channels = defaultdict(set)
         self.id_iter = itertools.count()
         self.inflight_cmd = dict()
@@ -70,7 +90,10 @@ class CdpBase:
             request['sessionId'] = self.session_id
         logger.debug('Sending command %r', request)
         request_str = json.dumps(request)
-        await self.ws.send_message(request_str)
+        try:
+            await self.ws.send_message(request_str)
+        except WsConnectionClosed as wcc:
+            raise CdpConnectionClosed(wcc.reason) from None
         await cmd_event.wait()
         response = self.inflight_result.pop(cmd_id)
         if isinstance(response, Exception):
@@ -98,8 +121,8 @@ class CdpBase:
         self.channels[event_type].add(sender)
         proxy = CmEventProxy()
         yield proxy
-        event = await receiver.receive()
-        await receiver.aclose()
+        async with receiver:
+            event = await receiver.receive()
         proxy.value = event
 
     def _handle_data(self, data):
@@ -171,10 +194,10 @@ class CdpConnection(CdpBase, trio.abc.AsyncResource):
     CDP can multiplex multiple "sessions" over a single connection. This class
     corresponds to the "root" session, i.e. the implicitly created session that
     has no session ID. This class is responsible for reading incoming WebSocket
-    messages and forwarding them to the corresponding session, or handling the
-    "root" session itself.
+    messages and forwarding them to the corresponding session, as well as
+    handling messages targeted at the root session itself.
 
-    You should generally call the :func:`open_cdp_connection()` instead of
+    You should generally call the :func:`open_cdp()` instead of
     instantiating this class directly.
     '''
     def __init__(self, ws):
@@ -183,10 +206,20 @@ class CdpConnection(CdpBase, trio.abc.AsyncResource):
 
         :param trio_websocket.WebSocketConnection ws:
         '''
-        super().__init__(ws, session_id=None)
+        super().__init__(ws, session_id=None, target_id=None)
         self.sessions = dict()
 
     async def aclose(self):
+        '''
+        Close the underlying WebSocket connection.
+
+        This will cause the reader task to gracefully exit when it tries to read
+        the next message from the WebSocket. All of the public APIs
+        (``execute()``, ``listen()``, etc.) will raise
+        ``CdpConnectionClosed`` after the CDP connection is closed.
+
+        It is safe to call this multiple times.
+        '''
         await self.ws.aclose()
 
     async def open_session(self, target_id: cdp.target.TargetID) -> 'CdpSession':
@@ -205,7 +238,14 @@ class CdpConnection(CdpBase, trio.abc.AsyncResource):
         responses to commands and events to listeners.
         '''
         while True:
-            message = await self.ws.get_message()
+            try:
+                message = await self.ws.get_message()
+            except WsConnectionClosed:
+                # If the WebSocket is closed, we don't want to throw an
+                # exception from the reader task. Instead we will throw
+                # exceptions from the public API methods, and we can quietly
+                # exit the reader task here.
+                break
             try:
                 data = json.loads(message)
             except json.JSONDecodeError:
@@ -293,19 +333,16 @@ class CdpSession(CdpBase):
 
 
 @asynccontextmanager
-async def open_cdp_connection(url) -> typing.AsyncIterator[CdpConnection]:
+async def open_cdp(url) -> typing.AsyncIterator[CdpConnection]:
     '''
     This async context manager opens a connection to the browser specified by
     ``url`` before entering the block, then closes the connection when the block
     exits.
     '''
-    async with open_websocket_url(url, max_message_size=2**24) as ws:
-        async with trio.open_nursery() as nursery:
-            cdp_conn = CdpConnection(ws)
-            async with cdp_conn:
-                nursery.start_soon(cdp_conn._reader_task)
-                yield cdp_conn
-                nursery.cancel_scope.cancel()
+    async with trio.open_nursery() as nursery:
+        conn = await connect_cdp(nursery, url)
+        async with conn:
+            yield conn
 
 
 async def connect_cdp(nursery, url) -> CdpConnection:
@@ -313,16 +350,16 @@ async def connect_cdp(nursery, url) -> CdpConnection:
     Connect to the browser specified by ``url`` and spawn a background task in
     the specified nursery.
 
-    The ``open_cdp_connection()`` context manager is preferred in most
+    The ``open_cdp()`` context manager is preferred in most
     situations. You should only use this function if you need to specify a
     custom nursery.
 
     This connection is not automatically closed! You can either use the
-    connection object as an async context manager, or else call `aclose()` on it
-    when you are done with it.
+    connection object as a context manager (``async with conn:``) or else call
+    ``await conn.aclose()`` on it when you are done with it.
     '''
     ws = await connect_websocket_url(nursery, url,
-        max_message_size=2**24)
+        max_message_size=MAX_WS_MESSAGE_SIZE)
     cdp_conn = CdpConnection(ws)
     nursery.start_soon(cdp_conn._reader_task)
     return cdp_conn

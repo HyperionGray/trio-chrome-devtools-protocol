@@ -6,4 +6,4 @@ publish: test
 	twine upload dist/*
 
 test:
-	pytest test/ --cov=trio_cdp --cov-report=term-missing
+	pytest tests/ --cov=trio_cdp --cov-report=term-missing

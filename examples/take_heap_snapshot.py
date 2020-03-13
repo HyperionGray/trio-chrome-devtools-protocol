@@ -5,10 +5,10 @@ To use this example, start Chrome (or any other browser that supports CDP) with
 the option `--remote-debugging-port=9000`. The URL that Chrome is listening on
 is displayed in the terminal after Chrome starts up.
 
-Then run this script with the Chrome URL as the first argument 
+Then run this script with the Chrome URL as the first argument
 
 $ python examples/take_heap_snapshot.py \
-    ws://localhost:9000/devtools/browser/facfb2295-... 
+    ws://localhost:9000/devtools/browser/facfb2295-...
 '''
 from datetime import datetime
 import logging
@@ -17,7 +17,7 @@ import sys
 
 from cdp import browser, dom, heap_profiler, page, target
 import trio
-from trio_cdp import open_cdp_connection
+from trio_cdp import open_cdp
 
 
 log_level = os.environ.get('LOG_LEVEL', 'info').upper()
@@ -52,7 +52,7 @@ async def _take_heap_snapshot(session, outfile, report_progress=False):
 
 async def main():
     cdp_uri = sys.argv[1]
-    async with open_cdp_connection(cdp_uri) as conn:
+    async with open_cdp(cdp_uri) as conn:
         logger.info('Connecting')
         targets = await conn.execute(target.get_targets())
         target_id = targets[0].target_id

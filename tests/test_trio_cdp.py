@@ -6,7 +6,8 @@ import pytest
 import trio
 from trio_websocket import serve_websocket
 
-from trio_cdp import BrowserError, open_cdp_connection
+from . import fail_after
+from trio_cdp import BrowserError, open_cdp
 
 
 HOST = '127.0.0.1'
@@ -26,6 +27,7 @@ def test_browser_error():
         'This is extra data about the error'
 
 
+@fail_after(1)
 async def test_connection_execute(nursery):
     ''' Open a connection and execute a command on it. '''
     async def handler(request):
@@ -53,13 +55,13 @@ async def test_connection_execute(nursery):
         except Exception:
             logging.exception('Server exception')
     server = await start_server(nursery, handler)
-
-    async with open_cdp_connection(server) as conn:
+    async with open_cdp(server) as conn:
         targets = await conn.execute(target.get_targets())
         assert len(targets) == 1
         assert isinstance(targets[0], target.TargetInfo)
 
 
+@fail_after(1)
 async def test_connection_invalid_json():
     ''' If the server sends invalid JSON, that exception is raised on the reader
     task, which crashes the entire connection. Therefore, the entire test needs
@@ -79,11 +81,12 @@ async def test_connection_invalid_json():
                     logging.exception('Server exception')
             server = await start_server(nursery, handler)
 
-            async with open_cdp_connection(server) as conn:
+            async with open_cdp(server) as conn:
                 targets = await conn.execute(target.get_targets())
     assert exc_info.value.code == -32700 # JSON parse error
 
 
+@fail_after(1)
 async def test_connection_browser_error(nursery):
     ''' If the browser sends an error with a valid command ID, then that error
     should be raised at the point where the command was executed. Compare to
@@ -110,13 +113,14 @@ async def test_connection_browser_error(nursery):
             logging.exception('Server exception')
     server = await start_server(nursery, handler)
 
-    async with open_cdp_connection(server) as conn:
+    async with open_cdp(server) as conn:
         with pytest.raises(BrowserError) as exc_info:
             targets = await conn.execute(target.get_targets())
 
     assert exc_info.value.code == -32000
 
 
+@fail_after(1)
 async def test_session_execute(nursery):
     ''' Open a session and execute a command on it. '''
     async def handler(request):
@@ -159,7 +163,7 @@ async def test_session_execute(nursery):
             logging.exception('Server exception')
     server = await start_server(nursery, handler)
 
-    async with open_cdp_connection(server) as conn:
+    async with open_cdp(server) as conn:
         session = await conn.open_session(target.TargetID('target1'))
         assert session.session_id == 'session1'
         node_id = await session.execute(
@@ -167,6 +171,7 @@ async def test_session_execute(nursery):
         assert node_id == 1
 
 
+@fail_after(1)
 async def test_wait_for_event(nursery):
     ''' The server sends 2 different events. The client is listening for a
     specific type of event and therefore only sees the 2nd one. '''
@@ -196,7 +201,7 @@ async def test_wait_for_event(nursery):
             logging.exception('Server exception')
     server = await start_server(nursery, handler)
 
-    async with open_cdp_connection(server) as conn:
+    async with open_cdp(server) as conn:
         async with conn.wait_for(page.LoadEventFired) as event:
             # In real code we would do something here to trigger a load event,
             # e.g. clicking a link.
@@ -205,6 +210,7 @@ async def test_wait_for_event(nursery):
         assert event.value.timestamp == 2
 
 
+@fail_after(1)
 async def test_listen_for_events(nursery):
     ''' The server sends 2 different events. The client is listening for a
     specific type of event and therefore only sees the 2nd one. '''
@@ -234,7 +240,7 @@ async def test_listen_for_events(nursery):
             logging.exception('Server exception')
     server = await start_server(nursery, handler)
 
-    async with open_cdp_connection(server) as conn:
+    async with open_cdp(server) as conn:
         n = 1
         async for event in conn.listen(page.LoadEventFired):
             assert isinstance(event, page.LoadEventFired)

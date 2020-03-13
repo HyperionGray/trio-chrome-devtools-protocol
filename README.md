@@ -15,7 +15,7 @@ multiplex commands, responses, and events over a single connection.
 The example demonstrates the salient features of the library.
 
 ```python
-async with open_cdp_connection(cdp_url) as conn:
+async with open_cdp(cdp_url) as conn:
     # Find the first available target (usually a browser tab).
     targets = await conn.execute(target.get_targets())
     target_id = targets[0].id
@@ -40,7 +40,7 @@ We'll go through this example bit by bit. First, it starts with a context
 manager:
 
 ```python
-async with open_cdp_connection(cdp_url) as conn:
+async with open_cdp(cdp_url) as conn:
 ```
 
 This context manager opens a connection to the browser when the block is entered
@@ -119,11 +119,11 @@ snippets.
 
 A more complete version of this example can be found in `examples/get_title.py`.
 There is also a screenshot example in `examples/screenshot.py`. The unit tests
-in `test/` also provide more examples.
+in `tests/` also provide more examples.
 
 To run the examples, you need a Chrome binary in your system. You can get one like this:
 
-#### FOR MAC
+## Running Examples on MacOS
 
 **Terminal 1**
 
@@ -132,7 +132,7 @@ This sets up the chrome browser in a specific version, and runs it in debug mode
 ```
 wget https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Mac%2F678035%2Fchrome-mac.zip?generation=1563322360871926&alt=media
 unzip chrome-mac.zip && rm chrome-mac.zip
-./chrome-mac/Chromium.app/Contents/MacOS/Chromium --remote-debugging-port=9000 
+./chrome-mac/Chromium.app/Contents/MacOS/Chromium --remote-debugging-port=9000
 > DevTools listening on ws://127.0.0.1:9000/devtools/browser/<DEV_SESSION_GUID>
 ```
 
@@ -144,7 +144,7 @@ This runs the example browser automation script on the instantiated browser wind
 python examples/get_title.py ws://127.0.0.1:9000/devtools/browser/<DEV_SESSION_GUID> https://hyperiongray.com
 ```
 
-#### FOR LINUX
+## Running Examples on Linux
 
 **Terminal 1**
 
@@ -153,7 +153,7 @@ This sets up the chrome browser in a specific version, and runs it in debug mode
 ```
 wget https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/678025/chrome-linux.zip
 unzip chrome-linux.zip && rm chrome-linux.zip
-./chrome-linux/chrome --remote-debugging-port=9000 
+./chrome-linux/chrome --remote-debugging-port=9000
 > DevTools listening on ws://127.0.0.1:9000/devtools/browser/<DEV_SESSION_GUID>
 ```
 
@@ -165,7 +165,27 @@ This runs the example browser automation script on the instantiated browser wind
 python examples/get_title.py ws://127.0.0.1:9000/devtools/browser/<DEV_SESSION_GUID> https://hyperiongray.com
 ```
 
-<a href="https://www.hyperiongray.com/?pk_campaign=github&pk_kwd=trio-cdp"><img alt="define hyperion gray" width="500px" src="https://hyperiongray.s3.amazonaws.com/define-hg.svg"></a>
+## Changelog
 
-id=E89C70427E6B7D2F56365B3E4C2268AA
-id=CC6E9EA42D2FFBABEDCC4E3282EF2A74
+### 0.5.0
+
+* **Backwards Compability Break:** Rename `open_cdp_connection()` to `open_cdp()`.
+* Fix `ConnectionClosed` bug.
+
+### 0.4.0
+
+* Add support for passing in a nursery. (Supports usage in Jupyter notebook.)
+
+### 0.3.0
+
+* New APIs for enabling DOM events and Page events.
+
+### 0.2.0
+
+* Restructure event listeners.
+
+### 0.1.0
+
+* Initial version
+
+<a href="https://www.hyperiongray.com/?pk_campaign=github&pk_kwd=trio-cdp"><img alt="define hyperion gray" width="500px" src="https://hyperiongray.s3.amazonaws.com/define-hg.svg"></a>

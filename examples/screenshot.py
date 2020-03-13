@@ -19,7 +19,7 @@ import sys
 
 from cdp import emulation, page, target
 import trio
-from trio_cdp import open_cdp_connection
+from trio_cdp import open_cdp
 
 
 log_level = os.environ.get('LOG_LEVEL', 'info').upper()
@@ -30,10 +30,10 @@ logging.getLogger('trio-websocket').setLevel(logging.WARNING)
 
 async def main():
     logger.info('Connecting to browser: %s', sys.argv[1])
-    async with open_cdp_connection(sys.argv[1]) as conn:
+    async with open_cdp(sys.argv[1]) as conn:
         logger.info('Listing targets')
         targets = await conn.execute(target.get_targets())
-        
+
         for t in targets:
             if (t.type == 'page' and
                 not t.url.startswith('devtools://') and
