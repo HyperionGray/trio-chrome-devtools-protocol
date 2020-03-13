@@ -8,7 +8,7 @@ with (here / 'README.md').open(encoding='utf8') as f:
 
 setup(
     name='trio-chrome-devtools-protocol',
-    version='0.5.0',
+    version='0.6.0-dev',
     description='Trio driver for Chrome DevTools Protocol (CDP)',
     long_description=long_description,
     long_description_content_type='text/markdown',
