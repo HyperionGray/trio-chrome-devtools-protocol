@@ -17,9 +17,8 @@ import logging
 import os
 import sys
 
-from cdp import emulation, page, target
 import trio
-from trio_cdp import open_cdp
+from trio_cdp import open_cdp, emulation, page, target
 
 
 log_level = os.environ.get('LOG_LEVEL', 'info').upper()
@@ -32,7 +31,7 @@ async def main():
     logger.info('Connecting to browser: %s', sys.argv[1])
     async with open_cdp(sys.argv[1]) as conn:
         logger.info('Listing targets')
-        targets = await conn.execute(target.get_targets())
+        targets = await target.get_targets()
 
         for t in targets:
             if (t.type == 'page' and
@@ -42,28 +41,26 @@ async def main():
                 break
 
         logger.info('Attaching to target id=%s', target_id)
-        session = await conn.open_session(target_id)
+        async with conn.open_session(target_id) as session:
 
-        logger.info('Setting device emulation')
-        await session.execute(emulation.set_device_metrics_override(
-            width=800, height=600, device_scale_factor=1, mobile=False
-        ))
+            logger.info('Setting device emulation')
+            await emulation.set_device_metrics_override(
+                width=800, height=600, device_scale_factor=1, mobile=False
+            )
 
-        logger.info('Enabling page events')
-        await session.execute(page.enable())
+            logger.info('Enabling page events')
+            await page.enable()
 
-        logger.info('Navigating to %s', sys.argv[2])
-        async with session.wait_for(page.LoadEventFired):
-            await session.execute(page.navigate(url=sys.argv[2]))
+            logger.info('Navigating to %s', sys.argv[2])
+            async with session.wait_for(page.LoadEventFired):
+                await page.navigate(url=sys.argv[2])
 
-        logger.info('Making a screenshot')
-        img_data = await session.execute(page.capture_screenshot(
-            format='png'
-        ))
-        logger.info('Saving to file')
-        screenshot_file = await trio.open_file('test.png', 'wb')
-        async with screenshot_file:
-            await screenshot_file.write(b64decode(img_data))
+            logger.info('Making a screenshot')
+            img_data = await page.capture_screenshot(format='png')
+            logger.info('Saving to file')
+            screenshot_file = await trio.open_file('test.png', 'wb')
+            async with screenshot_file:
+                await screenshot_file.write(b64decode(img_data))
 
 
 if __name__ == '__main__':

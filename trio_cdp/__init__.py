@@ -1,6 +1,8 @@
+from __future__ import annotations
 from collections import defaultdict
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
+import functools
 import itertools
 import json
 import logging
@@ -13,6 +15,9 @@ from trio_websocket import (
     connect_websocket_url,
     open_websocket_url
 ) # type: ignore
+
+from .context import connection_context, session_context
+from .generated import *
 
 
 logger = logging.getLogger('trio_cdp')
@@ -109,7 +114,8 @@ class CdpBase:
         return receiver
 
     @asynccontextmanager
-    async def wait_for(self, event_type: typing.Type[T], buffer_size=10) -> CmEventProxy:
+    async def wait_for(self, event_type: typing.Type[T], buffer_size=10) -> \
+            typing.AsyncGenerator[CmEventProxy, None]:
         '''
         Wait for an event of the given type and return it.
 
@@ -222,9 +228,26 @@ class CdpConnection(CdpBase, trio.abc.AsyncResource):
         '''
         await self.ws.aclose()
 
-    async def open_session(self, target_id: cdp.target.TargetID) -> 'CdpSession':
+    @asynccontextmanager
+    async def open_session(self, target_id: cdp.target.TargetID) -> \
+            typing.AsyncIterator[CdpSession]:
         '''
-        Open a :class:`CdpSession` with the specified target.
+        This context manager opens a session and enables the "simple" style of calling
+        CDP APIs.
+
+        For example, inside a session context, you can call ``await dom.get_document()``
+        and it will execute on the current session automatically.
+        '''
+        session = await self.connect_session(target_id)
+        token = session_context.set(session)
+        try:
+            yield session
+        finally:
+            session_context.reset(token)
+
+    async def connect_session(self, target_id: cdp.target.TargetID) -> 'CdpSession':
+        '''
+        Returns a new :class:`CdpSession` connected to the specified target.
         '''
         session_id = await self.execute(cdp.target.attach_to_target(
             target_id, True))
@@ -338,25 +361,37 @@ async def open_cdp(url) -> typing.AsyncIterator[CdpConnection]:
     This async context manager opens a connection to the browser specified by
     ``url`` before entering the block, then closes the connection when the block
     exits.
+
+    The context manager also sets the connection as the default connection for the
+    current task, so that commands like ``await target.get_targets()`` will run on this
+    connection automatically. If you want to use multiple connections concurrently, it
+    is recommended to open each on in a separate task.
     '''
     async with trio.open_nursery() as nursery:
         conn = await connect_cdp(nursery, url)
-        async with conn:
+        token = connection_context.set(conn)
+        try:
             yield conn
+        finally:
+            connection_context.reset(token)
+            await conn.aclose()
 
 
 async def connect_cdp(nursery, url) -> CdpConnection:
     '''
-    Connect to the browser specified by ``url`` and spawn a background task in
-    the specified nursery.
+    Connect to the browser specified by ``url`` and spawn a background task in the
+    specified nursery.
 
-    The ``open_cdp()`` context manager is preferred in most
-    situations. You should only use this function if you need to specify a
-    custom nursery.
+    The ``open_cdp()`` context manager is preferred in most situations. You should only
+    use this function if you need to specify a custom nursery.
 
-    This connection is not automatically closed! You can either use the
-    connection object as a context manager (``async with conn:``) or else call
-    ``await conn.aclose()`` on it when you are done with it.
+    This connection is not automatically closed! You can either use the connection
+    object as a context manager (``async with conn:``) or else call ``await
+    conn.aclose()`` on it when you are done with it.
+
+    If ``set_context`` is True, then the returned connection will be installed as
+    the default connection for the current task. This argument is for unusual use cases,
+    such as running inside of a notebook.
     '''
     ws = await connect_websocket_url(nursery, url,
         max_message_size=MAX_WS_MESSAGE_SIZE)
