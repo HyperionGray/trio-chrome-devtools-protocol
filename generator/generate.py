@@ -2,12 +2,19 @@ from __future__ import annotations
 import inspect
 import pathlib
 from textwrap import indent as tw_indent
+import types
 import typing
 
 import cdp
 
 
-def indent(text, count):
+try:
+    ForwardRef = typing.ForwardRef # type: ignore
+except AttributeError:
+    ForwardRef = typing._ForwardRef # type: ignore
+
+
+def indent(text: str, count: int):
     ''' Indent text with the specified number of spaces. '''
     return tw_indent(text, ' '  * count)
 
@@ -31,14 +38,14 @@ def main():
             file.write(f'from . import {module}\n')
 
 
-def clean(root):
+def clean(root: pathlib.Path):
     ''' Remove files from directory. '''
     for path in root.iterdir():
         if path.is_file():
             path.unlink()
 
 
-def generate_module(root, module_name, module):
+def generate_module(root: pathlib.Path, module_name: str, module: types.ModuleType):
     ''' Generate code for a module. '''
     print('* Generating module:', module_name)
     module_path = root / f'{module_name}.py'
@@ -69,7 +76,7 @@ def generate_module(root, module_name, module):
         file.write('\n\n'.join(commands))
 
 
-def generate_command(module, name, fn):
+def generate_command(module: str, name: str, fn: types.FunctionType):
     ''' Generate code for one command, i.e. one PyCDP wrapper function. '''
     print(f'  - {name}()')
     sig = inspect.signature(fn)
@@ -87,10 +94,11 @@ def generate_command(module, name, fn):
         call_args.append(param.name)
 
     if len(args) == 0:
-        args = ', '.join(args)
+        arg_str = ', '.join(args)
     else:
-        args = indent('\n' + ',\n'.join(args), 8) + '\n    '
-    call_args = ', '.join(call_args)
+        arg_str = indent('\n' + ',\n'.join(args), 8) + '\n    '
+
+    call_arg_str = ', '.join(call_args)
 
     # Copy docstring.
     if fn.__doc__:
@@ -105,12 +113,12 @@ def generate_command(module, name, fn):
     # Format the function and return it as a string.
     ctx_name, ctx_fn = which_context(module, name)
     body = f"{ctx_name} = {ctx_fn}('{module}.{name}')\n"
-    body += f"return await {ctx_name}.execute(cdp.{module}.{name}({call_args}))"
+    body += f"return await {ctx_name}.execute(cdp.{module}.{name}({call_arg_str}))"
     body = indent(body, 4)
-    return f'async def {name}({args}) -> {return_type}:\n{doc}{body}\n'
+    return f'async def {name}({arg_str}) -> {return_type}:\n{doc}{body}\n'
 
 
-def format_annotation(ann):
+def format_annotation(ann: typing.Any):
     '''
     Given a type annotation, return a stringified version.
 
@@ -121,7 +129,7 @@ def format_annotation(ann):
     '''
     if isinstance(ann, str):
         ann_str = ann
-    elif isinstance(ann, typing.ForwardRef):
+    elif isinstance(ann, ForwardRef):
         ann_str = ann.__forward_arg__
     elif ann in (bool, dict, float, int, str):
         ann_str = ann.__name__
@@ -151,7 +159,7 @@ def format_annotation(ann):
     return ann_str
 
 
-def which_context(module, name):
+def which_context(module: str, name: str):
     '''
     Returns the information for which context to use when executing a particular
     function.
@@ -164,6 +172,7 @@ def which_context(module, name):
     else:
         context = 'session', 'get_session_context'
     return context
+
 
 if __name__ == '__main__':
     main()

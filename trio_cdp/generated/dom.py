@@ -212,7 +212,7 @@ async def get_file_info(
     File wrapper.
 
     :param object_id: JavaScript object id of the node wrapper.
-    :returns:
+    :returns: 
     '''
     session = get_session_context('dom.get_file_info')
     return await session.execute(cdp.dom.get_file_info(object_id))

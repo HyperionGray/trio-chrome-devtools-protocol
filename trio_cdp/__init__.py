@@ -10,11 +10,11 @@ import typing
 
 import cdp
 import trio # type: ignore
-from trio_websocket import (
+from trio_websocket import ( # type: ignore
     ConnectionClosed as WsConnectionClosed,
     connect_websocket_url,
     open_websocket_url
-) # type: ignore
+)
 
 from .context import connection_context, session_context
 from .generated import *
