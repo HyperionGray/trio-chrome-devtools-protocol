@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.6.0
+-----
+
+* Simplified calling convention for CDP commands.
+
 0.5.0
 -----
 
