@@ -15,9 +15,8 @@ import logging
 import os
 import sys
 
-from cdp import browser, dom, heap_profiler, page, target
 import trio
-from trio_cdp import open_cdp
+from trio_cdp import open_cdp, browser, dom, heap_profiler, page, target
 
 
 log_level = os.environ.get('LOG_LEVEL', 'info').upper()
@@ -46,7 +45,7 @@ async def _take_heap_snapshot(session, outfile, report_progress=False):
         nursery.start_soon(chunk_helper)
         if report_progress:
             nursery.start_soon(progress_helper)
-        await session.execute(heap_profiler.take_heap_snapshot(report_progress))
+        await heap_profiler.take_heap_snapshot(report_progress)
         nursery.cancel_scope.cancel()
 
 
@@ -54,18 +53,18 @@ async def main():
     cdp_uri = sys.argv[1]
     async with open_cdp(cdp_uri) as conn:
         logger.info('Connecting')
-        targets = await conn.execute(target.get_targets())
+        targets = await target.get_targets()
         target_id = targets[0].target_id
 
         # First page
         logger.info('Attaching to target id=%s', target_id)
-        session = await conn.open_session(target_id)
+        async with conn.open_session(target_id) as session:
 
-        logger.info('Started heap snapshot')
-        outfile_path = trio.Path('%s.heapsnapshot' % datetime.today().isoformat())
-        async with await outfile_path.open('a') as outfile:
-            logger.info('Started writing heap snapshot')
-            await _take_heap_snapshot(session, outfile, report_progress=True)
+            logger.info('Started heap snapshot')
+            outfile_path = trio.Path('%s.heapsnapshot' % datetime.today().isoformat())
+            async with await outfile_path.open('a') as outfile:
+                logger.info('Started writing heap snapshot')
+                await _take_heap_snapshot(session, outfile, report_progress=True)
 
 
 if __name__ == '__main__':

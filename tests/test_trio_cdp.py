@@ -7,7 +7,7 @@ import trio
 from trio_websocket import serve_websocket
 
 from . import fail_after
-from trio_cdp import BrowserError, open_cdp
+from trio_cdp import BrowserError, open_cdp, dom as trio_cdp_dom
 
 
 HOST = '127.0.0.1'
@@ -120,9 +120,10 @@ async def test_connection_browser_error(nursery):
     assert exc_info.value.code == -32000
 
 
-@fail_after(1)
-async def test_session_execute(nursery):
-    ''' Open a session and execute a command on it. '''
+@pytest.fixture
+def session_handler():
+    ''' This fixture is used for the session tests below. It expects to receive an
+    "attachToTarget" command followed by a "querySelector" command. '''
     async def handler(request):
         # It's tricky to catch exceptions from the server, so exceptions are
         # logged instead.
@@ -161,14 +162,44 @@ async def test_session_execute(nursery):
             await ws.send_message(json.dumps(response))
         except Exception:
             logging.exception('Server exception')
-    server = await start_server(nursery, handler)
+    return handler
+
+
+@fail_after(1)
+async def test_session_execute(nursery, session_handler):
+    ''' Connect a session and execute a command on it. '''
+    server = await start_server(nursery, session_handler)
 
     async with open_cdp(server) as conn:
-        session = await conn.open_session(target.TargetID('target1'))
+        session = await conn.connect_session(target.TargetID('target1'))
         assert session.session_id == 'session1'
         node_id = await session.execute(
             dom.query_selector(dom.NodeId(0),'p.foo'))
         assert node_id == 1
+
+
+@fail_after(1)
+async def test_session_context(nursery, session_handler):
+    ''' Open a session context and execute a "simplified" API command in it. '''
+    server = await start_server(nursery, session_handler)
+
+    async with open_cdp(server) as conn:
+        async with conn.open_session(target.TargetID('target1')) as session:
+            assert session.session_id == 'session1'
+            node_id = await trio_cdp_dom.query_selector(dom.NodeId(0),'p.foo')
+            assert node_id == 1
+
+
+@fail_after(1)
+async def test_session_no_context(nursery, session_handler):
+    ''' Commands should raise an error if called outside of a session context.. '''
+    server = await start_server(nursery, session_handler)
+
+    async with open_cdp(server) as conn:
+        with pytest.raises(RuntimeError) as exc_info:
+            node_id = await trio_cdp_dom.query_selector(dom.NodeId(0),'p.foo')
+        assert str(exc_info.value) == 'dom.query_selector() must be called in a ' \
+            'session context.'
 
 
 @fail_after(1)

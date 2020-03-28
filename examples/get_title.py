@@ -16,9 +16,8 @@ import logging
 import os
 import sys
 
-from cdp import dom, page, target
 import trio
-from trio_cdp import open_cdp
+from trio_cdp import open_cdp, dom, page, target
 
 
 log_level = os.environ.get('LOG_LEVEL', 'info').upper()
@@ -31,7 +30,7 @@ async def main():
     logger.info('Connecting to browser: %s', sys.argv[1])
     async with open_cdp(sys.argv[1]) as conn:
         logger.info('Listing targets')
-        targets = await conn.execute(target.get_targets())
+        targets = await target.get_targets()
 
         for t in targets:
             if (t.type == 'page' and
@@ -41,19 +40,18 @@ async def main():
                 break
 
         logger.info('Attaching to target id=%s', target_id)
-        session = await conn.open_session(target_id)
+        async with conn.open_session(target_id) as session:
 
-        logger.info('Navigating to %s', sys.argv[2])
-        await session.execute(page.enable())
-        async with session.wait_for(page.LoadEventFired):
-            await session.execute(page.navigate(sys.argv[2]))
+            logger.info('Navigating to %s', sys.argv[2])
+            await page.enable()
+            async with session.wait_for(page.LoadEventFired):
+                await page.navigate(sys.argv[2])
 
-        logger.info('Extracting page title')
-        root_node = await session.execute(dom.get_document())
-        title_node_id = await session.execute(
-                dom.query_selector(root_node.node_id, 'title'))
-        html = await session.execute(dom.get_outer_html(title_node_id))
-        print(html)
+            logger.info('Extracting page title')
+            root_node = await dom.get_document()
+            title_node_id = await dom.query_selector(root_node.node_id, 'title')
+            html = await dom.get_outer_html(title_node_id)
+            print(html)
 
 
 if __name__ == '__main__':
