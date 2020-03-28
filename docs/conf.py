@@ -20,7 +20,7 @@
 project = 'Trio CDP'
 copyright = '2020, Mark Haase, Brian Mackintosh'
 author = 'Mark Haase, Brian Mackintosh'
-
+master_doc = 'index'
 
 # -- General configuration ---------------------------------------------------
 

@@ -8,13 +8,11 @@ using `Trio <https://trio.readthedocs.io/>`_. This library handles the WebSocket
 negotiation and session management, allowing you to transparently multiplex commands,
 responses, and events over a single connection.
 
-Contents
---------
-
 .. toctree::
-    :maxdepth: 1
+   :caption: Contents
+   :maxdepth: 1
 
-    installation
-    getting_started
-    api
-    changelog
+   installation
+   getting_started
+   api
+   changelog
