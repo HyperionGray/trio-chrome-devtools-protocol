@@ -36,7 +36,7 @@ async def enable() -> None:
 
 
 async def get_highlight_object_for_test(
-        node_id: dom.NodeId,
+        node_id: cdp.dom.NodeId,
         include_distance: typing.Optional[bool] = None,
         include_style: typing.Optional[bool] = None
     ) -> dict:
@@ -44,8 +44,8 @@ async def get_highlight_object_for_test(
     For testing.
 
     :param node_id: Id of the node to get highlight object for.
-    :param include_distance: Whether to include distance info.
-    :param include_style: Whether to include style info.
+    :param include_distance: *(Optional)* Whether to include distance info.
+    :param include_style: *(Optional)* Whether to include style info.
     :returns: Highlight data for the node.
     '''
     session = get_session_context('overlay.get_highlight_object_for_test')
@@ -61,16 +61,16 @@ async def hide_highlight() -> None:
 
 
 async def highlight_frame(
-        frame_id: page.FrameId,
-        content_color: typing.Optional[dom.RGBA] = None,
-        content_outline_color: typing.Optional[dom.RGBA] = None
+        frame_id: cdp.page.FrameId,
+        content_color: typing.Optional[cdp.dom.RGBA] = None,
+        content_outline_color: typing.Optional[cdp.dom.RGBA] = None
     ) -> None:
     '''
     Highlights owner element of the frame with given id.
 
     :param frame_id: Identifier of the frame to highlight.
-    :param content_color: The content box highlight fill color (default: transparent).
-    :param content_outline_color: The content box highlight outline color (default: transparent).
+    :param content_color: *(Optional)* The content box highlight fill color (default: transparent).
+    :param content_outline_color: *(Optional)* The content box highlight outline color (default: transparent).
     '''
     session = get_session_context('overlay.highlight_frame')
     return await session.execute(cdp.overlay.highlight_frame(frame_id, content_color, content_outline_color))
@@ -78,9 +78,9 @@ async def highlight_frame(
 
 async def highlight_node(
         highlight_config: HighlightConfig,
-        node_id: typing.Optional[dom.NodeId] = None,
-        backend_node_id: typing.Optional[dom.BackendNodeId] = None,
-        object_id: typing.Optional[runtime.RemoteObjectId] = None,
+        node_id: typing.Optional[cdp.dom.NodeId] = None,
+        backend_node_id: typing.Optional[cdp.dom.BackendNodeId] = None,
+        object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None,
         selector: typing.Optional[str] = None
     ) -> None:
     '''
@@ -88,26 +88,26 @@ async def highlight_node(
     objectId must be specified.
 
     :param highlight_config: A descriptor for the highlight appearance.
-    :param node_id: Identifier of the node to highlight.
-    :param backend_node_id: Identifier of the backend node to highlight.
-    :param object_id: JavaScript object id of the node to be highlighted.
-    :param selector: Selectors to highlight relevant nodes.
+    :param node_id: *(Optional)* Identifier of the node to highlight.
+    :param backend_node_id: *(Optional)* Identifier of the backend node to highlight.
+    :param object_id: *(Optional)* JavaScript object id of the node to be highlighted.
+    :param selector: *(Optional)* Selectors to highlight relevant nodes.
     '''
     session = get_session_context('overlay.highlight_node')
     return await session.execute(cdp.overlay.highlight_node(highlight_config, node_id, backend_node_id, object_id, selector))
 
 
 async def highlight_quad(
-        quad: dom.Quad,
-        color: typing.Optional[dom.RGBA] = None,
-        outline_color: typing.Optional[dom.RGBA] = None
+        quad: cdp.dom.Quad,
+        color: typing.Optional[cdp.dom.RGBA] = None,
+        outline_color: typing.Optional[cdp.dom.RGBA] = None
     ) -> None:
     '''
     Highlights given quad. Coordinates are absolute with respect to the main frame viewport.
 
     :param quad: Quad to highlight
-    :param color: The highlight fill color (default: transparent).
-    :param outline_color: The highlight outline color (default: transparent).
+    :param color: *(Optional)* The highlight fill color (default: transparent).
+    :param outline_color: *(Optional)* The highlight outline color (default: transparent).
     '''
     session = get_session_context('overlay.highlight_quad')
     return await session.execute(cdp.overlay.highlight_quad(quad, color, outline_color))
@@ -118,8 +118,8 @@ async def highlight_rect(
         y: int,
         width: int,
         height: int,
-        color: typing.Optional[dom.RGBA] = None,
-        outline_color: typing.Optional[dom.RGBA] = None
+        color: typing.Optional[cdp.dom.RGBA] = None,
+        outline_color: typing.Optional[cdp.dom.RGBA] = None
     ) -> None:
     '''
     Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.
@@ -128,8 +128,8 @@ async def highlight_rect(
     :param y: Y coordinate
     :param width: Rectangle width
     :param height: Rectangle height
-    :param color: The highlight fill color (default: transparent).
-    :param outline_color: The highlight outline color (default: transparent).
+    :param color: *(Optional)* The highlight fill color (default: transparent).
+    :param outline_color: *(Optional)* The highlight outline color (default: transparent).
     '''
     session = get_session_context('overlay.highlight_rect')
     return await session.execute(cdp.overlay.highlight_rect(x, y, width, height, color, outline_color))
@@ -144,8 +144,7 @@ async def set_inspect_mode(
     Backend then generates 'inspectNodeRequested' event upon element selection.
 
     :param mode: Set an inspection mode.
-    :param highlight_config: A descriptor for the highlight appearance of hovered-over nodes. May be omitted if ``enabled
-    == false``.
+    :param highlight_config: *(Optional)* A descriptor for the highlight appearance of hovered-over nodes. May be omitted if ```enabled == false```.
     '''
     session = get_session_context('overlay.set_inspect_mode')
     return await session.execute(cdp.overlay.set_inspect_mode(mode, highlight_config))
@@ -155,7 +154,7 @@ async def set_paused_in_debugger_message(
         message: typing.Optional[str] = None
     ) -> None:
     '''
-    :param message: The message to display, also triggers resume and step over controls.
+    :param message: *(Optional)* The message to display, also triggers resume and step over controls.
     '''
     session = get_session_context('overlay.set_paused_in_debugger_message')
     return await session.execute(cdp.overlay.set_paused_in_debugger_message(message))

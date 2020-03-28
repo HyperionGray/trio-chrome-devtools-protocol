@@ -35,20 +35,20 @@ async def read(
     Read a chunk of the stream
 
     :param handle: Handle of the stream to read.
-    :param offset: Seek to the specified offset before reading (if not specificed, proceed with offset
-    following the last read). Some types of streams may only support sequential reads.
-    :param size: Maximum number of bytes to read (left upon the agent discretion if not specified).
-    :returns: a tuple with the following items:
-        0. base64Encoded: (Optional) Set if the data is base64-encoded
-        1. data: Data that were read.
-        2. eof: Set if the end-of-file condition occured while reading.
+    :param offset: *(Optional)* Seek to the specified offset before reading (if not specificed, proceed with offset following the last read). Some types of streams may only support sequential reads.
+    :param size: *(Optional)* Maximum number of bytes to read (left upon the agent discretion if not specified).
+    :returns: A tuple with the following items:
+
+        0. **base64Encoded** – *(Optional)* Set if the data is base64-encoded
+        1. **data** – Data that were read.
+        2. **eof** – Set if the end-of-file condition occured while reading.
     '''
     session = get_session_context('io.read')
     return await session.execute(cdp.io.read(handle, offset, size))
 
 
 async def resolve_blob(
-        object_id: runtime.RemoteObjectId
+        object_id: cdp.runtime.RemoteObjectId
     ) -> str:
     '''
     Return UUID of Blob object specified by a remote object id.

@@ -95,11 +95,10 @@ async def get_metadata(
     :param security_origin: Security origin.
     :param database_name: Database name.
     :param object_store_name: Object store name.
-    :returns: a tuple with the following items:
-        0. entriesCount: the entries count
-        1. keyGeneratorValue: the current value of key generator, to become the next inserted
-        key into the object store. Valid if objectStore.autoIncrement
-        is true.
+    :returns: A tuple with the following items:
+
+        0. **entriesCount** – the entries count
+        1. **keyGeneratorValue** – the current value of key generator, to become the next inserted key into the object store. Valid if objectStore.autoIncrement is true.
     '''
     session = get_session_context('indexed_db.get_metadata')
     return await session.execute(cdp.indexed_db.get_metadata(security_origin, database_name, object_store_name))
@@ -123,10 +122,11 @@ async def request_data(
     :param index_name: Index name, empty string for object store data requests.
     :param skip_count: Number of records to skip.
     :param page_size: Number of records to fetch.
-    :param key_range: Key range.
-    :returns: a tuple with the following items:
-        0. objectStoreDataEntries: Array of object store data entries.
-        1. hasMore: If true, there are more entries to fetch in the given range.
+    :param key_range: *(Optional)* Key range.
+    :returns: A tuple with the following items:
+
+        0. **objectStoreDataEntries** – Array of object store data entries.
+        1. **hasMore** – If true, there are more entries to fetch in the given range.
     '''
     session = get_session_context('indexed_db.request_data')
     return await session.execute(cdp.indexed_db.request_data(security_origin, database_name, object_store_name, index_name, skip_count, page_size, key_range))

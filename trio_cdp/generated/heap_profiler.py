@@ -51,7 +51,7 @@ async def enable() -> None:
 
 
 async def get_heap_object_id(
-        object_id: runtime.RemoteObjectId
+        object_id: cdp.runtime.RemoteObjectId
     ) -> HeapSnapshotObjectId:
     '''
     :param object_id: Identifier of the object to get heap object id for.
@@ -64,10 +64,10 @@ async def get_heap_object_id(
 async def get_object_by_heap_object_id(
         object_id: HeapSnapshotObjectId,
         object_group: typing.Optional[str] = None
-    ) -> runtime.RemoteObject:
+    ) -> cdp.runtime.RemoteObject:
     '''
     :param object_id:
-    :param object_group: Symbolic group name that can be used to release multiple objects.
+    :param object_group: *(Optional)* Symbolic group name that can be used to release multiple objects.
     :returns: Evaluation result.
     '''
     session = get_session_context('heap_profiler.get_object_by_heap_object_id')
@@ -88,8 +88,7 @@ async def start_sampling(
         sampling_interval: typing.Optional[float] = None
     ) -> None:
     '''
-    :param sampling_interval: Average sample interval in bytes. Poisson distribution is used for the intervals. The
-    default value is 32768 bytes.
+    :param sampling_interval: *(Optional)* Average sample interval in bytes. Poisson distribution is used for the intervals. The default value is 32768 bytes.
     '''
     session = get_session_context('heap_profiler.start_sampling')
     return await session.execute(cdp.heap_profiler.start_sampling(sampling_interval))
@@ -99,7 +98,7 @@ async def start_tracking_heap_objects(
         track_allocations: typing.Optional[bool] = None
     ) -> None:
     '''
-    :param track_allocations:
+    :param track_allocations: *(Optional)*
     '''
     session = get_session_context('heap_profiler.start_tracking_heap_objects')
     return await session.execute(cdp.heap_profiler.start_tracking_heap_objects(track_allocations))
@@ -119,8 +118,7 @@ async def stop_tracking_heap_objects(
         report_progress: typing.Optional[bool] = None
     ) -> None:
     '''
-    :param report_progress: If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken
-    when the tracking is stopped.
+    :param report_progress: *(Optional)* If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken when the tracking is stopped.
     '''
     session = get_session_context('heap_profiler.stop_tracking_heap_objects')
     return await session.execute(cdp.heap_profiler.stop_tracking_heap_objects(report_progress))
@@ -130,7 +128,7 @@ async def take_heap_snapshot(
         report_progress: typing.Optional[bool] = None
     ) -> None:
     '''
-    :param report_progress: If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
+    :param report_progress: *(Optional)* If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
     '''
     session = get_session_context('heap_profiler.take_heap_snapshot')
     return await session.execute(cdp.heap_profiler.take_heap_snapshot(report_progress))

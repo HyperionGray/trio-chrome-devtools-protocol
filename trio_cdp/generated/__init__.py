@@ -25,7 +25,7 @@ from . import fetch
 from . import headless_experimental
 from . import heap_profiler
 from . import indexed_db
-from . import input
+from . import input_
 from . import inspector
 from . import io
 from . import layer_tree

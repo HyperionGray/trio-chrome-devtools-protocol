@@ -37,16 +37,16 @@ async def enable() -> None:
 
 
 async def get_current_time(
-        id: str
+        id_: str
     ) -> float:
     '''
     Returns the current time of the an animation.
 
-    :param id: Id of animation.
+    :param id_: Id of animation.
     :returns: Current time of the page.
     '''
     session = get_session_context('animation.get_current_time')
-    return await session.execute(cdp.animation.get_current_time(id))
+    return await session.execute(cdp.animation.get_current_time(id_))
 
 
 async def get_playback_rate() -> float:
@@ -73,7 +73,7 @@ async def release_animations(
 
 async def resolve_animation(
         animation_id: str
-    ) -> runtime.RemoteObject:
+    ) -> cdp.runtime.RemoteObject:
     '''
     Gets the remote object of the Animation.
 

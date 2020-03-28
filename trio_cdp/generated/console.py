@@ -34,7 +34,7 @@ async def disable() -> None:
 async def enable() -> None:
     '''
     Enables console domain, sends the messages collected so far to the client by means of the
-    `messageAdded` notification.
+    ``messageAdded`` notification.
     '''
     session = get_session_context('console.enable')
     return await session.execute(cdp.console.enable())

@@ -71,8 +71,8 @@ async def start_precise_coverage(
     coverage may be incomplete. Enabling prevents running optimized code and resets execution
     counters.
 
-    :param call_count: Collect accurate call counts beyond simple 'covered' or 'not covered'.
-    :param detailed: Collect block-based coverage.
+    :param call_count: *(Optional)* Collect accurate call counts beyond simple 'covered' or 'not covered'.
+    :param detailed: *(Optional)* Collect block-based coverage.
     '''
     session = get_session_context('profiler.start_precise_coverage')
     return await session.execute(cdp.profiler.start_precise_coverage(call_count, detailed))
@@ -81,6 +81,8 @@ async def start_precise_coverage(
 async def start_type_profile() -> None:
     '''
     Enable type profile.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('profiler.start_type_profile')
     return await session.execute(cdp.profiler.start_type_profile())
@@ -108,6 +110,8 @@ async def stop_precise_coverage() -> None:
 async def stop_type_profile() -> None:
     '''
     Disable type profile. Disabling releases type profile data collected so far.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('profiler.stop_type_profile')
     return await session.execute(cdp.profiler.stop_type_profile())
@@ -127,6 +131,8 @@ async def take_precise_coverage() -> typing.List[ScriptCoverage]:
 async def take_type_profile() -> typing.List[ScriptTypeProfile]:
     '''
     Collect type profile.
+
+    **EXPERIMENTAL**
 
     :returns: Type profile for all scripts since startTypeProfile() was turned on.
     '''

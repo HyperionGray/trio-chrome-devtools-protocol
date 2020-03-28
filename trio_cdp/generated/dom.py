@@ -44,6 +44,8 @@ async def collect_class_names_from_subtree(
     '''
     Collects class names for the node with given id and all of it's child nodes.
 
+    **EXPERIMENTAL**
+
     :param node_id: Id of the node to collect class names.
     :returns: Class name list.
     '''
@@ -60,10 +62,11 @@ async def copy_to(
     Creates a deep copy of the specified node and places it into the target container before the
     given anchor.
 
+    **EXPERIMENTAL**
+
     :param node_id: Id of the node to copy.
     :param target_node_id: Id of the element to drop the copy into.
-    :param insert_before_node_id: Drop the copy before this node (if absent, the copy becomes the last child of
-    ``targetNodeId``).
+    :param insert_before_node_id: *(Optional)* Drop the copy before this node (if absent, the copy becomes the last child of ```targetNodeId```).
     :returns: Id of the node clone.
     '''
     session = get_session_context('dom.copy_to')
@@ -73,7 +76,7 @@ async def copy_to(
 async def describe_node(
         node_id: typing.Optional[NodeId] = None,
         backend_node_id: typing.Optional[BackendNodeId] = None,
-        object_id: typing.Optional[runtime.RemoteObjectId] = None,
+        object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None,
         depth: typing.Optional[int] = None,
         pierce: typing.Optional[bool] = None
     ) -> Node:
@@ -81,13 +84,11 @@ async def describe_node(
     Describes node given its id, does not require domain to be enabled. Does not start tracking any
     objects, can be used for automation.
 
-    :param node_id: Identifier of the node.
-    :param backend_node_id: Identifier of the backend node.
-    :param object_id: JavaScript object id of the node wrapper.
-    :param depth: The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the
-    entire subtree or provide an integer larger than 0.
-    :param pierce: Whether or not iframes and shadow roots should be traversed when returning the subtree
-    (default is false).
+    :param node_id: *(Optional)* Identifier of the node.
+    :param backend_node_id: *(Optional)* Identifier of the backend node.
+    :param object_id: *(Optional)* JavaScript object id of the node wrapper.
+    :param depth: *(Optional)* The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+    :param pierce: *(Optional)* Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
     :returns: Node description.
     '''
     session = get_session_context('dom.describe_node')
@@ -106,8 +107,10 @@ async def discard_search_results(
         search_id: str
     ) -> None:
     '''
-    Discards search results from the session with the given id. `getSearchResults` should no longer
+    Discards search results from the session with the given id. ``getSearchResults`` should no longer
     be called for that search.
+
+    **EXPERIMENTAL**
 
     :param search_id: Unique search session identifier.
     '''
@@ -126,14 +129,14 @@ async def enable() -> None:
 async def focus(
         node_id: typing.Optional[NodeId] = None,
         backend_node_id: typing.Optional[BackendNodeId] = None,
-        object_id: typing.Optional[runtime.RemoteObjectId] = None
+        object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None
     ) -> None:
     '''
     Focuses the given element.
 
-    :param node_id: Identifier of the node.
-    :param backend_node_id: Identifier of the backend node.
-    :param object_id: JavaScript object id of the node wrapper.
+    :param node_id: *(Optional)* Identifier of the node.
+    :param backend_node_id: *(Optional)* Identifier of the backend node.
+    :param object_id: *(Optional)* JavaScript object id of the node wrapper.
     '''
     session = get_session_context('dom.focus')
     return await session.execute(cdp.dom.focus(node_id, backend_node_id, object_id))
@@ -155,14 +158,14 @@ async def get_attributes(
 async def get_box_model(
         node_id: typing.Optional[NodeId] = None,
         backend_node_id: typing.Optional[BackendNodeId] = None,
-        object_id: typing.Optional[runtime.RemoteObjectId] = None
+        object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None
     ) -> BoxModel:
     '''
     Returns boxes for the given node.
 
-    :param node_id: Identifier of the node.
-    :param backend_node_id: Identifier of the backend node.
-    :param object_id: JavaScript object id of the node wrapper.
+    :param node_id: *(Optional)* Identifier of the node.
+    :param backend_node_id: *(Optional)* Identifier of the backend node.
+    :param object_id: *(Optional)* JavaScript object id of the node wrapper.
     :returns: Box model for the node.
     '''
     session = get_session_context('dom.get_box_model')
@@ -172,15 +175,17 @@ async def get_box_model(
 async def get_content_quads(
         node_id: typing.Optional[NodeId] = None,
         backend_node_id: typing.Optional[BackendNodeId] = None,
-        object_id: typing.Optional[runtime.RemoteObjectId] = None
+        object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None
     ) -> typing.List[Quad]:
     '''
     Returns quads that describe node position on the page. This method
     might return multiple quads for inline nodes.
 
-    :param node_id: Identifier of the node.
-    :param backend_node_id: Identifier of the backend node.
-    :param object_id: JavaScript object id of the node wrapper.
+    **EXPERIMENTAL**
+
+    :param node_id: *(Optional)* Identifier of the node.
+    :param backend_node_id: *(Optional)* Identifier of the backend node.
+    :param object_id: *(Optional)* JavaScript object id of the node wrapper.
     :returns: Quads that describe node layout relative to viewport.
     '''
     session = get_session_context('dom.get_content_quads')
@@ -194,10 +199,8 @@ async def get_document(
     '''
     Returns the root DOM node (and optionally the subtree) to the caller.
 
-    :param depth: The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the
-    entire subtree or provide an integer larger than 0.
-    :param pierce: Whether or not iframes and shadow roots should be traversed when returning the subtree
-    (default is false).
+    :param depth: *(Optional)* The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+    :param pierce: *(Optional)* Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
     :returns: Resulting node.
     '''
     session = get_session_context('dom.get_document')
@@ -205,11 +208,13 @@ async def get_document(
 
 
 async def get_file_info(
-        object_id: runtime.RemoteObjectId
+        object_id: cdp.runtime.RemoteObjectId
     ) -> str:
     '''
     Returns file information for the given
     File wrapper.
+
+    **EXPERIMENTAL**
 
     :param object_id: JavaScript object id of the node wrapper.
     :returns: 
@@ -225,10 +230,8 @@ async def get_flattened_document(
     '''
     Returns the root DOM node (and optionally the subtree) to the caller.
 
-    :param depth: The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the
-    entire subtree or provide an integer larger than 0.
-    :param pierce: Whether or not iframes and shadow roots should be traversed when returning the subtree
-    (default is false).
+    :param depth: *(Optional)* The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+    :param pierce: *(Optional)* Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
     :returns: Resulting node.
     '''
     session = get_session_context('dom.get_flattened_document')
@@ -236,15 +239,18 @@ async def get_flattened_document(
 
 
 async def get_frame_owner(
-        frame_id: page.FrameId
+        frame_id: cdp.page.FrameId
     ) -> typing.Tuple[BackendNodeId, typing.Optional[NodeId]]:
     '''
     Returns iframe node that owns iframe with the given domain.
 
+    **EXPERIMENTAL**
+
     :param frame_id:
-    :returns: a tuple with the following items:
-        0. backendNodeId: Resulting node.
-        1. nodeId: (Optional) Id of the node at given coordinates, only when enabled and requested document.
+    :returns: A tuple with the following items:
+
+        0. **backendNodeId** – Resulting node.
+        1. **nodeId** – *(Optional)* Id of the node at given coordinates, only when enabled and requested document.
     '''
     session = get_session_context('dom.get_frame_owner')
     return await session.execute(cdp.dom.get_frame_owner(frame_id))
@@ -259,12 +265,15 @@ async def get_node_for_location(
     Returns node id at given location. Depending on whether DOM domain is enabled, nodeId is
     either returned or not.
 
+    **EXPERIMENTAL**
+
     :param x: X coordinate.
     :param y: Y coordinate.
-    :param include_user_agent_shadow_dom: False to skip to the nearest non-UA shadow root ancestor (default: false).
-    :returns: a tuple with the following items:
-        0. backendNodeId: Resulting node.
-        1. nodeId: (Optional) Id of the node at given coordinates, only when enabled and requested document.
+    :param include_user_agent_shadow_dom: *(Optional)* False to skip to the nearest non-UA shadow root ancestor (default: false).
+    :returns: A tuple with the following items:
+
+        0. **backendNodeId** – Resulting node.
+        1. **nodeId** – *(Optional)* Id of the node at given coordinates, only when enabled and requested document.
     '''
     session = get_session_context('dom.get_node_for_location')
     return await session.execute(cdp.dom.get_node_for_location(x, y, include_user_agent_shadow_dom))
@@ -273,14 +282,14 @@ async def get_node_for_location(
 async def get_outer_html(
         node_id: typing.Optional[NodeId] = None,
         backend_node_id: typing.Optional[BackendNodeId] = None,
-        object_id: typing.Optional[runtime.RemoteObjectId] = None
+        object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None
     ) -> str:
     '''
     Returns node's HTML markup.
 
-    :param node_id: Identifier of the node.
-    :param backend_node_id: Identifier of the backend node.
-    :param object_id: JavaScript object id of the node wrapper.
+    :param node_id: *(Optional)* Identifier of the node.
+    :param backend_node_id: *(Optional)* Identifier of the backend node.
+    :param object_id: *(Optional)* JavaScript object id of the node wrapper.
     :returns: Outer HTML markup.
     '''
     session = get_session_context('dom.get_outer_html')
@@ -292,6 +301,8 @@ async def get_relayout_boundary(
     ) -> NodeId:
     '''
     Returns the id of the nearest ancestor that is a relayout boundary.
+
+    **EXPERIMENTAL**
 
     :param node_id: Id of the node.
     :returns: Relayout boundary node id for the given node.
@@ -306,8 +317,10 @@ async def get_search_results(
         to_index: int
     ) -> typing.List[NodeId]:
     '''
-    Returns search results from given `fromIndex` to given `toIndex` from the search with the given
+    Returns search results from given ``fromIndex`` to given ``toIndex`` from the search with the given
     identifier.
+
+    **EXPERIMENTAL**
 
     :param search_id: Unique search session identifier.
     :param from_index: Start index of the search result to be returned.
@@ -345,6 +358,8 @@ async def highlight_rect() -> None:
 async def mark_undoable_state() -> None:
     '''
     Marks last undoable state.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('dom.mark_undoable_state')
     return await session.execute(cdp.dom.mark_undoable_state())
@@ -360,8 +375,7 @@ async def move_to(
 
     :param node_id: Id of the node to move.
     :param target_node_id: Id of the element to drop the moved node into.
-    :param insert_before_node_id: Drop node before this one (if absent, the moved node becomes the last child of
-    ``targetNodeId``).
+    :param insert_before_node_id: *(Optional)* Drop node before this one (if absent, the moved node becomes the last child of ```targetNodeId```).
     :returns: New id of the moved node.
     '''
     session = get_session_context('dom.move_to')
@@ -373,14 +387,17 @@ async def perform_search(
         include_user_agent_shadow_dom: typing.Optional[bool] = None
     ) -> typing.Tuple[str, int]:
     '''
-    Searches for a given string in the DOM tree. Use `getSearchResults` to access search results or
-    `cancelSearch` to end this search session.
+    Searches for a given string in the DOM tree. Use ``getSearchResults`` to access search results or
+    ``cancelSearch`` to end this search session.
+
+    **EXPERIMENTAL**
 
     :param query: Plain text or query selector or XPath search query.
-    :param include_user_agent_shadow_dom: True to search in user agent shadow DOM.
-    :returns: a tuple with the following items:
-        0. searchId: Unique search session identifier.
-        1. resultCount: Number of search results.
+    :param include_user_agent_shadow_dom: *(Optional)* True to search in user agent shadow DOM.
+    :returns: A tuple with the following items:
+
+        0. **searchId** – Unique search session identifier.
+        1. **resultCount** – Number of search results.
     '''
     session = get_session_context('dom.perform_search')
     return await session.execute(cdp.dom.perform_search(query, include_user_agent_shadow_dom))
@@ -391,6 +408,8 @@ async def push_node_by_path_to_frontend(
     ) -> NodeId:
     '''
     Requests that the node is sent to the caller given its path. // FIXME, use XPath
+
+    **EXPERIMENTAL**
 
     :param path: Path to node in the proprietary format.
     :returns: Id of the node for given path.
@@ -405,9 +424,10 @@ async def push_nodes_by_backend_ids_to_frontend(
     '''
     Requests that a batch of nodes is sent to the caller given their backend node ids.
 
+    **EXPERIMENTAL**
+
     :param backend_node_ids: The array of backend node ids.
-    :returns: The array of ids of pushed nodes that correspond to the backend ids specified in
-    backendNodeIds.
+    :returns: The array of ids of pushed nodes that correspond to the backend ids specified in backendNodeIds.
     '''
     session = get_session_context('dom.push_nodes_by_backend_ids_to_frontend')
     return await session.execute(cdp.dom.push_nodes_by_backend_ids_to_frontend(backend_node_ids))
@@ -418,7 +438,7 @@ async def query_selector(
         selector: str
     ) -> NodeId:
     '''
-    Executes `querySelector` on a given node.
+    Executes ``querySelector`` on a given node.
 
     :param node_id: Id of the node to query upon.
     :param selector: Selector string.
@@ -433,7 +453,7 @@ async def query_selector_all(
         selector: str
     ) -> typing.List[NodeId]:
     '''
-    Executes `querySelectorAll` on a given node.
+    Executes ``querySelectorAll`` on a given node.
 
     :param node_id: Id of the node to query upon.
     :param selector: Selector string.
@@ -446,6 +466,8 @@ async def query_selector_all(
 async def redo() -> None:
     '''
     Re-does the last undone action.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('dom.redo')
     return await session.execute(cdp.dom.redo())
@@ -484,26 +506,24 @@ async def request_child_nodes(
     ) -> None:
     '''
     Requests that children of the node with given id are returned to the caller in form of
-    `setChildNodes` events where not only immediate children are retrieved, but all children down to
+    ``setChildNodes`` events where not only immediate children are retrieved, but all children down to
     the specified depth.
 
     :param node_id: Id of the node to get children for.
-    :param depth: The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the
-    entire subtree or provide an integer larger than 0.
-    :param pierce: Whether or not iframes and shadow roots should be traversed when returning the sub-tree
-    (default is false).
+    :param depth: *(Optional)* The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+    :param pierce: *(Optional)* Whether or not iframes and shadow roots should be traversed when returning the sub-tree (default is false).
     '''
     session = get_session_context('dom.request_child_nodes')
     return await session.execute(cdp.dom.request_child_nodes(node_id, depth, pierce))
 
 
 async def request_node(
-        object_id: runtime.RemoteObjectId
+        object_id: cdp.runtime.RemoteObjectId
     ) -> NodeId:
     '''
     Requests that the node is sent to the caller given the JavaScript node object reference. All
     nodes that form the path from the node to the root are also sent to the client as a series of
-    `setChildNodes` notifications.
+    ``setChildNodes`` notifications.
 
     :param object_id: JavaScript object id to convert into node.
     :returns: Node id for given object.
@@ -516,15 +536,15 @@ async def resolve_node(
         node_id: typing.Optional[NodeId] = None,
         backend_node_id: typing.Optional[BackendNodeId] = None,
         object_group: typing.Optional[str] = None,
-        execution_context_id: typing.Optional[runtime.ExecutionContextId] = None
-    ) -> runtime.RemoteObject:
+        execution_context_id: typing.Optional[cdp.runtime.ExecutionContextId] = None
+    ) -> cdp.runtime.RemoteObject:
     '''
     Resolves the JavaScript node object for a given NodeId or BackendNodeId.
 
-    :param node_id: Id of the node to resolve.
-    :param backend_node_id: Backend identifier of the node to resolve.
-    :param object_group: Symbolic group name that can be used to release multiple objects.
-    :param execution_context_id: Execution context in which to resolve the node.
+    :param node_id: *(Optional)* Id of the node to resolve.
+    :param backend_node_id: *(Optional)* Backend identifier of the node to resolve.
+    :param object_group: *(Optional)* Symbolic group name that can be used to release multiple objects.
+    :param execution_context_id: *(Optional)* Execution context in which to resolve the node.
     :returns: JavaScript object wrapper for given node.
     '''
     session = get_session_context('dom.resolve_node')
@@ -558,8 +578,7 @@ async def set_attributes_as_text(
 
     :param node_id: Id of the element to set attributes for.
     :param text: Text with a number of attributes. Will parse this text using HTML parser.
-    :param name: Attribute name to replace with new attributes derived from text in case text parsed
-    successfully.
+    :param name: *(Optional)* Attribute name to replace with new attributes derived from text in case text parsed successfully.
     '''
     session = get_session_context('dom.set_attributes_as_text')
     return await session.execute(cdp.dom.set_attributes_as_text(node_id, text, name))
@@ -569,15 +588,15 @@ async def set_file_input_files(
         files: typing.List[str],
         node_id: typing.Optional[NodeId] = None,
         backend_node_id: typing.Optional[BackendNodeId] = None,
-        object_id: typing.Optional[runtime.RemoteObjectId] = None
+        object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None
     ) -> None:
     '''
     Sets files for the given file input element.
 
     :param files: Array of file paths to set.
-    :param node_id: Identifier of the node.
-    :param backend_node_id: Identifier of the backend node.
-    :param object_id: JavaScript object id of the node wrapper.
+    :param node_id: *(Optional)* Identifier of the node.
+    :param backend_node_id: *(Optional)* Identifier of the backend node.
+    :param object_id: *(Optional)* JavaScript object id of the node wrapper.
     '''
     session = get_session_context('dom.set_file_input_files')
     return await session.execute(cdp.dom.set_file_input_files(files, node_id, backend_node_id, object_id))
@@ -589,6 +608,8 @@ async def set_inspected_node(
     '''
     Enables console to refer to the node with given id via $x (see Command Line API for more details
     $x functions).
+
+    **EXPERIMENTAL**
 
     :param node_id: DOM node id to be accessible by means of $x command line API.
     '''
@@ -642,6 +663,8 @@ async def set_outer_html(
 async def undo() -> None:
     '''
     Undoes the last performed action.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('dom.undo')
     return await session.execute(cdp.dom.undo())

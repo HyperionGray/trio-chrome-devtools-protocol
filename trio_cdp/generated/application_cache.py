@@ -27,7 +27,7 @@ async def enable() -> None:
 
 
 async def get_application_cache_for_frame(
-        frame_id: page.FrameId
+        frame_id: cdp.page.FrameId
     ) -> ApplicationCache:
     '''
     Returns relevant application cache data for the document in given frame.
@@ -44,15 +44,14 @@ async def get_frames_with_manifests() -> typing.List[FrameWithManifest]:
     Returns array of frame identifiers with manifest urls for each frame containing a document
     associated with some application cache.
 
-    :returns: Array of frame identifiers with manifest urls for each frame containing a document
-    associated with some application cache.
+    :returns: Array of frame identifiers with manifest urls for each frame containing a document associated with some application cache.
     '''
     session = get_session_context('application_cache.get_frames_with_manifests')
     return await session.execute(cdp.application_cache.get_frames_with_manifests())
 
 
 async def get_manifest_for_frame(
-        frame_id: page.FrameId
+        frame_id: cdp.page.FrameId
     ) -> str:
     '''
     Returns manifest URL for document in the given frame.

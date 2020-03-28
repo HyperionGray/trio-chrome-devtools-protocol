@@ -45,6 +45,8 @@ async def clear_geolocation_override() -> None:
 async def reset_page_scale_factor() -> None:
     '''
     Requests that page scale factor is reset to initial values.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('emulation.reset_page_scale_factor')
     return await session.execute(cdp.emulation.reset_page_scale_factor())
@@ -56,6 +58,8 @@ async def set_cpu_throttling_rate(
     '''
     Enables CPU throttling to emulate slow CPUs.
 
+    **EXPERIMENTAL**
+
     :param rate: Throttling rate as a slowdown factor (1 is no throttle, 2 is 2x slowdown, etc).
     '''
     session = get_session_context('emulation.set_cpu_throttling_rate')
@@ -63,14 +67,13 @@ async def set_cpu_throttling_rate(
 
 
 async def set_default_background_color_override(
-        color: typing.Optional[dom.RGBA] = None
+        color: typing.Optional[cdp.dom.RGBA] = None
     ) -> None:
     '''
     Sets or clears an override of the default background color of the frame. This override is used
     if the content does not specify one.
 
-    :param color: RGBA of the default background color. If not specified, any existing override will be
-    cleared.
+    :param color: *(Optional)* RGBA of the default background color. If not specified, any existing override will be cleared.
     '''
     session = get_session_context('emulation.set_default_background_color_override')
     return await session.execute(cdp.emulation.set_default_background_color_override(color))
@@ -88,7 +91,7 @@ async def set_device_metrics_override(
         position_y: typing.Optional[int] = None,
         dont_set_visible_size: typing.Optional[bool] = None,
         screen_orientation: typing.Optional[ScreenOrientation] = None,
-        viewport: typing.Optional[page.Viewport] = None
+        viewport: typing.Optional[cdp.page.Viewport] = None
     ) -> None:
     '''
     Overrides the values of device screen dimensions (window.screen.width, window.screen.height,
@@ -98,17 +101,15 @@ async def set_device_metrics_override(
     :param width: Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
     :param height: Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
     :param device_scale_factor: Overriding device scale factor value. 0 disables the override.
-    :param mobile: Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text
-    autosizing and more.
-    :param scale: Scale to apply to resulting view image.
-    :param screen_width: Overriding screen width value in pixels (minimum 0, maximum 10000000).
-    :param screen_height: Overriding screen height value in pixels (minimum 0, maximum 10000000).
-    :param position_x: Overriding view X position on screen in pixels (minimum 0, maximum 10000000).
-    :param position_y: Overriding view Y position on screen in pixels (minimum 0, maximum 10000000).
-    :param dont_set_visible_size: Do not set visible view size, rely upon explicit setVisibleSize call.
-    :param screen_orientation: Screen orientation override.
-    :param viewport: If set, the visible area of the page will be overridden to this viewport. This viewport
-    change is not observed by the page, e.g. viewport-relative elements do not change positions.
+    :param mobile: Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more.
+    :param scale: **(EXPERIMENTAL)** *(Optional)* Scale to apply to resulting view image.
+    :param screen_width: **(EXPERIMENTAL)** *(Optional)* Overriding screen width value in pixels (minimum 0, maximum 10000000).
+    :param screen_height: **(EXPERIMENTAL)** *(Optional)* Overriding screen height value in pixels (minimum 0, maximum 10000000).
+    :param position_x: **(EXPERIMENTAL)** *(Optional)* Overriding view X position on screen in pixels (minimum 0, maximum 10000000).
+    :param position_y: **(EXPERIMENTAL)** *(Optional)* Overriding view Y position on screen in pixels (minimum 0, maximum 10000000).
+    :param dont_set_visible_size: **(EXPERIMENTAL)** *(Optional)* Do not set visible view size, rely upon explicit setVisibleSize call.
+    :param screen_orientation: *(Optional)* Screen orientation override.
+    :param viewport: **(EXPERIMENTAL)** *(Optional)* If set, the visible area of the page will be overridden to this viewport. This viewport change is not observed by the page, e.g. viewport-relative elements do not change positions.
     '''
     session = get_session_context('emulation.set_device_metrics_override')
     return await session.execute(cdp.emulation.set_device_metrics_override(width, height, device_scale_factor, mobile, scale, screen_width, screen_height, position_x, position_y, dont_set_visible_size, screen_orientation, viewport))
@@ -118,6 +119,10 @@ async def set_document_cookie_disabled(
         disabled: bool
     ) -> None:
     '''
+
+
+    **EXPERIMENTAL**
+
     :param disabled: Whether document.coookie API should be disabled.
     '''
     session = get_session_context('emulation.set_document_cookie_disabled')
@@ -129,8 +134,12 @@ async def set_emit_touch_events_for_mouse(
         configuration: typing.Optional[str] = None
     ) -> None:
     '''
+
+
+    **EXPERIMENTAL**
+
     :param enabled: Whether touch emulation based on mouse input should be enabled.
-    :param configuration: Touch/gesture events configuration. Default: current platform.
+    :param configuration: *(Optional)* Touch/gesture events configuration. Default: current platform.
     '''
     session = get_session_context('emulation.set_emit_touch_events_for_mouse')
     return await session.execute(cdp.emulation.set_emit_touch_events_for_mouse(enabled, configuration))
@@ -154,6 +163,8 @@ async def set_focus_emulation_enabled(
     '''
     Enables or disables simulating a focused and active page.
 
+    **EXPERIMENTAL**
+
     :param enabled: Whether to enable to disable focus emulation.
     '''
     session = get_session_context('emulation.set_focus_emulation_enabled')
@@ -169,9 +180,9 @@ async def set_geolocation_override(
     Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position
     unavailable.
 
-    :param latitude: Mock latitude
-    :param longitude: Mock longitude
-    :param accuracy: Mock accuracy
+    :param latitude: *(Optional)* Mock latitude
+    :param longitude: *(Optional)* Mock longitude
+    :param accuracy: *(Optional)* Mock accuracy
     '''
     session = get_session_context('emulation.set_geolocation_override')
     return await session.execute(cdp.emulation.set_geolocation_override(latitude, longitude, accuracy))
@@ -181,10 +192,17 @@ async def set_navigator_overrides(
         platform: str
     ) -> None:
     '''
-    Overrides value returned by the javascript navigator object.
+Overrides value returned by the javascript navigator object.
 
-    :param platform: The platform navigator.platform should return.
-    '''
+.. deprecated:: 1.3
+
+**EXPERIMENTAL**
+
+:param platform: The platform navigator.platform should return.
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('emulation.set_navigator_overrides')
     return await session.execute(cdp.emulation.set_navigator_overrides(platform))
 
@@ -194,6 +212,8 @@ async def set_page_scale_factor(
     ) -> None:
     '''
     Sets a specified page scale factor.
+
+    **EXPERIMENTAL**
 
     :param page_scale_factor: Page scale factor.
     '''
@@ -217,6 +237,10 @@ async def set_scrollbars_hidden(
         hidden: bool
     ) -> None:
     '''
+
+
+    **EXPERIMENTAL**
+
     :param hidden: Whether scrollbars should be always hidden.
     '''
     session = get_session_context('emulation.set_scrollbars_hidden')
@@ -229,8 +253,9 @@ async def set_timezone_override(
     '''
     Overrides default host system timezone with the specified one.
 
-    :param timezone_id: The timezone identifier. If empty, disables the override and
-    restores default host system timezone.
+    **EXPERIMENTAL**
+
+    :param timezone_id: The timezone identifier. If empty, disables the override and restores default host system timezone.
     '''
     session = get_session_context('emulation.set_timezone_override')
     return await session.execute(cdp.emulation.set_timezone_override(timezone_id))
@@ -244,7 +269,7 @@ async def set_touch_emulation_enabled(
     Enables touch on platforms which do not support them.
 
     :param enabled: Whether the touch event emulation should be enabled.
-    :param max_touch_points: Maximum touch points supported. Defaults to one.
+    :param max_touch_points: *(Optional)* Maximum touch points supported. Defaults to one.
     '''
     session = get_session_context('emulation.set_touch_emulation_enabled')
     return await session.execute(cdp.emulation.set_touch_emulation_enabled(enabled, max_touch_points))
@@ -259,8 +284,8 @@ async def set_user_agent_override(
     Allows overriding user agent with the given string.
 
     :param user_agent: User agent to use.
-    :param accept_language: Browser langugage to emulate.
-    :param platform: The platform navigator.platform should return.
+    :param accept_language: *(Optional)* Browser langugage to emulate.
+    :param platform: *(Optional)* The platform navigator.platform should return.
     '''
     session = get_session_context('emulation.set_user_agent_override')
     return await session.execute(cdp.emulation.set_user_agent_override(user_agent, accept_language, platform))
@@ -271,20 +296,19 @@ async def set_virtual_time_policy(
         budget: typing.Optional[float] = None,
         max_virtual_time_task_starvation_count: typing.Optional[int] = None,
         wait_for_navigation: typing.Optional[bool] = None,
-        initial_virtual_time: typing.Optional[network.TimeSinceEpoch] = None
+        initial_virtual_time: typing.Optional[cdp.network.TimeSinceEpoch] = None
     ) -> float:
     '''
     Turns on virtual time for all frames (replacing real-time with a synthetic time source) and sets
     the current virtual time policy.  Note this supersedes any previous time budget.
 
+    **EXPERIMENTAL**
+
     :param policy:
-    :param budget: If set, after this many virtual milliseconds have elapsed virtual time will be paused and a
-    virtualTimeBudgetExpired event is sent.
-    :param max_virtual_time_task_starvation_count: If set this specifies the maximum number of tasks that can be run before virtual is forced
-    forwards to prevent deadlock.
-    :param wait_for_navigation: If set the virtual time policy change should be deferred until any frame starts navigating.
-    Note any previous deferred policy change is superseded.
-    :param initial_virtual_time: If set, base::Time::Now will be overriden to initially return this value.
+    :param budget: *(Optional)* If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
+    :param max_virtual_time_task_starvation_count: *(Optional)* If set this specifies the maximum number of tasks that can be run before virtual is forced forwards to prevent deadlock.
+    :param wait_for_navigation: *(Optional)* If set the virtual time policy change should be deferred until any frame starts navigating. Note any previous deferred policy change is superseded.
+    :param initial_virtual_time: *(Optional)* If set, base::Time::Now will be overriden to initially return this value.
     :returns: Absolute timestamp at which virtual time was first enabled (up time in milliseconds).
     '''
     session = get_session_context('emulation.set_virtual_time_policy')
@@ -296,12 +320,19 @@ async def set_visible_size(
         height: int
     ) -> None:
     '''
-    Resizes the frame/viewport of the page. Note that this does not affect the frame's container
-    (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported
-    on Android.
+Resizes the frame/viewport of the page. Note that this does not affect the frame's container
+(e.g. browser window). Can be used to produce screenshots of the specified size. Not supported
+on Android.
 
-    :param width: Frame width (DIP).
-    :param height: Frame height (DIP).
-    '''
+.. deprecated:: 1.3
+
+**EXPERIMENTAL**
+
+:param width: Frame width (DIP).
+:param height: Frame height (DIP).
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('emulation.set_visible_size')
     return await session.execute(cdp.emulation.set_visible_size(width, height))

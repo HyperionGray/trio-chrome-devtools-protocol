@@ -16,7 +16,7 @@ from cdp.dom_debugger import (
 
 
 async def get_event_listeners(
-        object_id: runtime.RemoteObjectId,
+        object_id: cdp.runtime.RemoteObjectId,
         depth: typing.Optional[int] = None,
         pierce: typing.Optional[bool] = None
     ) -> typing.List[EventListener]:
@@ -24,10 +24,8 @@ async def get_event_listeners(
     Returns event listeners of the given object.
 
     :param object_id: Identifier of the object to return listeners for.
-    :param depth: The maximum depth at which Node children should be retrieved, defaults to 1. Use -1 for the
-    entire subtree or provide an integer larger than 0.
-    :param pierce: Whether or not iframes and shadow roots should be traversed when returning the subtree
-    (default is false). Reports listeners for all contexts if pierce is enabled.
+    :param depth: *(Optional)* The maximum depth at which Node children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+    :param pierce: *(Optional)* Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false). Reports listeners for all contexts if pierce is enabled.
     :returns: Array of relevant listeners.
     '''
     session = get_session_context('dom_debugger.get_event_listeners')
@@ -35,17 +33,17 @@ async def get_event_listeners(
 
 
 async def remove_dom_breakpoint(
-        node_id: dom.NodeId,
-        type: DOMBreakpointType
+        node_id: cdp.dom.NodeId,
+        type_: DOMBreakpointType
     ) -> None:
     '''
-    Removes DOM breakpoint that was set using `setDOMBreakpoint`.
+    Removes DOM breakpoint that was set using ``setDOMBreakpoint``.
 
     :param node_id: Identifier of the node to remove breakpoint from.
-    :param type: Type of the breakpoint to remove.
+    :param type_: Type of the breakpoint to remove.
     '''
     session = get_session_context('dom_debugger.remove_dom_breakpoint')
-    return await session.execute(cdp.dom_debugger.remove_dom_breakpoint(node_id, type))
+    return await session.execute(cdp.dom_debugger.remove_dom_breakpoint(node_id, type_))
 
 
 async def remove_event_listener_breakpoint(
@@ -56,7 +54,7 @@ async def remove_event_listener_breakpoint(
     Removes breakpoint on particular DOM event.
 
     :param event_name: Event name.
-    :param target_name: EventTarget interface name.
+    :param target_name: **(EXPERIMENTAL)** *(Optional)* EventTarget interface name.
     '''
     session = get_session_context('dom_debugger.remove_event_listener_breakpoint')
     return await session.execute(cdp.dom_debugger.remove_event_listener_breakpoint(event_name, target_name))
@@ -67,6 +65,8 @@ async def remove_instrumentation_breakpoint(
     ) -> None:
     '''
     Removes breakpoint on particular native event.
+
+    **EXPERIMENTAL**
 
     :param event_name: Instrumentation name to stop on.
     '''
@@ -87,17 +87,17 @@ async def remove_xhr_breakpoint(
 
 
 async def set_dom_breakpoint(
-        node_id: dom.NodeId,
-        type: DOMBreakpointType
+        node_id: cdp.dom.NodeId,
+        type_: DOMBreakpointType
     ) -> None:
     '''
     Sets breakpoint on particular operation with DOM.
 
     :param node_id: Identifier of the node to set breakpoint on.
-    :param type: Type of the operation to stop upon.
+    :param type_: Type of the operation to stop upon.
     '''
     session = get_session_context('dom_debugger.set_dom_breakpoint')
-    return await session.execute(cdp.dom_debugger.set_dom_breakpoint(node_id, type))
+    return await session.execute(cdp.dom_debugger.set_dom_breakpoint(node_id, type_))
 
 
 async def set_event_listener_breakpoint(
@@ -108,8 +108,7 @@ async def set_event_listener_breakpoint(
     Sets breakpoint on particular DOM event.
 
     :param event_name: DOM Event name to stop on (any DOM event will do).
-    :param target_name: EventTarget interface name to stop on. If equal to ``"*"`` or not provided, will stop on any
-    EventTarget.
+    :param target_name: **(EXPERIMENTAL)** *(Optional)* EventTarget interface name to stop on. If equal to ```"*"``` or not provided, will stop on any EventTarget.
     '''
     session = get_session_context('dom_debugger.set_event_listener_breakpoint')
     return await session.execute(cdp.dom_debugger.set_event_listener_breakpoint(event_name, target_name))
@@ -120,6 +119,8 @@ async def set_instrumentation_breakpoint(
     ) -> None:
     '''
     Sets breakpoint on particular native event.
+
+    **EXPERIMENTAL**
 
     :param event_name: Instrumentation name to stop on.
     '''

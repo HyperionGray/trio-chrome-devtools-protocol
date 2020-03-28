@@ -41,6 +41,8 @@ async def attach_to_browser_target() -> SessionID:
     '''
     Attaches to the browser target, only uses flat sessionId mode.
 
+    **EXPERIMENTAL**
+
     :returns: Id assigned to the session.
     '''
     connection = get_connection_context('target.attach_to_browser_target')
@@ -55,7 +57,7 @@ async def attach_to_target(
     Attaches to the target with given id.
 
     :param target_id:
-    :param flatten: Enables "flat" access to the session via specifying sessionId attribute in the commands.
+    :param flatten: **(EXPERIMENTAL)** *(Optional)* Enables "flat" access to the session via specifying sessionId attribute in the commands.
     :returns: Id assigned to the session.
     '''
     connection = get_connection_context('target.attach_to_target')
@@ -80,6 +82,8 @@ async def create_browser_context() -> BrowserContextID:
     Creates a new empty BrowserContext. Similar to an incognito profile but you can have more than
     one.
 
+    **EXPERIMENTAL**
+
     :returns: The id of the context created.
     '''
     connection = get_connection_context('target.create_browser_context')
@@ -99,14 +103,12 @@ async def create_target(
     Creates a new page.
 
     :param url: The initial URL the page will be navigated to.
-    :param width: Frame width in DIP (headless chrome only).
-    :param height: Frame height in DIP (headless chrome only).
-    :param browser_context_id: The browser context to create the page in.
-    :param enable_begin_frame_control: Whether BeginFrames for this target will be controlled via DevTools (headless chrome only,
-    not supported on MacOS yet, false by default).
-    :param new_window: Whether to create a new Window or Tab (chrome-only, false by default).
-    :param background: Whether to create the target in background or foreground (chrome-only,
-    false by default).
+    :param width: *(Optional)* Frame width in DIP (headless chrome only).
+    :param height: *(Optional)* Frame height in DIP (headless chrome only).
+    :param browser_context_id: *(Optional)* The browser context to create the page in.
+    :param enable_begin_frame_control: **(EXPERIMENTAL)** *(Optional)* Whether BeginFrames for this target will be controlled via DevTools (headless chrome only, not supported on MacOS yet, false by default).
+    :param new_window: *(Optional)* Whether to create a new Window or Tab (chrome-only, false by default).
+    :param background: *(Optional)* Whether to create the target in background or foreground (chrome-only, false by default).
     :returns: The id of the page opened.
     '''
     connection = get_connection_context('target.create_target')
@@ -120,8 +122,8 @@ async def detach_from_target(
     '''
     Detaches session with given id.
 
-    :param session_id: Session to detach.
-    :param target_id: Deprecated.
+    :param session_id: *(Optional)* Session to detach.
+    :param target_id: **(DEPRECATED)** *(Optional)* Deprecated.
     '''
     connection = get_connection_context('target.detach_from_target')
     return await connection.execute(cdp.target.detach_from_target(session_id, target_id))
@@ -133,6 +135,8 @@ async def dispose_browser_context(
     '''
     Deletes a BrowserContext. All the belonging pages will be closed without calling their
     beforeunload hooks.
+
+    **EXPERIMENTAL**
 
     :param browser_context_id:
     '''
@@ -148,14 +152,16 @@ async def expose_dev_tools_protocol(
     Inject object to the target's main frame that provides a communication
     channel with browser target.
 
-    Injected object will be available as `window[bindingName]`.
+    Injected object will be available as ``window[bindingName]``.
 
     The object has the follwing API:
-    - `binding.send(json)` - a method to send messages over the remote debugging protocol
-    - `binding.onmessage = json => handleMessage(json)` - a callback that will be called for the protocol notifications and command responses.
+    - ``binding.send(json)`` - a method to send messages over the remote debugging protocol
+    - ``binding.onmessage = json => handleMessage(json)`` - a callback that will be called for the protocol notifications and command responses.
+
+    **EXPERIMENTAL**
 
     :param target_id:
-    :param binding_name: Binding name, 'cdp' if not specified.
+    :param binding_name: *(Optional)* Binding name, 'cdp' if not specified.
     '''
     connection = get_connection_context('target.expose_dev_tools_protocol')
     return await connection.execute(cdp.target.expose_dev_tools_protocol(target_id, binding_name))
@@ -163,7 +169,9 @@ async def expose_dev_tools_protocol(
 
 async def get_browser_contexts() -> typing.List[BrowserContextID]:
     '''
-    Returns all browser contexts created with `Target.createBrowserContext` method.
+    Returns all browser contexts created with ``Target.createBrowserContext`` method.
+
+    **EXPERIMENTAL**
 
     :returns: An array of browser context ids.
     '''
@@ -177,7 +185,9 @@ async def get_target_info(
     '''
     Returns information about a target.
 
-    :param target_id:
+    **EXPERIMENTAL**
+
+    :param target_id: *(Optional)*
     :returns: 
     '''
     connection = get_connection_context('target.get_target_info')
@@ -203,8 +213,8 @@ async def send_message_to_target(
     Sends protocol message over session with given id.
 
     :param message:
-    :param session_id: Identifier of the session.
-    :param target_id: Deprecated.
+    :param session_id: *(Optional)* Identifier of the session.
+    :param target_id: **(DEPRECATED)** *(Optional)* Deprecated.
     '''
     connection = get_connection_context('target.send_message_to_target')
     return await connection.execute(cdp.target.send_message_to_target(message, session_id, target_id))
@@ -220,10 +230,11 @@ async def set_auto_attach(
     this one. When turned on, attaches to all existing related targets as well. When turned off,
     automatically detaches from all currently attached targets.
 
+    **EXPERIMENTAL**
+
     :param auto_attach: Whether to auto-attach to related targets.
-    :param wait_for_debugger_on_start: Whether to pause new targets when attaching to them. Use ``Runtime.runIfWaitingForDebugger``
-    to run paused targets.
-    :param flatten: Enables "flat" access to the session via specifying sessionId attribute in the commands.
+    :param wait_for_debugger_on_start: Whether to pause new targets when attaching to them. Use ```Runtime.runIfWaitingForDebugger``` to run paused targets.
+    :param flatten: **(EXPERIMENTAL)** *(Optional)* Enables "flat" access to the session via specifying sessionId attribute in the commands.
     '''
     connection = get_connection_context('target.set_auto_attach')
     return await connection.execute(cdp.target.set_auto_attach(auto_attach, wait_for_debugger_on_start, flatten))
@@ -234,7 +245,7 @@ async def set_discover_targets(
     ) -> None:
     '''
     Controls whether to discover available targets and notify via
-    `targetCreated/targetInfoChanged/targetDestroyed` events.
+    ``targetCreated/targetInfoChanged/targetDestroyed`` events.
 
     :param discover: Whether to discover available targets.
     '''
@@ -246,8 +257,10 @@ async def set_remote_locations(
         locations: typing.List[RemoteLocation]
     ) -> None:
     '''
-    Enables target discovery for the specified locations, when `setDiscoverTargets` was set to
-    `true`.
+    Enables target discovery for the specified locations, when ``setDiscoverTargets`` was set to
+    ``true``.
+
+    **EXPERIMENTAL**
 
     :param locations: List of remote locations.
     '''

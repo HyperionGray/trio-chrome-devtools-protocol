@@ -35,7 +35,7 @@ async def disable() -> None:
 async def enable() -> None:
     '''
     Enables log domain, sends the entries collected so far to the client by means of the
-    `entryAdded` notification.
+    ``entryAdded`` notification.
     '''
     session = get_session_context('log.enable')
     return await session.execute(cdp.log.enable())

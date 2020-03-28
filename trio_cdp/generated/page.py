@@ -61,6 +61,8 @@ async def add_compilation_cache(
     Seeds compilation cache for given url. Compilation cache does not survive
     cross-process navigation.
 
+    **EXPERIMENTAL**
+
     :param url:
     :param data: Base64-encoded data
     '''
@@ -72,11 +74,18 @@ async def add_script_to_evaluate_on_load(
         script_source: str
     ) -> ScriptIdentifier:
     '''
-    Deprecated, please use addScriptToEvaluateOnNewDocument instead.
+Deprecated, please use addScriptToEvaluateOnNewDocument instead.
 
-    :param script_source:
-    :returns: Identifier of the added script.
-    '''
+.. deprecated:: 1.3
+
+**EXPERIMENTAL**
+
+:param script_source:
+:returns: Identifier of the added script.
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('page.add_script_to_evaluate_on_load')
     return await session.execute(cdp.page.add_script_to_evaluate_on_load(script_source))
 
@@ -89,9 +98,7 @@ async def add_script_to_evaluate_on_new_document(
     Evaluates given script in every frame upon creation (before loading frame's scripts).
 
     :param source:
-    :param world_name: If specified, creates an isolated world with the given name and evaluates given script in it.
-    This world name will be used as the ExecutionContextDescription::name when the corresponding
-    event is emitted.
+    :param world_name: **(EXPERIMENTAL)** *(Optional)* If specified, creates an isolated world with the given name and evaluates given script in it. This world name will be used as the ExecutionContextDescription::name when the corresponding event is emitted.
     :returns: Identifier of the added script.
     '''
     session = get_session_context('page.add_script_to_evaluate_on_new_document')
@@ -107,7 +114,7 @@ async def bring_to_front() -> None:
 
 
 async def capture_screenshot(
-        format: typing.Optional[str] = None,
+        format_: typing.Optional[str] = None,
         quality: typing.Optional[int] = None,
         clip: typing.Optional[Viewport] = None,
         from_surface: typing.Optional[bool] = None
@@ -115,33 +122,37 @@ async def capture_screenshot(
     '''
     Capture page screenshot.
 
-    :param format: Image compression format (defaults to png).
-    :param quality: Compression quality from range [0..100] (jpeg only).
-    :param clip: Capture the screenshot of a given region only.
-    :param from_surface: Capture the screenshot from the surface, rather than the view. Defaults to true.
+    :param format_: *(Optional)* Image compression format (defaults to png).
+    :param quality: *(Optional)* Compression quality from range [0..100] (jpeg only).
+    :param clip: *(Optional)* Capture the screenshot of a given region only.
+    :param from_surface: **(EXPERIMENTAL)** *(Optional)* Capture the screenshot from the surface, rather than the view. Defaults to true.
     :returns: Base64-encoded image data.
     '''
     session = get_session_context('page.capture_screenshot')
-    return await session.execute(cdp.page.capture_screenshot(format, quality, clip, from_surface))
+    return await session.execute(cdp.page.capture_screenshot(format_, quality, clip, from_surface))
 
 
 async def capture_snapshot(
-        format: typing.Optional[str] = None
+        format_: typing.Optional[str] = None
     ) -> str:
     '''
     Returns a snapshot of the page as a string. For MHTML format, the serialization includes
     iframes, shadow DOM, external resources, and element-inline styles.
 
-    :param format: Format (defaults to mhtml).
+    **EXPERIMENTAL**
+
+    :param format_: *(Optional)* Format (defaults to mhtml).
     :returns: Serialized page data.
     '''
     session = get_session_context('page.capture_snapshot')
-    return await session.execute(cdp.page.capture_snapshot(format))
+    return await session.execute(cdp.page.capture_snapshot(format_))
 
 
 async def clear_compilation_cache() -> None:
     '''
     Clears seeded compilation cache.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('page.clear_compilation_cache')
     return await session.execute(cdp.page.clear_compilation_cache())
@@ -149,24 +160,43 @@ async def clear_compilation_cache() -> None:
 
 async def clear_device_metrics_override() -> None:
     '''
-    Clears the overriden device metrics.
-    '''
+Clears the overriden device metrics.
+
+.. deprecated:: 1.3
+
+**EXPERIMENTAL**
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('page.clear_device_metrics_override')
     return await session.execute(cdp.page.clear_device_metrics_override())
 
 
 async def clear_device_orientation_override() -> None:
     '''
-    Clears the overridden Device Orientation.
-    '''
+Clears the overridden Device Orientation.
+
+.. deprecated:: 1.3
+
+**EXPERIMENTAL**
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('page.clear_device_orientation_override')
     return await session.execute(cdp.page.clear_device_orientation_override())
 
 
 async def clear_geolocation_override() -> None:
     '''
-    Clears the overriden Geolocation Position and Error.
-    '''
+Clears the overriden Geolocation Position and Error.
+
+.. deprecated:: 1.3
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('page.clear_geolocation_override')
     return await session.execute(cdp.page.clear_geolocation_override())
 
@@ -174,6 +204,8 @@ async def clear_geolocation_override() -> None:
 async def close() -> None:
     '''
     Tries to close page, running its beforeunload hooks, if any.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('page.close')
     return await session.execute(cdp.page.close())
@@ -182,6 +214,8 @@ async def close() -> None:
 async def crash() -> None:
     '''
     Crashes renderer on the IO thread, generates minidumps.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('page.crash')
     return await session.execute(cdp.page.crash())
@@ -191,14 +225,13 @@ async def create_isolated_world(
         frame_id: FrameId,
         world_name: typing.Optional[str] = None,
         grant_univeral_access: typing.Optional[bool] = None
-    ) -> runtime.ExecutionContextId:
+    ) -> cdp.runtime.ExecutionContextId:
     '''
     Creates an isolated world for the given frame.
 
     :param frame_id: Id of the frame in which the isolated world should be created.
-    :param world_name: An optional name which is reported in the Execution Context.
-    :param grant_univeral_access: Whether or not universal access should be granted to the isolated world. This is a powerful
-    option, use with caution.
+    :param world_name: *(Optional)* An optional name which is reported in the Execution Context.
+    :param grant_univeral_access: *(Optional)* Whether or not universal access should be granted to the isolated world. This is a powerful option, use with caution.
     :returns: Execution context of the isolated world.
     '''
     session = get_session_context('page.create_isolated_world')
@@ -210,11 +243,18 @@ async def delete_cookie(
         url: str
     ) -> None:
     '''
-    Deletes browser cookie with given name, domain and path.
+Deletes browser cookie with given name, domain and path.
 
-    :param cookie_name: Name of the cookie to remove.
-    :param url: URL to match cooke domain and path.
-    '''
+.. deprecated:: 1.3
+
+**EXPERIMENTAL**
+
+:param cookie_name: Name of the cookie to remove.
+:param url: URL to match cooke domain and path.
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('page.delete_cookie')
     return await session.execute(cdp.page.delete_cookie(cookie_name, url))
 
@@ -242,8 +282,10 @@ async def generate_test_report(
     '''
     Generates a report for testing.
 
+    **EXPERIMENTAL**
+
     :param message: Message to be displayed in the report.
-    :param group: Specifies the endpoint group to deliver the report to.
+    :param group: *(Optional)* Specifies the endpoint group to deliver the report to.
     '''
     session = get_session_context('page.generate_test_report')
     return await session.execute(cdp.page.generate_test_report(message, group))
@@ -253,22 +295,30 @@ async def get_app_manifest() -> typing.Tuple[str, typing.List[AppManifestError],
     '''
 
 
-    :returns: a tuple with the following items:
-        0. url: Manifest location.
-        1. errors: 
-        2. data: (Optional) Manifest content.
+    :returns: A tuple with the following items:
+
+        0. **url** – Manifest location.
+        1. **errors** – 
+        2. **data** – *(Optional)* Manifest content.
     '''
     session = get_session_context('page.get_app_manifest')
     return await session.execute(cdp.page.get_app_manifest())
 
 
-async def get_cookies() -> typing.List[network.Cookie]:
+async def get_cookies() -> typing.List[cdp.network.Cookie]:
     '''
-    Returns all browser cookies. Depending on the backend support, will return detailed cookie
-    information in the `cookies` field.
+Returns all browser cookies. Depending on the backend support, will return detailed cookie
+information in the ``cookies`` field.
 
-    :returns: Array of cookie objects.
-    '''
+.. deprecated:: 1.3
+
+**EXPERIMENTAL**
+
+:returns: Array of cookie objects.
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('page.get_cookies')
     return await session.execute(cdp.page.get_cookies())
 
@@ -287,20 +337,23 @@ async def get_installability_errors() -> typing.List[str]:
     '''
 
 
+    **EXPERIMENTAL**
+
     :returns: 
     '''
     session = get_session_context('page.get_installability_errors')
     return await session.execute(cdp.page.get_installability_errors())
 
 
-async def get_layout_metrics() -> typing.Tuple[LayoutViewport, VisualViewport, dom.Rect]:
+async def get_layout_metrics() -> typing.Tuple[LayoutViewport, VisualViewport, cdp.dom.Rect]:
     '''
     Returns metrics relating to the layouting of the page, such as viewport bounds/scale.
 
-    :returns: a tuple with the following items:
-        0. layoutViewport: Metrics relating to the layout viewport.
-        1. visualViewport: Metrics relating to the visual viewport.
-        2. contentSize: Size of scrollable area.
+    :returns: A tuple with the following items:
+
+        0. **layoutViewport** – Metrics relating to the layout viewport.
+        1. **visualViewport** – Metrics relating to the visual viewport.
+        2. **contentSize** – Size of scrollable area.
     '''
     session = get_session_context('page.get_layout_metrics')
     return await session.execute(cdp.page.get_layout_metrics())
@@ -310,9 +363,10 @@ async def get_navigation_history() -> typing.Tuple[int, typing.List[NavigationEn
     '''
     Returns navigation history for the current page.
 
-    :returns: a tuple with the following items:
-        0. currentIndex: Index of the current navigation history entry.
-        1. entries: Array of navigation history entries.
+    :returns: A tuple with the following items:
+
+        0. **currentIndex** – Index of the current navigation history entry.
+        1. **entries** – Array of navigation history entries.
     '''
     session = get_session_context('page.get_navigation_history')
     return await session.execute(cdp.page.get_navigation_history())
@@ -325,11 +379,14 @@ async def get_resource_content(
     '''
     Returns content of the given resource.
 
+    **EXPERIMENTAL**
+
     :param frame_id: Frame id to get resource for.
     :param url: URL of the resource to get content for.
-    :returns: a tuple with the following items:
-        0. content: Resource content.
-        1. base64Encoded: True, if content was served as base64.
+    :returns: A tuple with the following items:
+
+        0. **content** – Resource content.
+        1. **base64Encoded** – True, if content was served as base64.
     '''
     session = get_session_context('page.get_resource_content')
     return await session.execute(cdp.page.get_resource_content(frame_id, url))
@@ -338,6 +395,8 @@ async def get_resource_content(
 async def get_resource_tree() -> FrameResourceTree:
     '''
     Returns present frame / resource tree structure.
+
+    **EXPERIMENTAL**
 
     :returns: Present frame / resource tree structure.
     '''
@@ -352,8 +411,10 @@ async def handle_file_chooser(
     '''
     Accepts or cancels an intercepted file chooser dialog.
 
+    **EXPERIMENTAL**
+
     :param action:
-    :param files: Array of absolute file paths to set, only respected with ``accept`` action.
+    :param files: *(Optional)* Array of absolute file paths to set, only respected with ```accept``` action.
     '''
     session = get_session_context('page.handle_file_chooser')
     return await session.execute(cdp.page.handle_file_chooser(action, files))
@@ -367,8 +428,7 @@ async def handle_java_script_dialog(
     Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).
 
     :param accept: Whether to accept or dismiss the dialog.
-    :param prompt_text: The text to enter into the dialog prompt before accepting. Used only if this is a prompt
-    dialog.
+    :param prompt_text: *(Optional)* The text to enter into the dialog prompt before accepting. Used only if this is a prompt dialog.
     '''
     session = get_session_context('page.handle_java_script_dialog')
     return await session.execute(cdp.page.handle_java_script_dialog(accept, prompt_text))
@@ -379,18 +439,19 @@ async def navigate(
         referrer: typing.Optional[str] = None,
         transition_type: typing.Optional[TransitionType] = None,
         frame_id: typing.Optional[FrameId] = None
-    ) -> typing.Tuple[FrameId, typing.Optional[network.LoaderId], typing.Optional[str]]:
+    ) -> typing.Tuple[FrameId, typing.Optional[cdp.network.LoaderId], typing.Optional[str]]:
     '''
     Navigates current page to the given URL.
 
     :param url: URL to navigate the page to.
-    :param referrer: Referrer URL.
-    :param transition_type: Intended transition type.
-    :param frame_id: Frame id to navigate, if not specified navigates the top frame.
-    :returns: a tuple with the following items:
-        0. frameId: Frame id that has navigated (or failed to navigate)
-        1. loaderId: (Optional) Loader identifier.
-        2. errorText: (Optional) User friendly error message, present if and only if navigation has failed.
+    :param referrer: *(Optional)* Referrer URL.
+    :param transition_type: *(Optional)* Intended transition type.
+    :param frame_id: *(Optional)* Frame id to navigate, if not specified navigates the top frame.
+    :returns: A tuple with the following items:
+
+        0. **frameId** – Frame id that has navigated (or failed to navigate)
+        1. **loaderId** – *(Optional)* Loader identifier.
+        2. **errorText** – *(Optional)* User friendly error message, present if and only if navigation has failed.
     '''
     session = get_session_context('page.navigate')
     return await session.execute(cdp.page.navigate(url, referrer, transition_type, frame_id))
@@ -425,40 +486,30 @@ async def print_to_pdf(
         footer_template: typing.Optional[str] = None,
         prefer_css_page_size: typing.Optional[bool] = None,
         transfer_mode: typing.Optional[str] = None
-    ) -> typing.Tuple[str, typing.Optional[io.StreamHandle]]:
+    ) -> typing.Tuple[str, typing.Optional[cdp.io.StreamHandle]]:
     '''
     Print page as PDF.
 
-    :param landscape: Paper orientation. Defaults to false.
-    :param display_header_footer: Display header and footer. Defaults to false.
-    :param print_background: Print background graphics. Defaults to false.
-    :param scale: Scale of the webpage rendering. Defaults to 1.
-    :param paper_width: Paper width in inches. Defaults to 8.5 inches.
-    :param paper_height: Paper height in inches. Defaults to 11 inches.
-    :param margin_top: Top margin in inches. Defaults to 1cm (~0.4 inches).
-    :param margin_bottom: Bottom margin in inches. Defaults to 1cm (~0.4 inches).
-    :param margin_left: Left margin in inches. Defaults to 1cm (~0.4 inches).
-    :param margin_right: Right margin in inches. Defaults to 1cm (~0.4 inches).
-    :param page_ranges: Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means
-    print all pages.
-    :param ignore_invalid_page_ranges: Whether to silently ignore invalid but successfully parsed page ranges, such as '3-2'.
-    Defaults to false.
-    :param header_template: HTML template for the print header. Should be valid HTML markup with following
-    classes used to inject printing values into them:
-    - ``date``: formatted print date
-    - ``title``: document title
-    - ``url``: document location
-    - ``pageNumber``: current page number
-    - ``totalPages``: total pages in the document
+    :param landscape: *(Optional)* Paper orientation. Defaults to false.
+    :param display_header_footer: *(Optional)* Display header and footer. Defaults to false.
+    :param print_background: *(Optional)* Print background graphics. Defaults to false.
+    :param scale: *(Optional)* Scale of the webpage rendering. Defaults to 1.
+    :param paper_width: *(Optional)* Paper width in inches. Defaults to 8.5 inches.
+    :param paper_height: *(Optional)* Paper height in inches. Defaults to 11 inches.
+    :param margin_top: *(Optional)* Top margin in inches. Defaults to 1cm (~0.4 inches).
+    :param margin_bottom: *(Optional)* Bottom margin in inches. Defaults to 1cm (~0.4 inches).
+    :param margin_left: *(Optional)* Left margin in inches. Defaults to 1cm (~0.4 inches).
+    :param margin_right: *(Optional)* Right margin in inches. Defaults to 1cm (~0.4 inches).
+    :param page_ranges: *(Optional)* Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.
+    :param ignore_invalid_page_ranges: *(Optional)* Whether to silently ignore invalid but successfully parsed page ranges, such as '3-2'. Defaults to false.
+    :param header_template: *(Optional)* HTML template for the print header. Should be valid HTML markup with following classes used to inject printing values into them: - ```date````: formatted print date - ````title````: document title - ````url````: document location - ````pageNumber````: current page number - ````totalPages````: total pages in the document  For example, ````<span class=title></span>```` would generate span containing the title.
+    :param footer_template: *(Optional)* HTML template for the print footer. Should use the same format as the ````headerTemplate````.
+    :param prefer_css_page_size: *(Optional)* Whether or not to prefer page size as defined by css. Defaults to false, in which case the content will be scaled to fit the paper size.
+    :param transfer_mode: **(EXPERIMENTAL)** *(Optional)* return as stream
+    :returns: A tuple with the following items:
 
-    For example, ``<span class=title></span>`` would generate span containing the title.
-    :param footer_template: HTML template for the print footer. Should use the same format as the ``headerTemplate``.
-    :param prefer_css_page_size: Whether or not to prefer page size as defined by css. Defaults to false,
-    in which case the content will be scaled to fit the paper size.
-    :param transfer_mode: return as stream
-    :returns: a tuple with the following items:
-        0. data: Base64-encoded pdf data. Empty if |returnAsStream| is specified.
-        1. stream: (Optional) A handle of the stream that holds resulting PDF data.
+        0. **data** – Base64-encoded pdf data. Empty if `` returnAsStream` is specified.
+        1. **stream** – *(Optional)* A handle of the stream that holds resulting PDF data.
     '''
     session = get_session_context('page.print_to_pdf')
     return await session.execute(cdp.page.print_to_pdf(landscape, display_header_footer, print_background, scale, paper_width, paper_height, margin_top, margin_bottom, margin_left, margin_right, page_ranges, ignore_invalid_page_ranges, header_template, footer_template, prefer_css_page_size, transfer_mode))
@@ -471,9 +522,8 @@ async def reload(
     '''
     Reloads given page optionally ignoring the cache.
 
-    :param ignore_cache: If true, browser cache is ignored (as if the user pressed Shift+refresh).
-    :param script_to_evaluate_on_load: If set, the script will be injected into all frames of the inspected page after reload.
-    Argument will be ignored if reloading dataURL origin.
+    :param ignore_cache: *(Optional)* If true, browser cache is ignored (as if the user pressed Shift+refresh).
+    :param script_to_evaluate_on_load: *(Optional)* If set, the script will be injected into all frames of the inspected page after reload. Argument will be ignored if reloading dataURL origin.
     '''
     session = get_session_context('page.reload')
     return await session.execute(cdp.page.reload(ignore_cache, script_to_evaluate_on_load))
@@ -483,10 +533,17 @@ async def remove_script_to_evaluate_on_load(
         identifier: ScriptIdentifier
     ) -> None:
     '''
-    Deprecated, please use removeScriptToEvaluateOnNewDocument instead.
+Deprecated, please use removeScriptToEvaluateOnNewDocument instead.
 
-    :param identifier:
-    '''
+.. deprecated:: 1.3
+
+**EXPERIMENTAL**
+
+:param identifier:
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('page.remove_script_to_evaluate_on_load')
     return await session.execute(cdp.page.remove_script_to_evaluate_on_load(identifier))
 
@@ -517,6 +574,8 @@ async def screencast_frame_ack(
     '''
     Acknowledges that a screencast frame has been received by the frontend.
 
+    **EXPERIMENTAL**
+
     :param session_id: Frame number.
     '''
     session = get_session_context('page.screencast_frame_ack')
@@ -529,15 +588,17 @@ async def search_in_resource(
         query: str,
         case_sensitive: typing.Optional[bool] = None,
         is_regex: typing.Optional[bool] = None
-    ) -> typing.List[debugger.SearchMatch]:
+    ) -> typing.List[cdp.debugger.SearchMatch]:
     '''
     Searches for given string in resource content.
+
+    **EXPERIMENTAL**
 
     :param frame_id: Frame id for resource to search in.
     :param url: URL of the resource to search in.
     :param query: String to search for.
-    :param case_sensitive: If true, search is case sensitive.
-    :param is_regex: If true, treats string parameter as regex.
+    :param case_sensitive: *(Optional)* If true, search is case sensitive.
+    :param is_regex: *(Optional)* If true, treats string parameter as regex.
     :returns: List of search matches.
     '''
     session = get_session_context('page.search_in_resource')
@@ -550,6 +611,8 @@ async def set_ad_blocking_enabled(
     '''
     Enable Chrome's experimental ad filter on all sites.
 
+    **EXPERIMENTAL**
+
     :param enabled: Whether to block ads.
     '''
     session = get_session_context('page.set_ad_blocking_enabled')
@@ -561,6 +624,8 @@ async def set_bypass_csp(
     ) -> None:
     '''
     Enable page Content Security Policy by-passing.
+
+    **EXPERIMENTAL**
 
     :param enabled: Whether to bypass page CSP.
     '''
@@ -579,28 +644,34 @@ async def set_device_metrics_override(
         position_x: typing.Optional[int] = None,
         position_y: typing.Optional[int] = None,
         dont_set_visible_size: typing.Optional[bool] = None,
-        screen_orientation: typing.Optional[emulation.ScreenOrientation] = None,
+        screen_orientation: typing.Optional[cdp.emulation.ScreenOrientation] = None,
         viewport: typing.Optional[Viewport] = None
     ) -> None:
     '''
-    Overrides the values of device screen dimensions (window.screen.width, window.screen.height,
-    window.innerWidth, window.innerHeight, and "device-width"/"device-height"-related CSS media
-    query results).
+Overrides the values of device screen dimensions (window.screen.width, window.screen.height,
+window.innerWidth, window.innerHeight, and "device-width"/"device-height"-related CSS media
+query results).
 
-    :param width: Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
-    :param height: Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
-    :param device_scale_factor: Overriding device scale factor value. 0 disables the override.
-    :param mobile: Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text
-    autosizing and more.
-    :param scale: Scale to apply to resulting view image.
-    :param screen_width: Overriding screen width value in pixels (minimum 0, maximum 10000000).
-    :param screen_height: Overriding screen height value in pixels (minimum 0, maximum 10000000).
-    :param position_x: Overriding view X position on screen in pixels (minimum 0, maximum 10000000).
-    :param position_y: Overriding view Y position on screen in pixels (minimum 0, maximum 10000000).
-    :param dont_set_visible_size: Do not set visible view size, rely upon explicit setVisibleSize call.
-    :param screen_orientation: Screen orientation override.
-    :param viewport: The viewport dimensions and scale. If not set, the override is cleared.
-    '''
+.. deprecated:: 1.3
+
+**EXPERIMENTAL**
+
+:param width: Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
+:param height: Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
+:param device_scale_factor: Overriding device scale factor value. 0 disables the override.
+:param mobile: Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more.
+:param scale: *(Optional)* Scale to apply to resulting view image.
+:param screen_width: *(Optional)* Overriding screen width value in pixels (minimum 0, maximum 10000000).
+:param screen_height: *(Optional)* Overriding screen height value in pixels (minimum 0, maximum 10000000).
+:param position_x: *(Optional)* Overriding view X position on screen in pixels (minimum 0, maximum 10000000).
+:param position_y: *(Optional)* Overriding view Y position on screen in pixels (minimum 0, maximum 10000000).
+:param dont_set_visible_size: *(Optional)* Do not set visible view size, rely upon explicit setVisibleSize call.
+:param screen_orientation: *(Optional)* Screen orientation override.
+:param viewport: *(Optional)* The viewport dimensions and scale. If not set, the override is cleared.
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('page.set_device_metrics_override')
     return await session.execute(cdp.page.set_device_metrics_override(width, height, device_scale_factor, mobile, scale, screen_width, screen_height, position_x, position_y, dont_set_visible_size, screen_orientation, viewport))
 
@@ -611,12 +682,19 @@ async def set_device_orientation_override(
         gamma: float
     ) -> None:
     '''
-    Overrides the Device Orientation.
+Overrides the Device Orientation.
 
-    :param alpha: Mock alpha
-    :param beta: Mock beta
-    :param gamma: Mock gamma
-    '''
+.. deprecated:: 1.3
+
+**EXPERIMENTAL**
+
+:param alpha: Mock alpha
+:param beta: Mock beta
+:param gamma: Mock gamma
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('page.set_device_orientation_override')
     return await session.execute(cdp.page.set_device_orientation_override(alpha, beta, gamma))
 
@@ -642,9 +720,10 @@ async def set_download_behavior(
     '''
     Set the behavior when downloading a file.
 
-    :param behavior: Whether to allow all or deny all download requests, or use default Chrome behavior if
-    available (otherwise deny).
-    :param download_path: The default path to save downloaded files to. This is requred if behavior is set to 'allow'
+    **EXPERIMENTAL**
+
+    :param behavior: Whether to allow all or deny all download requests, or use default Chrome behavior if available (otherwise deny).
+    :param download_path: *(Optional)* The default path to save downloaded files to. This is requred if behavior is set to 'allow'
     '''
     session = get_session_context('page.set_download_behavior')
     return await session.execute(cdp.page.set_download_behavior(behavior, download_path))
@@ -655,6 +734,8 @@ async def set_font_families(
     ) -> None:
     '''
     Set generic font families.
+
+    **EXPERIMENTAL**
 
     :param font_families: Specifies font families to set. If a font family is not specified, it won't be changed.
     '''
@@ -668,6 +749,8 @@ async def set_font_sizes(
     '''
     Set default font sizes.
 
+    **EXPERIMENTAL**
+
     :param font_sizes: Specifies font sizes to set. If a font size is not specified, it won't be changed.
     '''
     session = get_session_context('page.set_font_sizes')
@@ -680,13 +763,18 @@ async def set_geolocation_override(
         accuracy: typing.Optional[float] = None
     ) -> None:
     '''
-    Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position
-    unavailable.
+Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position
+unavailable.
 
-    :param latitude: Mock latitude
-    :param longitude: Mock longitude
-    :param accuracy: Mock accuracy
-    '''
+.. deprecated:: 1.3
+
+:param latitude: *(Optional)* Mock latitude
+:param longitude: *(Optional)* Mock longitude
+:param accuracy: *(Optional)* Mock accuracy
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('page.set_geolocation_override')
     return await session.execute(cdp.page.set_geolocation_override(latitude, longitude, accuracy))
 
@@ -697,8 +785,10 @@ async def set_intercept_file_chooser_dialog(
     '''
     Intercept file chooser requests and transfer control to protocol clients.
     When file chooser interception is enabled, native file chooser dialog is not shown.
-    Instead, a protocol event `Page.fileChooserOpened` is emitted.
-    File chooser can be handled with `page.handleFileChooser` command.
+    Instead, a protocol event ``Page.fileChooserOpened`` is emitted.
+    File chooser can be handled with ``page.handleFileChooser`` command.
+
+    **EXPERIMENTAL**
 
     :param enabled:
     '''
@@ -712,6 +802,8 @@ async def set_lifecycle_events_enabled(
     '''
     Controls whether page will emit lifecycle events.
 
+    **EXPERIMENTAL**
+
     :param enabled: If true, starts emitting lifecycle events.
     '''
     session = get_session_context('page.set_lifecycle_events_enabled')
@@ -724,6 +816,8 @@ async def set_produce_compilation_cache(
     '''
     Forces compilation cache to be generated for every subresource script.
 
+    **EXPERIMENTAL**
+
     :param enabled:
     '''
     session = get_session_context('page.set_produce_compilation_cache')
@@ -735,11 +829,18 @@ async def set_touch_emulation_enabled(
         configuration: typing.Optional[str] = None
     ) -> None:
     '''
-    Toggles mouse event-based touch event emulation.
+Toggles mouse event-based touch event emulation.
 
-    :param enabled: Whether the touch event emulation should be enabled.
-    :param configuration: Touch/gesture events configuration. Default: current platform.
-    '''
+.. deprecated:: 1.3
+
+**EXPERIMENTAL**
+
+:param enabled: Whether the touch event emulation should be enabled.
+:param configuration: *(Optional)* Touch/gesture events configuration. Default: current platform.
+
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('page.set_touch_emulation_enabled')
     return await session.execute(cdp.page.set_touch_emulation_enabled(enabled, configuration))
 
@@ -752,6 +853,8 @@ async def set_web_lifecycle_state(
     It will transition the page to the given state according to:
     https://github.com/WICG/web-lifecycle/
 
+    **EXPERIMENTAL**
+
     :param state: Target lifecycle state
     '''
     session = get_session_context('page.set_web_lifecycle_state')
@@ -759,23 +862,25 @@ async def set_web_lifecycle_state(
 
 
 async def start_screencast(
-        format: typing.Optional[str] = None,
+        format_: typing.Optional[str] = None,
         quality: typing.Optional[int] = None,
         max_width: typing.Optional[int] = None,
         max_height: typing.Optional[int] = None,
         every_nth_frame: typing.Optional[int] = None
     ) -> None:
     '''
-    Starts sending each frame using the `screencastFrame` event.
+    Starts sending each frame using the ``screencastFrame`` event.
 
-    :param format: Image compression format.
-    :param quality: Compression quality from range [0..100].
-    :param max_width: Maximum screenshot width.
-    :param max_height: Maximum screenshot height.
-    :param every_nth_frame: Send every n-th frame.
+    **EXPERIMENTAL**
+
+    :param format_: *(Optional)* Image compression format.
+    :param quality: *(Optional)* Compression quality from range [0..100].
+    :param max_width: *(Optional)* Maximum screenshot width.
+    :param max_height: *(Optional)* Maximum screenshot height.
+    :param every_nth_frame: *(Optional)* Send every n-th frame.
     '''
     session = get_session_context('page.start_screencast')
-    return await session.execute(cdp.page.start_screencast(format, quality, max_width, max_height, every_nth_frame))
+    return await session.execute(cdp.page.start_screencast(format_, quality, max_width, max_height, every_nth_frame))
 
 
 async def stop_loading() -> None:
@@ -788,7 +893,9 @@ async def stop_loading() -> None:
 
 async def stop_screencast() -> None:
     '''
-    Stops sending each frame in the `screencastFrame`.
+    Stops sending each frame in the ``screencastFrame``.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('page.stop_screencast')
     return await session.execute(cdp.page.stop_screencast())
@@ -797,6 +904,8 @@ async def stop_screencast() -> None:
 async def wait_for_debugger() -> None:
     '''
     Pauses page execution. Can be resumed using generic Runtime.runIfWaitingForDebugger.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('page.wait_for_debugger')
     return await session.execute(cdp.page.wait_for_debugger())

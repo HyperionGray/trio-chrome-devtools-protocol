@@ -47,8 +47,8 @@ async def add_rule(
         location: SourceRange
     ) -> CSSRule:
     '''
-    Inserts a new rule with the given `ruleText` in a stylesheet with given `styleSheetId`, at the
-    position specified by `location`.
+    Inserts a new rule with the given ``ruleText`` in a stylesheet with given ``styleSheetId``, at the
+    position specified by ``location``.
 
     :param style_sheet_id: The css style sheet identifier where a new rule should be inserted.
     :param rule_text: The text of a new rule.
@@ -73,10 +73,10 @@ async def collect_class_names(
 
 
 async def create_style_sheet(
-        frame_id: page.FrameId
+        frame_id: cdp.page.FrameId
     ) -> StyleSheetId:
     '''
-    Creates a new special "via-inspector" stylesheet in the frame with given `frameId`.
+    Creates a new special "via-inspector" stylesheet in the frame with given ``frameId``.
 
     :param frame_id: Identifier of the frame where "via-inspector" stylesheet should be created.
     :returns: Identifier of the created "via-inspector" stylesheet.
@@ -103,7 +103,7 @@ async def enable() -> None:
 
 
 async def force_pseudo_state(
-        node_id: dom.NodeId,
+        node_id: cdp.dom.NodeId,
         forced_pseudo_classes: typing.List[str]
     ) -> None:
     '''
@@ -118,29 +118,25 @@ async def force_pseudo_state(
 
 
 async def get_background_colors(
-        node_id: dom.NodeId
+        node_id: cdp.dom.NodeId
     ) -> typing.Tuple[typing.Optional[typing.List[str]], typing.Optional[str], typing.Optional[str]]:
     '''
     :param node_id: Id of the node to get background colors for.
-    :returns: a tuple with the following items:
-        0. backgroundColors: (Optional) The range of background colors behind this element, if it contains any visible text. If no
-        visible text is present, this will be undefined. In the case of a flat background color,
-        this will consist of simply that color. In the case of a gradient, this will consist of each
-        of the color stops. For anything more complicated, this will be an empty array. Images will
-        be ignored (as if the image had failed to load).
-        1. computedFontSize: (Optional) The computed font size for this node, as a CSS computed value string (e.g. '12px').
-        2. computedFontWeight: (Optional) The computed font weight for this node, as a CSS computed value string (e.g. 'normal' or
-        '100').
+    :returns: A tuple with the following items:
+
+        0. **backgroundColors** – *(Optional)* The range of background colors behind this element, if it contains any visible text. If no visible text is present, this will be undefined. In the case of a flat background color, this will consist of simply that color. In the case of a gradient, this will consist of each of the color stops. For anything more complicated, this will be an empty array. Images will be ignored (as if the image had failed to load).
+        1. **computedFontSize** – *(Optional)* The computed font size for this node, as a CSS computed value string (e.g. '12px').
+        2. **computedFontWeight** – *(Optional)* The computed font weight for this node, as a CSS computed value string (e.g. 'normal' or '100').
     '''
     session = get_session_context('css.get_background_colors')
     return await session.execute(cdp.css.get_background_colors(node_id))
 
 
 async def get_computed_style_for_node(
-        node_id: dom.NodeId
+        node_id: cdp.dom.NodeId
     ) -> typing.List[CSSComputedStyleProperty]:
     '''
-    Returns the computed style for a DOM node identified by `nodeId`.
+    Returns the computed style for a DOM node identified by ``nodeId``.
 
     :param node_id:
     :returns: Computed style for the specified DOM node.
@@ -150,35 +146,37 @@ async def get_computed_style_for_node(
 
 
 async def get_inline_styles_for_node(
-        node_id: dom.NodeId
+        node_id: cdp.dom.NodeId
     ) -> typing.Tuple[typing.Optional[CSSStyle], typing.Optional[CSSStyle]]:
     '''
     Returns the styles defined inline (explicitly in the "style" attribute and implicitly, using DOM
-    attributes) for a DOM node identified by `nodeId`.
+    attributes) for a DOM node identified by ``nodeId``.
 
     :param node_id:
-    :returns: a tuple with the following items:
-        0. inlineStyle: (Optional) Inline style for the specified DOM node.
-        1. attributesStyle: (Optional) Attribute-defined element style (e.g. resulting from "width=20 height=100%").
+    :returns: A tuple with the following items:
+
+        0. **inlineStyle** – *(Optional)* Inline style for the specified DOM node.
+        1. **attributesStyle** – *(Optional)* Attribute-defined element style (e.g. resulting from "width=20 height=100%").
     '''
     session = get_session_context('css.get_inline_styles_for_node')
     return await session.execute(cdp.css.get_inline_styles_for_node(node_id))
 
 
 async def get_matched_styles_for_node(
-        node_id: dom.NodeId
+        node_id: cdp.dom.NodeId
     ) -> typing.Tuple[typing.Optional[CSSStyle], typing.Optional[CSSStyle], typing.Optional[typing.List[RuleMatch]], typing.Optional[typing.List[PseudoElementMatches]], typing.Optional[typing.List[InheritedStyleEntry]], typing.Optional[typing.List[CSSKeyframesRule]]]:
     '''
-    Returns requested styles for a DOM node identified by `nodeId`.
+    Returns requested styles for a DOM node identified by ``nodeId``.
 
     :param node_id:
-    :returns: a tuple with the following items:
-        0. inlineStyle: (Optional) Inline style for the specified DOM node.
-        1. attributesStyle: (Optional) Attribute-defined element style (e.g. resulting from "width=20 height=100%").
-        2. matchedCSSRules: (Optional) CSS rules matching this node, from all applicable stylesheets.
-        3. pseudoElements: (Optional) Pseudo style matches for this node.
-        4. inherited: (Optional) A chain of inherited styles (from the immediate node parent up to the DOM tree root).
-        5. cssKeyframesRules: (Optional) A list of CSS keyframed animations matching this node.
+    :returns: A tuple with the following items:
+
+        0. **inlineStyle** – *(Optional)* Inline style for the specified DOM node.
+        1. **attributesStyle** – *(Optional)* Attribute-defined element style (e.g. resulting from "width=20 height=100%").
+        2. **matchedCSSRules** – *(Optional)* CSS rules matching this node, from all applicable stylesheets.
+        3. **pseudoElements** – *(Optional)* Pseudo style matches for this node.
+        4. **inherited** – *(Optional)* A chain of inherited styles (from the immediate node parent up to the DOM tree root).
+        5. **cssKeyframesRules** – *(Optional)* A list of CSS keyframed animations matching this node.
     '''
     session = get_session_context('css.get_matched_styles_for_node')
     return await session.execute(cdp.css.get_matched_styles_for_node(node_id))
@@ -195,7 +193,7 @@ async def get_media_queries() -> typing.List[CSSMedia]:
 
 
 async def get_platform_fonts_for_node(
-        node_id: dom.NodeId
+        node_id: cdp.dom.NodeId
     ) -> typing.List[PlatformFontUsage]:
     '''
     Requests information about platform fonts which we used to render child TextNodes in the given
@@ -222,7 +220,7 @@ async def get_style_sheet_text(
 
 
 async def set_effective_property_value_for_node(
-        node_id: dom.NodeId,
+        node_id: cdp.dom.NodeId,
         property_name: str,
         value: str
     ) -> None:
@@ -240,53 +238,53 @@ async def set_effective_property_value_for_node(
 
 async def set_keyframe_key(
         style_sheet_id: StyleSheetId,
-        range: SourceRange,
+        range_: SourceRange,
         key_text: str
     ) -> Value:
     '''
     Modifies the keyframe rule key text.
 
     :param style_sheet_id:
-    :param range:
+    :param range_:
     :param key_text:
     :returns: The resulting key text after modification.
     '''
     session = get_session_context('css.set_keyframe_key')
-    return await session.execute(cdp.css.set_keyframe_key(style_sheet_id, range, key_text))
+    return await session.execute(cdp.css.set_keyframe_key(style_sheet_id, range_, key_text))
 
 
 async def set_media_text(
         style_sheet_id: StyleSheetId,
-        range: SourceRange,
+        range_: SourceRange,
         text: str
     ) -> CSSMedia:
     '''
     Modifies the rule selector.
 
     :param style_sheet_id:
-    :param range:
+    :param range_:
     :param text:
     :returns: The resulting CSS media rule after modification.
     '''
     session = get_session_context('css.set_media_text')
-    return await session.execute(cdp.css.set_media_text(style_sheet_id, range, text))
+    return await session.execute(cdp.css.set_media_text(style_sheet_id, range_, text))
 
 
 async def set_rule_selector(
         style_sheet_id: StyleSheetId,
-        range: SourceRange,
+        range_: SourceRange,
         selector: str
     ) -> SelectorList:
     '''
     Modifies the rule selector.
 
     :param style_sheet_id:
-    :param range:
+    :param range_:
     :param selector:
     :returns: The resulting selector list after modification.
     '''
     session = get_session_context('css.set_rule_selector')
-    return await session.execute(cdp.css.set_rule_selector(style_sheet_id, range, selector))
+    return await session.execute(cdp.css.set_rule_selector(style_sheet_id, range_, selector))
 
 
 async def set_style_sheet_text(
@@ -298,7 +296,7 @@ async def set_style_sheet_text(
 
     :param style_sheet_id:
     :param text:
-    :returns: (Optional) URL of source map associated with script (if any).
+    :returns: *(Optional)* URL of source map associated with script (if any).
     '''
     session = get_session_context('css.set_style_sheet_text')
     return await session.execute(cdp.css.set_style_sheet_text(style_sheet_id, text))
@@ -328,7 +326,7 @@ async def start_rule_usage_tracking() -> None:
 async def stop_rule_usage_tracking() -> typing.List[RuleUsage]:
     '''
     Stop tracking rule usage and return the list of rules that were used since last call to
-    `takeCoverageDelta` (or since start of coverage instrumentation)
+    ``takeCoverageDelta`` (or since start of coverage instrumentation)
 
     :returns: 
     '''

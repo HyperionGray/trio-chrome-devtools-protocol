@@ -40,10 +40,11 @@ async def get_usage_and_quota(
     Returns usage and quota in bytes.
 
     :param origin: Security origin.
-    :returns: a tuple with the following items:
-        0. usage: Storage usage (bytes).
-        1. quota: Storage quota (bytes).
-        2. usageBreakdown: Storage usage per type (bytes).
+    :returns: A tuple with the following items:
+
+        0. **usage** – Storage usage (bytes).
+        1. **quota** – Storage quota (bytes).
+        2. **usageBreakdown** – Storage usage per type (bytes).
     '''
     session = get_session_context('storage.get_usage_and_quota')
     return await session.execute(cdp.storage.get_usage_and_quota(origin))

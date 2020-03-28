@@ -49,6 +49,8 @@ async def set_time_domain(
     Note that this must be called before enabling metrics collection. Calling
     this method while metrics collection is enabled returns an error.
 
+    **EXPERIMENTAL**
+
     :param time_domain: Time domain
     '''
     session = get_session_context('performance.set_time_domain')

@@ -51,10 +51,11 @@ async def get_dom_counters() -> typing.Tuple[int, int, int]:
     '''
 
 
-    :returns: a tuple with the following items:
-        0. documents: 
-        1. nodes: 
-        2. jsEventListeners: 
+    :returns: A tuple with the following items:
+
+        0. **documents** – 
+        1. **nodes** – 
+        2. **jsEventListeners** – 
     '''
     session = get_session_context('memory.get_dom_counters')
     return await session.execute(cdp.memory.get_dom_counters())
@@ -63,7 +64,7 @@ async def get_dom_counters() -> typing.Tuple[int, int, int]:
 async def get_sampling_profile() -> SamplingProfile:
     '''
     Retrieve native memory allocations profile collected since last
-    `startSampling` call.
+    ``startSampling`` call.
 
     :returns: 
     '''
@@ -107,8 +108,8 @@ async def start_sampling(
     '''
     Start collecting native memory profile.
 
-    :param sampling_interval: Average number of bytes between samples.
-    :param suppress_randomness: Do not randomize intervals between samples.
+    :param sampling_interval: *(Optional)* Average number of bytes between samples.
+    :param suppress_randomness: *(Optional)* Do not randomize intervals between samples.
     '''
     session = get_session_context('memory.start_sampling')
     return await session.execute(cdp.memory.start_sampling(sampling_interval, suppress_randomness))

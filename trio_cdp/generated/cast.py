@@ -29,12 +29,12 @@ async def enable(
     ) -> None:
     '''
     Starts observing for sinks that can be used for tab mirroring, and if set,
-    sinks compatible with |presentationUrl| as well. When sinks are found, a
-    |sinksUpdated| event is fired.
+    sinks compatible with ``presentationUrl`` as well. When sinks are found, a
+    ``sinksUpdated`` event is fired.
     Also starts observing for issue messages. When an issue is added or removed,
-    an |issueUpdated| event is fired.
+    an ``issueUpdated`` event is fired.
 
-    :param presentation_url:
+    :param presentation_url: *(Optional)*
     '''
     session = get_session_context('cast.enable')
     return await session.execute(cdp.cast.enable(presentation_url))

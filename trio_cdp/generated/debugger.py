@@ -34,7 +34,7 @@ async def continue_to_location(
     Continues execution until specific location is reached.
 
     :param location: Location to continue to.
-    :param target_call_frames:
+    :param target_call_frames: *(Optional)*
     '''
     session = get_session_context('debugger.continue_to_location')
     return await session.execute(cdp.debugger.continue_to_location(location, target_call_frames))
@@ -50,13 +50,12 @@ async def disable() -> None:
 
 async def enable(
         max_scripts_cache_size: typing.Optional[float] = None
-    ) -> runtime.UniqueDebuggerId:
+    ) -> cdp.runtime.UniqueDebuggerId:
     '''
     Enables debugger for the given page. Clients should not assume that the debugging has been
     enabled until the result for this command is received.
 
-    :param max_scripts_cache_size: The maximum size in bytes of collected scripts (not referenced by other heap objects)
-    the debugger can hold. Puts no limit if paramter is omitted.
+    :param max_scripts_cache_size: **(EXPERIMENTAL)** *(Optional)* The maximum size in bytes of collected scripts (not referenced by other heap objects) the debugger can hold. Puts no limit if paramter is omitted.
     :returns: Unique identifier of the debugger.
     '''
     session = get_session_context('debugger.enable')
@@ -72,26 +71,24 @@ async def evaluate_on_call_frame(
         return_by_value: typing.Optional[bool] = None,
         generate_preview: typing.Optional[bool] = None,
         throw_on_side_effect: typing.Optional[bool] = None,
-        timeout: typing.Optional[runtime.TimeDelta] = None
-    ) -> typing.Tuple[runtime.RemoteObject, typing.Optional[runtime.ExceptionDetails]]:
+        timeout: typing.Optional[cdp.runtime.TimeDelta] = None
+    ) -> typing.Tuple[cdp.runtime.RemoteObject, typing.Optional[cdp.runtime.ExceptionDetails]]:
     '''
     Evaluates expression on a given call frame.
 
     :param call_frame_id: Call frame identifier to evaluate on.
     :param expression: Expression to evaluate.
-    :param object_group: String object group name to put result into (allows rapid releasing resulting object handles
-    using ``releaseObjectGroup``).
-    :param include_command_line_api: Specifies whether command line API should be available to the evaluated expression, defaults
-    to false.
-    :param silent: In silent mode exceptions thrown during evaluation are not reported and do not pause
-    execution. Overrides ``setPauseOnException`` state.
-    :param return_by_value: Whether the result is expected to be a JSON object that should be sent by value.
-    :param generate_preview: Whether preview should be generated for the result.
-    :param throw_on_side_effect: Whether to throw an exception if side effect cannot be ruled out during evaluation.
-    :param timeout: Terminate execution after timing out (number of milliseconds).
-    :returns: a tuple with the following items:
-        0. result: Object wrapper for the evaluation result.
-        1. exceptionDetails: (Optional) Exception details.
+    :param object_group: *(Optional)* String object group name to put result into (allows rapid releasing resulting object handles using ```releaseObjectGroup````).
+    :param include_command_line_api: *(Optional)* Specifies whether command line API should be available to the evaluated expression, defaults to false.
+    :param silent: *(Optional)* In silent mode exceptions thrown during evaluation are not reported and do not pause execution. Overrides ````setPauseOnException``` state.
+    :param return_by_value: *(Optional)* Whether the result is expected to be a JSON object that should be sent by value.
+    :param generate_preview: **(EXPERIMENTAL)** *(Optional)* Whether preview should be generated for the result.
+    :param throw_on_side_effect: *(Optional)* Whether to throw an exception if side effect cannot be ruled out during evaluation.
+    :param timeout: **(EXPERIMENTAL)** *(Optional)* Terminate execution after timing out (number of milliseconds).
+    :returns: A tuple with the following items:
+
+        0. **result** – Object wrapper for the evaluation result.
+        1. **exceptionDetails** – *(Optional)* Exception details.
     '''
     session = get_session_context('debugger.evaluate_on_call_frame')
     return await session.execute(cdp.debugger.evaluate_on_call_frame(call_frame_id, expression, object_group, include_command_line_api, silent, return_by_value, generate_preview, throw_on_side_effect, timeout))
@@ -107,9 +104,8 @@ async def get_possible_breakpoints(
     the same.
 
     :param start: Start of range to search possible breakpoint locations in.
-    :param end: End of range to search possible breakpoint locations in (excluding). When not specified, end
-    of scripts is used as end of range.
-    :param restrict_to_function: Only consider locations which are in the same (non-nested) function as start.
+    :param end: *(Optional)* End of range to search possible breakpoint locations in (excluding). When not specified, end of scripts is used as end of range.
+    :param restrict_to_function: *(Optional)* Only consider locations which are in the same (non-nested) function as start.
     :returns: List of the possible breakpoint locations.
     '''
     session = get_session_context('debugger.get_possible_breakpoints')
@@ -117,7 +113,7 @@ async def get_possible_breakpoints(
 
 
 async def get_script_source(
-        script_id: runtime.ScriptId
+        script_id: cdp.runtime.ScriptId
     ) -> str:
     '''
     Returns source for the script with given id.
@@ -130,10 +126,12 @@ async def get_script_source(
 
 
 async def get_stack_trace(
-        stack_trace_id: runtime.StackTraceId
-    ) -> runtime.StackTrace:
+        stack_trace_id: cdp.runtime.StackTraceId
+    ) -> cdp.runtime.StackTrace:
     '''
-    Returns stack trace with given `stackTraceId`.
+    Returns stack trace with given ``stackTraceId``.
+
+    **EXPERIMENTAL**
 
     :param stack_trace_id:
     :returns: 
@@ -151,9 +149,13 @@ async def pause() -> None:
 
 
 async def pause_on_async_call(
-        parent_stack_trace_id: runtime.StackTraceId
+        parent_stack_trace_id: cdp.runtime.StackTraceId
     ) -> None:
     '''
+
+
+    **EXPERIMENTAL**
+
     :param parent_stack_trace_id: Debugger will pause when async call with given stack trace is started.
     '''
     session = get_session_context('debugger.pause_on_async_call')
@@ -174,15 +176,16 @@ async def remove_breakpoint(
 
 async def restart_frame(
         call_frame_id: CallFrameId
-    ) -> typing.Tuple[typing.List[CallFrame], typing.Optional[runtime.StackTrace], typing.Optional[runtime.StackTraceId]]:
+    ) -> typing.Tuple[typing.List[CallFrame], typing.Optional[cdp.runtime.StackTrace], typing.Optional[cdp.runtime.StackTraceId]]:
     '''
     Restarts particular call frame from the beginning.
 
     :param call_frame_id: Call frame identifier to evaluate on.
-    :returns: a tuple with the following items:
-        0. callFrames: New stack trace.
-        1. asyncStackTrace: (Optional) Async stack trace, if any.
-        2. asyncStackTraceId: (Optional) Async stack trace, if any.
+    :returns: A tuple with the following items:
+
+        0. **callFrames** – New stack trace.
+        1. **asyncStackTrace** – *(Optional)* Async stack trace, if any.
+        2. **asyncStackTraceId** – *(Optional)* Async stack trace, if any.
     '''
     session = get_session_context('debugger.restart_frame')
     return await session.execute(cdp.debugger.restart_frame(call_frame_id))
@@ -197,7 +200,7 @@ async def resume() -> None:
 
 
 async def search_in_content(
-        script_id: runtime.ScriptId,
+        script_id: cdp.runtime.ScriptId,
         query: str,
         case_sensitive: typing.Optional[bool] = None,
         is_regex: typing.Optional[bool] = None
@@ -207,8 +210,8 @@ async def search_in_content(
 
     :param script_id: Id of the script to search in.
     :param query: String to search for.
-    :param case_sensitive: If true, search is case sensitive.
-    :param is_regex: If true, treats string parameter as regex.
+    :param case_sensitive: *(Optional)* If true, search is case sensitive.
+    :param is_regex: *(Optional)* If true, treats string parameter as regex.
     :returns: List of search matches.
     '''
     session = get_session_context('debugger.search_in_content')
@@ -221,8 +224,7 @@ async def set_async_call_stack_depth(
     '''
     Enables or disables async call stacks tracking.
 
-    :param max_depth: Maximum depth of async call stacks. Setting to ``0`` will effectively disable collecting async
-    call stacks (default).
+    :param max_depth: Maximum depth of async call stacks. Setting to ```0``` will effectively disable collecting async call stacks (default).
     '''
     session = get_session_context('debugger.set_async_call_stack_depth')
     return await session.execute(cdp.debugger.set_async_call_stack_depth(max_depth))
@@ -236,6 +238,8 @@ async def set_blackbox_patterns(
     scripts with url matching one of the patterns. VM will try to leave blackboxed script by
     performing 'step in' several times, finally resorting to 'step out' if unsuccessful.
 
+    **EXPERIMENTAL**
+
     :param patterns: Array of regexps that will be used to check script url for blackbox state.
     '''
     session = get_session_context('debugger.set_blackbox_patterns')
@@ -243,7 +247,7 @@ async def set_blackbox_patterns(
 
 
 async def set_blackboxed_ranges(
-        script_id: runtime.ScriptId,
+        script_id: cdp.runtime.ScriptId,
         positions: typing.List[ScriptPosition]
     ) -> None:
     '''
@@ -251,6 +255,8 @@ async def set_blackboxed_ranges(
     scripts by performing 'step in' several times, finally resorting to 'step out' if unsuccessful.
     Positions array contains positions where blackbox state is changed. First interval isn't
     blackboxed. Array should be sorted.
+
+    **EXPERIMENTAL**
 
     :param script_id: Id of the script.
     :param positions:
@@ -267,11 +273,11 @@ async def set_breakpoint(
     Sets JavaScript breakpoint at a given location.
 
     :param location: Location to set breakpoint in.
-    :param condition: Expression to use as a breakpoint condition. When specified, debugger will only stop on the
-    breakpoint if this expression evaluates to true.
-    :returns: a tuple with the following items:
-        0. breakpointId: Id of the created breakpoint for further reference.
-        1. actualLocation: Location this breakpoint resolved into.
+    :param condition: *(Optional)* Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true.
+    :returns: A tuple with the following items:
+
+        0. **breakpointId** – Id of the created breakpoint for further reference.
+        1. **actualLocation** – Location this breakpoint resolved into.
     '''
     session = get_session_context('debugger.set_breakpoint')
     return await session.execute(cdp.debugger.set_breakpoint(location, condition))
@@ -288,27 +294,26 @@ async def set_breakpoint_by_url(
     '''
     Sets JavaScript breakpoint at given location specified either by URL or URL regex. Once this
     command is issued, all existing parsed scripts will have breakpoints resolved and returned in
-    `locations` property. Further matching script parsing will result in subsequent
-    `breakpointResolved` events issued. This logical breakpoint will survive page reloads.
+    ``locations`` property. Further matching script parsing will result in subsequent
+    ``breakpointResolved`` events issued. This logical breakpoint will survive page reloads.
 
     :param line_number: Line number to set breakpoint at.
-    :param url: URL of the resources to set breakpoint on.
-    :param url_regex: Regex pattern for the URLs of the resources to set breakpoints on. Either ``url`` or
-    ``urlRegex`` must be specified.
-    :param script_hash: Script hash of the resources to set breakpoint on.
-    :param column_number: Offset in the line to set breakpoint at.
-    :param condition: Expression to use as a breakpoint condition. When specified, debugger will only stop on the
-    breakpoint if this expression evaluates to true.
-    :returns: a tuple with the following items:
-        0. breakpointId: Id of the created breakpoint for further reference.
-        1. locations: List of the locations this breakpoint resolved into upon addition.
+    :param url: *(Optional)* URL of the resources to set breakpoint on.
+    :param url_regex: *(Optional)* Regex pattern for the URLs of the resources to set breakpoints on. Either ```url```` or ````urlRegex``` must be specified.
+    :param script_hash: *(Optional)* Script hash of the resources to set breakpoint on.
+    :param column_number: *(Optional)* Offset in the line to set breakpoint at.
+    :param condition: *(Optional)* Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true.
+    :returns: A tuple with the following items:
+
+        0. **breakpointId** – Id of the created breakpoint for further reference.
+        1. **locations** – List of the locations this breakpoint resolved into upon addition.
     '''
     session = get_session_context('debugger.set_breakpoint_by_url')
     return await session.execute(cdp.debugger.set_breakpoint_by_url(line_number, url, url_regex, script_hash, column_number, condition))
 
 
 async def set_breakpoint_on_function_call(
-        object_id: runtime.RemoteObjectId,
+        object_id: cdp.runtime.RemoteObjectId,
         condition: typing.Optional[str] = None
     ) -> BreakpointId:
     '''
@@ -316,9 +321,10 @@ async def set_breakpoint_on_function_call(
     If another function was created from the same source as a given one,
     calling it will also trigger the breakpoint.
 
+    **EXPERIMENTAL**
+
     :param object_id: Function object id.
-    :param condition: Expression to use as a breakpoint condition. When specified, debugger will
-    stop on the breakpoint if this expression evaluates to true.
+    :param condition: *(Optional)* Expression to use as a breakpoint condition. When specified, debugger will stop on the breakpoint if this expression evaluates to true.
     :returns: Id of the created breakpoint for further reference.
     '''
     session = get_session_context('debugger.set_breakpoint_on_function_call')
@@ -355,7 +361,7 @@ async def set_pause_on_exceptions(
     ) -> None:
     '''
     Defines pause on exceptions state. Can be set to stop on all exceptions, uncaught exceptions or
-    no exceptions. Initial pause on exceptions state is `none`.
+    no exceptions. Initial pause on exceptions state is ``none``.
 
     :param state: Pause on exceptions mode.
     '''
@@ -364,10 +370,12 @@ async def set_pause_on_exceptions(
 
 
 async def set_return_value(
-        new_value: runtime.CallArgument
+        new_value: cdp.runtime.CallArgument
     ) -> None:
     '''
     Changes return value in top frame. Available only at return break position.
+
+    **EXPERIMENTAL**
 
     :param new_value: New return value.
     '''
@@ -376,23 +384,23 @@ async def set_return_value(
 
 
 async def set_script_source(
-        script_id: runtime.ScriptId,
+        script_id: cdp.runtime.ScriptId,
         script_source: str,
         dry_run: typing.Optional[bool] = None
-    ) -> typing.Tuple[typing.Optional[typing.List[CallFrame]], typing.Optional[bool], typing.Optional[runtime.StackTrace], typing.Optional[runtime.StackTraceId], typing.Optional[runtime.ExceptionDetails]]:
+    ) -> typing.Tuple[typing.Optional[typing.List[CallFrame]], typing.Optional[bool], typing.Optional[cdp.runtime.StackTrace], typing.Optional[cdp.runtime.StackTraceId], typing.Optional[cdp.runtime.ExceptionDetails]]:
     '''
     Edits JavaScript source live.
 
     :param script_id: Id of the script to edit.
     :param script_source: New content of the script.
-    :param dry_run: If true the change will not actually be applied. Dry run may be used to get result
-    description without actually modifying the code.
-    :returns: a tuple with the following items:
-        0. callFrames: (Optional) New stack trace in case editing has happened while VM was stopped.
-        1. stackChanged: (Optional) Whether current call stack  was modified after applying the changes.
-        2. asyncStackTrace: (Optional) Async stack trace, if any.
-        3. asyncStackTraceId: (Optional) Async stack trace, if any.
-        4. exceptionDetails: (Optional) Exception details if any.
+    :param dry_run: *(Optional)* If true the change will not actually be applied. Dry run may be used to get result description without actually modifying the code.
+    :returns: A tuple with the following items:
+
+        0. **callFrames** – *(Optional)* New stack trace in case editing has happened while VM was stopped.
+        1. **stackChanged** – *(Optional)* Whether current call stack  was modified after applying the changes.
+        2. **asyncStackTrace** – *(Optional)* Async stack trace, if any.
+        3. **asyncStackTraceId** – *(Optional)* Async stack trace, if any.
+        4. **exceptionDetails** – *(Optional)* Exception details if any.
     '''
     session = get_session_context('debugger.set_script_source')
     return await session.execute(cdp.debugger.set_script_source(script_id, script_source, dry_run))
@@ -413,15 +421,14 @@ async def set_skip_all_pauses(
 async def set_variable_value(
         scope_number: int,
         variable_name: str,
-        new_value: runtime.CallArgument,
+        new_value: cdp.runtime.CallArgument,
         call_frame_id: CallFrameId
     ) -> None:
     '''
     Changes value of variable in a callframe. Object-based scopes are not supported and must be
     mutated manually.
 
-    :param scope_number: 0-based number of scope as was listed in scope chain. Only 'local', 'closure' and 'catch'
-    scope types are allowed. Other scopes could be manipulated manually.
+    :param scope_number: 0-based number of scope as was listed in scope chain. Only 'local', 'closure' and 'catch' scope types are allowed. Other scopes could be manipulated manually.
     :param variable_name: Variable name.
     :param new_value: New variable value.
     :param call_frame_id: Id of callframe that holds variable.
@@ -436,8 +443,7 @@ async def step_into(
     '''
     Steps into the function call.
 
-    :param break_on_async_call: Debugger will issue additional Debugger.paused notification if any async task is scheduled
-    before next pause.
+    :param break_on_async_call: **(EXPERIMENTAL)** *(Optional)* Debugger will issue additional Debugger.paused notification if any async task is scheduled before next pause.
     '''
     session = get_session_context('debugger.step_into')
     return await session.execute(cdp.debugger.step_into(break_on_async_call))

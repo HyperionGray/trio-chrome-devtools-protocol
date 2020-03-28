@@ -25,14 +25,12 @@ async def get_info() -> typing.Tuple[GPUInfo, str, str, str]:
     '''
     Returns information about the system.
 
-    :returns: a tuple with the following items:
-        0. gpu: Information about the GPUs on the system.
-        1. modelName: A platform-dependent description of the model of the machine. On Mac OS, this is, for
-        example, 'MacBookPro'. Will be the empty string if not supported.
-        2. modelVersion: A platform-dependent description of the version of the machine. On Mac OS, this is, for
-        example, '10.1'. Will be the empty string if not supported.
-        3. commandLine: The command line string used to launch the browser. Will be the empty string if not
-        supported.
+    :returns: A tuple with the following items:
+
+        0. **gpu** – Information about the GPUs on the system.
+        1. **modelName** – A platform-dependent description of the model of the machine. On Mac OS, this is, for example, 'MacBookPro'. Will be the empty string if not supported.
+        2. **modelVersion** – A platform-dependent description of the version of the machine. On Mac OS, this is, for example, '10.1'. Will be the empty string if not supported.
+        3. **commandLine** – The command line string used to launch the browser. Will be the empty string if not supported.
     '''
     session = get_session_context('system_info.get_info')
     return await session.execute(cdp.system_info.get_info())

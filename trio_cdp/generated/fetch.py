@@ -32,10 +32,10 @@ async def continue_request(
     Continues the request, optionally modifying some of its parameters.
 
     :param request_id: An id the client received in requestPaused event.
-    :param url: If set, the request url will be modified in a way that's not observable by page.
-    :param method: If set, the request method is overridden.
-    :param post_data: If set, overrides the post data in the request.
-    :param headers: If set, overrides the request headrts.
+    :param url: *(Optional)* If set, the request url will be modified in a way that's not observable by page.
+    :param method: *(Optional)* If set, the request method is overridden.
+    :param post_data: *(Optional)* If set, overrides the post data in the request.
+    :param headers: *(Optional)* If set, overrides the request headrts.
     '''
     session = get_session_context('fetch.continue_request')
     return await session.execute(cdp.fetch.continue_request(request_id, url, method, post_data, headers))
@@ -71,11 +71,8 @@ async def enable(
     Enables issuing of requestPaused events. A request will be paused until client
     calls one of failRequest, fulfillRequest or continueRequest/continueWithAuth.
 
-    :param patterns: If specified, only requests matching any of these patterns will produce
-    fetchRequested event and will be paused until clients response. If not set,
-    all requests will be affected.
-    :param handle_auth_requests: If true, authRequired events will be issued and requests will be paused
-    expecting a call to continueWithAuth.
+    :param patterns: *(Optional)* If specified, only requests matching any of these patterns will produce fetchRequested event and will be paused until clients response. If not set, all requests will be affected.
+    :param handle_auth_requests: *(Optional)* If true, authRequired events will be issued and requests will be paused expecting a call to continueWithAuth.
     '''
     session = get_session_context('fetch.enable')
     return await session.execute(cdp.fetch.enable(patterns, handle_auth_requests))
@@ -83,7 +80,7 @@ async def enable(
 
 async def fail_request(
         request_id: RequestId,
-        error_reason: network.ErrorReason
+        error_reason: cdp.network.ErrorReason
     ) -> None:
     '''
     Causes the request to fail with specified reason.
@@ -108,9 +105,8 @@ async def fulfill_request(
     :param request_id: An id the client received in requestPaused event.
     :param response_code: An HTTP response code.
     :param response_headers: Response headers.
-    :param body: A response body.
-    :param response_phrase: A textual representation of responseCode.
-    If absent, a standard phrase mathcing responseCode is used.
+    :param body: *(Optional)* A response body.
+    :param response_phrase: *(Optional)* A textual representation of responseCode. If absent, a standard phrase mathcing responseCode is used.
     '''
     session = get_session_context('fetch.fulfill_request')
     return await session.execute(cdp.fetch.fulfill_request(request_id, response_code, response_headers, body, response_phrase))
@@ -128,9 +124,10 @@ async def get_response_body(
     results in an undefined behavior.
 
     :param request_id: Identifier for the intercepted request to get body for.
-    :returns: a tuple with the following items:
-        0. body: Response body.
-        1. base64Encoded: True, if content was sent as base64.
+    :returns: A tuple with the following items:
+
+        0. **body** – Response body.
+        1. **base64Encoded** – True, if content was sent as base64.
     '''
     session = get_session_context('fetch.get_response_body')
     return await session.execute(cdp.fetch.get_response_body(request_id))
@@ -138,7 +135,7 @@ async def get_response_body(
 
 async def take_response_body_as_stream(
         request_id: RequestId
-    ) -> io.StreamHandle:
+    ) -> cdp.io.StreamHandle:
     '''
     Returns a handle to the stream representing the response body.
     The request must be paused in the HeadersReceived stage.

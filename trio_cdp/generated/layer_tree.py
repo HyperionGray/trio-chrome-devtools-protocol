@@ -81,13 +81,13 @@ async def profile_snapshot(
         snapshot_id: SnapshotId,
         min_repeat_count: typing.Optional[int] = None,
         min_duration: typing.Optional[float] = None,
-        clip_rect: typing.Optional[dom.Rect] = None
+        clip_rect: typing.Optional[cdp.dom.Rect] = None
     ) -> typing.List[PaintProfile]:
     '''
     :param snapshot_id: The id of the layer snapshot.
-    :param min_repeat_count: The maximum number of times to replay the snapshot (1, if not specified).
-    :param min_duration: The minimum duration (in seconds) to replay the snapshot.
-    :param clip_rect: The clip rectangle to apply when replaying the snapshot.
+    :param min_repeat_count: *(Optional)* The maximum number of times to replay the snapshot (1, if not specified).
+    :param min_duration: *(Optional)* The minimum duration (in seconds) to replay the snapshot.
+    :param clip_rect: *(Optional)* The clip rectangle to apply when replaying the snapshot.
     :returns: The array of paint profiles, one per run.
     '''
     session = get_session_context('layer_tree.profile_snapshot')
@@ -116,9 +116,9 @@ async def replay_snapshot(
     Replays the layer snapshot and returns the resulting bitmap.
 
     :param snapshot_id: The id of the layer snapshot.
-    :param from_step: The first step to replay from (replay from the very start if not specified).
-    :param to_step: The last step to replay to (replay till the end if not specified).
-    :param scale: The scale to apply while replaying (defaults to 1).
+    :param from_step: *(Optional)* The first step to replay from (replay from the very start if not specified).
+    :param to_step: *(Optional)* The last step to replay to (replay till the end if not specified).
+    :param scale: *(Optional)* The scale to apply while replaying (defaults to 1).
     :returns: A data: URL for resulting image.
     '''
     session = get_session_context('layer_tree.replay_snapshot')

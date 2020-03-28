@@ -30,6 +30,8 @@ async def close() -> None:
 async def crash() -> None:
     '''
     Crashes browser on the main thread.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('browser.crash')
     return await session.execute(cdp.browser.crash())
@@ -38,6 +40,8 @@ async def crash() -> None:
 async def crash_gpu_process() -> None:
     '''
     Crashes GPU process.
+
+    **EXPERIMENTAL**
     '''
     session = get_session_context('browser.crash_gpu_process')
     return await session.execute(cdp.browser.crash_gpu_process())
@@ -47,6 +51,8 @@ async def get_browser_command_line() -> typing.List[str]:
     '''
     Returns the command line switches for the browser process if, and only if
     --enable-automation is on the commandline.
+
+    **EXPERIMENTAL**
 
     :returns: Commandline parameters
     '''
@@ -61,8 +67,10 @@ async def get_histogram(
     '''
     Get a Chrome histogram by name.
 
+    **EXPERIMENTAL**
+
     :param name: Requested histogram name.
-    :param delta: If true, retrieve delta since last call.
+    :param delta: *(Optional)* If true, retrieve delta since last call.
     :returns: Histogram.
     '''
     session = get_session_context('browser.get_histogram')
@@ -76,10 +84,10 @@ async def get_histograms(
     '''
     Get Chrome histograms.
 
-    :param query: Requested substring in name. Only histograms which have query as a
-    substring in their name are extracted. An empty or absent query returns
-    all histograms.
-    :param delta: If true, retrieve delta since last call.
+    **EXPERIMENTAL**
+
+    :param query: *(Optional)* Requested substring in name. Only histograms which have query as a substring in their name are extracted. An empty or absent query returns all histograms.
+    :param delta: *(Optional)* If true, retrieve delta since last call.
     :returns: Histograms.
     '''
     session = get_session_context('browser.get_histograms')
@@ -90,12 +98,13 @@ async def get_version() -> typing.Tuple[str, str, str, str, str]:
     '''
     Returns version information.
 
-    :returns: a tuple with the following items:
-        0. protocolVersion: Protocol version.
-        1. product: Product name.
-        2. revision: Product revision.
-        3. userAgent: User-Agent.
-        4. jsVersion: V8 version.
+    :returns: A tuple with the following items:
+
+        0. **protocolVersion** – Protocol version.
+        1. **product** – Product name.
+        2. **revision** – Product revision.
+        3. **userAgent** – User-Agent.
+        4. **jsVersion** – V8 version.
     '''
     session = get_session_context('browser.get_version')
     return await session.execute(cdp.browser.get_version())
@@ -107,25 +116,28 @@ async def get_window_bounds(
     '''
     Get position and size of the browser window.
 
+    **EXPERIMENTAL**
+
     :param window_id: Browser window id.
-    :returns: Bounds information of the window. When window state is 'minimized', the restored window
-    position and size are returned.
+    :returns: Bounds information of the window. When window state is 'minimized', the restored window position and size are returned.
     '''
     session = get_session_context('browser.get_window_bounds')
     return await session.execute(cdp.browser.get_window_bounds(window_id))
 
 
 async def get_window_for_target(
-        target_id: typing.Optional[target.TargetID] = None
+        target_id: typing.Optional[cdp.target.TargetID] = None
     ) -> typing.Tuple[WindowID, Bounds]:
     '''
     Get the browser window that contains the devtools target.
 
-    :param target_id: Devtools agent host id. If called as a part of the session, associated targetId is used.
-    :returns: a tuple with the following items:
-        0. windowId: Browser window id.
-        1. bounds: Bounds information of the window. When window state is 'minimized', the restored window
-        position and size are returned.
+    **EXPERIMENTAL**
+
+    :param target_id: *(Optional)* Devtools agent host id. If called as a part of the session, associated targetId is used.
+    :returns: A tuple with the following items:
+
+        0. **windowId** – Browser window id.
+        1. **bounds** – Bounds information of the window. When window state is 'minimized', the restored window position and size are returned.
     '''
     session = get_session_context('browser.get_window_for_target')
     return await session.execute(cdp.browser.get_window_for_target(target_id))
@@ -134,26 +146,30 @@ async def get_window_for_target(
 async def grant_permissions(
         origin: str,
         permissions: typing.List[PermissionType],
-        browser_context_id: typing.Optional[target.BrowserContextID] = None
+        browser_context_id: typing.Optional[cdp.target.BrowserContextID] = None
     ) -> None:
     '''
     Grant specific permissions to the given origin and reject all others.
 
+    **EXPERIMENTAL**
+
     :param origin:
     :param permissions:
-    :param browser_context_id: BrowserContext to override permissions. When omitted, default browser context is used.
+    :param browser_context_id: *(Optional)* BrowserContext to override permissions. When omitted, default browser context is used.
     '''
     session = get_session_context('browser.grant_permissions')
     return await session.execute(cdp.browser.grant_permissions(origin, permissions, browser_context_id))
 
 
 async def reset_permissions(
-        browser_context_id: typing.Optional[target.BrowserContextID] = None
+        browser_context_id: typing.Optional[cdp.target.BrowserContextID] = None
     ) -> None:
     '''
     Reset all permission management for all origins.
 
-    :param browser_context_id: BrowserContext to reset permissions. When omitted, default browser context is used.
+    **EXPERIMENTAL**
+
+    :param browser_context_id: *(Optional)* BrowserContext to reset permissions. When omitted, default browser context is used.
     '''
     session = get_session_context('browser.reset_permissions')
     return await session.execute(cdp.browser.reset_permissions(browser_context_id))
@@ -166,8 +182,10 @@ async def set_dock_tile(
     '''
     Set dock tile details, platform-specific.
 
-    :param badge_label:
-    :param image: Png encoded image.
+    **EXPERIMENTAL**
+
+    :param badge_label: *(Optional)*
+    :param image: *(Optional)* Png encoded image.
     '''
     session = get_session_context('browser.set_dock_tile')
     return await session.execute(cdp.browser.set_dock_tile(badge_label, image))
@@ -180,9 +198,10 @@ async def set_window_bounds(
     '''
     Set position and/or size of the browser window.
 
+    **EXPERIMENTAL**
+
     :param window_id: Browser window id.
-    :param bounds: New window bounds. The 'minimized', 'maximized' and 'fullscreen' states cannot be combined
-    with 'left', 'top', 'width' or 'height'. Leaves unspecified fields unchanged.
+    :param bounds: New window bounds. The 'minimized', 'maximized' and 'fullscreen' states cannot be combined with 'left', 'top', 'width' or 'height'. Leaves unspecified fields unchanged.
     '''
     session = get_session_context('browser.set_window_bounds')
     return await session.execute(cdp.browser.set_window_bounds(window_id, bounds))
