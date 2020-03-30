@@ -239,11 +239,8 @@ class CdpConnection(CdpBase, trio.abc.AsyncResource):
         and it will execute on the current session automatically.
         '''
         session = await self.connect_session(target_id)
-        token = session_context.set(session)
-        try:
+        with session_context(session):
             yield session
-        finally:
-            session_context.reset(token)
 
     async def connect_session(self, target_id: cdp.target.TargetID) -> 'CdpSession':
         '''
@@ -369,11 +366,10 @@ async def open_cdp(url) -> typing.AsyncIterator[CdpConnection]:
     '''
     async with trio.open_nursery() as nursery:
         conn = await connect_cdp(nursery, url)
-        token = connection_context.set(conn)
         try:
-            yield conn
+            with connection_context(conn):
+                yield conn
         finally:
-            connection_context.reset(token)
             await conn.aclose()
 
 

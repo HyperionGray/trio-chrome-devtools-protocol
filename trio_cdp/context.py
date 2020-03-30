@@ -1,8 +1,11 @@
+from contextlib import contextmanager
 import contextvars
 
 
-connection_context: contextvars.ContextVar = contextvars.ContextVar('connection_context')
-session_context: contextvars.ContextVar = contextvars.ContextVar('session_context')
+_connection_context: contextvars.ContextVar = contextvars.ContextVar('connection_context')
+_session_context: contextvars.ContextVar = contextvars.ContextVar('session_context')
+
+
 
 
 def get_connection_context(fn_name):
@@ -11,7 +14,7 @@ def get_connection_context(fn_name):
     ``RuntimeError`` with a helpful message.
     '''
     try:
-        return connection_context.get()
+        return _connection_context.get()
     except LookupError:
         raise RuntimeError(f'{fn_name}() must be called in a connection context.')
 
@@ -22,9 +25,31 @@ def get_session_context(fn_name):
     ``RuntimeError`` with a helpful message.
     '''
     try:
-        return session_context.get()
+        return _session_context.get()
     except LookupError:
         raise RuntimeError(f'{fn_name}() must be called in a session context.')
+
+
+@contextmanager
+def connection_context(connection):
+    ''' This context manager installs ``connection`` as the session context for the current
+    Trio task. '''
+    token = _connection_context.set(connection)
+    try:
+        yield
+    finally:
+        _connection_context.reset(token)
+
+
+@contextmanager
+def session_context(session):
+    ''' This context manager installs ``session`` as the session context for the current
+    Trio task. '''
+    token = _session_context.set(session)
+    try:
+        yield
+    finally:
+        _session_context.reset(token)
 
 
 def set_global_connection(connection):
@@ -33,8 +58,8 @@ def set_global_connection(connection):
     connection for all tasks. This is generally not recommended, except it may be
     necessary in certain use cases such as running inside Jupyter notebook.
     '''
-    global connection_context
-    connection_context = contextvars.ContextVar('connection_context',
+    global _connection_context
+    _connection_context = contextvars.ContextVar('_connection_context',
         default=connection)
 
 
@@ -44,5 +69,5 @@ def set_global_session(session):
     session for all tasks. This is generally not recommended, except it may be
     necessary in certain use cases such as running inside Jupyter notebook.
     '''
-    global session_context
-    session_context = contextvars.ContextVar('session_context', default=session)
+    global _session_context
+    _session_context = contextvars.ContextVar('_session_context', default=session)
