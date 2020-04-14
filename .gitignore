@@ -1,11 +1,12 @@
 .coverage
-*.egg-info
 .ipynb_checkpoints
 .mypy_cache
-.vscode
 __pycache__
+.vscode
+*.egg-info
+build
+chrome-mac
 dist
 test.png
 venv
-chrome-mac
-build
+TODO.md

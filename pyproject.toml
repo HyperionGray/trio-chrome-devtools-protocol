@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "trio-chrome-devtools-protocol"
+version = "0.6.0"
+description = "Trio driver for Chrome DevTools Protocol (CDP)"
+authors = ["Mark E. Haase <mehaase@gmail.com>", "Brian Mackintosh <bcmackintosh@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/hyperiongray/python-chrome-devtools-protocol"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Internet"
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+chrome-devtools-protocol = "^0.3.0"
+trio = "^0.13.0"
+trio_websocket = "^0.8.0"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.770"
+pytest = "^5.4.1"
+pytest-cov = "^2.8.1"
+pytest-trio = "^0.5.2"
+sphinx = "^3.0.1"
+sphinx-rtd-theme = "^0.4.3"
+sphinx-autodoc-typehints = "^1.10.3"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
