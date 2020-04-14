@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "trio-chrome-devtools-protocol"
 packages = [{include = "trio_cdp"}]
-version = "0.6.0"
+version = "0.7.0"
 description = "Trio driver for Chrome DevTools Protocol (CDP)"
 authors = ["Mark E. Haase <mehaase@gmail.com>", "Brian Mackintosh <bcmackintosh@gmail.com>"]
 license = "MIT"
