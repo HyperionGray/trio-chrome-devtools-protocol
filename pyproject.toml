@@ -15,7 +15,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-chrome-devtools-protocol = "^0.3.0"
+chrome-devtools-protocol = "^0.4.0"
 trio = "^0.13.0"
 trio_websocket = "^0.8.0"
 
