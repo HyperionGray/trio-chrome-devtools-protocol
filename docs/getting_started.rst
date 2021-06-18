@@ -8,7 +8,7 @@ and then extract the page title.
 
 .. code::
 
-    from trio_cdp import open_cdp, page, dom
+    from trio_cdp import open_cdp, page, dom, target
 
     async with open_cdp(cdp_url) as conn:
         # Find the first available target (usually a browser tab).
