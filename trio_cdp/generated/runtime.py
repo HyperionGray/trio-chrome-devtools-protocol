@@ -47,7 +47,7 @@ async def add_binding(
         execution_context_id: typing.Optional[ExecutionContextId] = None,
         execution_context_name: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     If executionContextId is empty, adds binding with the given name on the
     global objects of all inspected contexts, including those created later,
     bindings survive reloads.
@@ -70,7 +70,7 @@ async def await_promise(
         return_by_value: typing.Optional[bool] = None,
         generate_preview: typing.Optional[bool] = None
     ) -> typing.Tuple[RemoteObject, typing.Optional[ExceptionDetails]]:
-    '''
+    r'''
     Add handler to promise with given promise object id.
 
     :param promise_object_id: Identifier of the promise.
@@ -98,7 +98,7 @@ async def call_function_on(
         object_group: typing.Optional[str] = None,
         throw_on_side_effect: typing.Optional[bool] = None
     ) -> typing.Tuple[RemoteObject, typing.Optional[ExceptionDetails]]:
-    '''
+    r'''
     Calls function with given declaration on the given object. Object group of the result is
     inherited from the target object.
 
@@ -128,7 +128,7 @@ async def compile_script(
         persist_script: bool,
         execution_context_id: typing.Optional[ExecutionContextId] = None
     ) -> typing.Tuple[typing.Optional[ScriptId], typing.Optional[ExceptionDetails]]:
-    '''
+    r'''
     Compiles expression.
 
     :param expression: Expression to compile.
@@ -145,7 +145,7 @@ async def compile_script(
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables reporting of execution contexts creation.
     '''
     session = get_session_context('runtime.disable')
@@ -153,7 +153,7 @@ async def disable() -> None:
 
 
 async def discard_console_entries() -> None:
-    '''
+    r'''
     Discards collected exceptions and console API calls.
     '''
     session = get_session_context('runtime.discard_console_entries')
@@ -161,7 +161,7 @@ async def discard_console_entries() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables reporting of execution contexts creation by means of ``executionContextCreated`` event.
     When the reporting gets enabled the event will be sent immediately for each existing execution
     context.
@@ -187,7 +187,7 @@ async def evaluate(
         allow_unsafe_eval_blocked_by_csp: typing.Optional[bool] = None,
         unique_context_id: typing.Optional[str] = None
     ) -> typing.Tuple[RemoteObject, typing.Optional[ExceptionDetails]]:
-    '''
+    r'''
     Evaluates expression on global object.
 
     :param expression: Expression to evaluate.
@@ -215,7 +215,7 @@ async def evaluate(
 
 
 async def get_heap_usage() -> typing.Tuple[float, float]:
-    '''
+    r'''
     Returns the JavaScript heap usage.
     It is the total usage of the corresponding isolate not scoped to a particular Runtime.
 
@@ -231,7 +231,7 @@ async def get_heap_usage() -> typing.Tuple[float, float]:
 
 
 async def get_isolate_id() -> str:
-    '''
+    r'''
     Returns the isolate id.
 
     **EXPERIMENTAL**
@@ -249,7 +249,7 @@ async def get_properties(
         generate_preview: typing.Optional[bool] = None,
         non_indexed_properties_only: typing.Optional[bool] = None
     ) -> typing.Tuple[typing.List[PropertyDescriptor], typing.Optional[typing.List[InternalPropertyDescriptor]], typing.Optional[typing.List[PrivatePropertyDescriptor]], typing.Optional[ExceptionDetails]]:
-    '''
+    r'''
     Returns properties of a given object. Object group of the result is inherited from the target
     object.
 
@@ -272,7 +272,7 @@ async def get_properties(
 async def global_lexical_scope_names(
         execution_context_id: typing.Optional[ExecutionContextId] = None
     ) -> typing.List[str]:
-    '''
+    r'''
     Returns all let, const and class variables from global scope.
 
     :param execution_context_id: *(Optional)* Specifies in which execution context to lookup global scope variables.
@@ -286,7 +286,7 @@ async def query_objects(
         prototype_object_id: RemoteObjectId,
         object_group: typing.Optional[str] = None
     ) -> RemoteObject:
-    '''
+    r'''
     :param prototype_object_id: Identifier of the prototype to return objects for.
     :param object_group: *(Optional)* Symbolic group name that can be used to release the results.
     :returns: Array with objects.
@@ -298,7 +298,7 @@ async def query_objects(
 async def release_object(
         object_id: RemoteObjectId
     ) -> None:
-    '''
+    r'''
     Releases remote object with given id.
 
     :param object_id: Identifier of the object to release.
@@ -310,7 +310,7 @@ async def release_object(
 async def release_object_group(
         object_group: str
     ) -> None:
-    '''
+    r'''
     Releases all remote objects that belong to a given group.
 
     :param object_group: Symbolic object group name.
@@ -322,7 +322,7 @@ async def release_object_group(
 async def remove_binding(
         name: str
     ) -> None:
-    '''
+    r'''
     This method does not remove binding function from global object but
     unsubscribes current runtime agent from Runtime.bindingCalled notifications.
 
@@ -335,7 +335,7 @@ async def remove_binding(
 
 
 async def run_if_waiting_for_debugger() -> None:
-    '''
+    r'''
     Tells inspected instance to run if it was waiting for debugger to attach.
     '''
     session = get_session_context('runtime.run_if_waiting_for_debugger')
@@ -352,7 +352,7 @@ async def run_script(
         generate_preview: typing.Optional[bool] = None,
         await_promise: typing.Optional[bool] = None
     ) -> typing.Tuple[RemoteObject, typing.Optional[ExceptionDetails]]:
-    '''
+    r'''
     Runs script with given id in a given context.
 
     :param script_id: Id of the script to run.
@@ -375,7 +375,7 @@ async def run_script(
 async def set_async_call_stack_depth(
         max_depth: int
     ) -> None:
-    '''
+    r'''
     Enables or disables async call stacks tracking.
 
     :param max_depth: Maximum depth of async call stacks. Setting to ```0``` will effectively disable collecting async call stacks (default).
@@ -387,7 +387,7 @@ async def set_async_call_stack_depth(
 async def set_custom_object_formatter_enabled(
         enabled: bool
     ) -> None:
-    '''
+    r'''
 
 
     **EXPERIMENTAL**
@@ -401,7 +401,7 @@ async def set_custom_object_formatter_enabled(
 async def set_max_call_stack_size_to_capture(
         size: int
     ) -> None:
-    '''
+    r'''
 
 
     **EXPERIMENTAL**
@@ -413,7 +413,7 @@ async def set_max_call_stack_size_to_capture(
 
 
 async def terminate_execution() -> None:
-    '''
+    r'''
     Terminate current or next JavaScript execution.
     Will cancel the termination when the outer-most script execution ends.
 

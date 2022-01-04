@@ -29,7 +29,7 @@ async def continue_request(
         headers: typing.Optional[typing.List[HeaderEntry]] = None,
         intercept_response: typing.Optional[bool] = None
     ) -> None:
-    '''
+    r'''
     Continues the request, optionally modifying some of its parameters.
 
     :param request_id: An id the client received in requestPaused event.
@@ -50,7 +50,7 @@ async def continue_response(
         response_headers: typing.Optional[typing.List[HeaderEntry]] = None,
         binary_response_headers: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Continues loading of the paused response, optionally modifying the
     response headers. If either responseCode or headers are modified, all of them
     must be present.
@@ -71,7 +71,7 @@ async def continue_with_auth(
         request_id: RequestId,
         auth_challenge_response: AuthChallengeResponse
     ) -> None:
-    '''
+    r'''
     Continues a request supplying authChallengeResponse following authRequired event.
 
     :param request_id: An id the client received in authRequired event.
@@ -82,7 +82,7 @@ async def continue_with_auth(
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables the fetch domain.
     '''
     session = get_session_context('fetch.disable')
@@ -93,7 +93,7 @@ async def enable(
         patterns: typing.Optional[typing.List[RequestPattern]] = None,
         handle_auth_requests: typing.Optional[bool] = None
     ) -> None:
-    '''
+    r'''
     Enables issuing of requestPaused events. A request will be paused until client
     calls one of failRequest, fulfillRequest or continueRequest/continueWithAuth.
 
@@ -108,7 +108,7 @@ async def fail_request(
         request_id: RequestId,
         error_reason: cdp.network.ErrorReason
     ) -> None:
-    '''
+    r'''
     Causes the request to fail with specified reason.
 
     :param request_id: An id the client received in requestPaused event.
@@ -126,7 +126,7 @@ async def fulfill_request(
         body: typing.Optional[str] = None,
         response_phrase: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Provides response to the request.
 
     :param request_id: An id the client received in requestPaused event.
@@ -143,7 +143,7 @@ async def fulfill_request(
 async def get_response_body(
         request_id: RequestId
     ) -> typing.Tuple[str, bool]:
-    '''
+    r'''
     Causes the body of the response to be received from the server and
     returned as a single string. May only be issued for a request that
     is paused in the Response stage and is mutually exclusive with
@@ -164,7 +164,7 @@ async def get_response_body(
 async def take_response_body_as_stream(
         request_id: RequestId
     ) -> cdp.io.StreamHandle:
-    '''
+    r'''
     Returns a handle to the stream representing the response body.
     The request must be paused in the HeadersReceived stage.
     Note that after this command the request can't be continued

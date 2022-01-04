@@ -87,7 +87,7 @@ async def add_compilation_cache(
         url: str,
         data: str
     ) -> None:
-    '''
+    r'''
     Seeds compilation cache for given url. Compilation cache does not survive
     cross-process navigation.
 
@@ -103,7 +103,7 @@ async def add_compilation_cache(
 async def add_script_to_evaluate_on_load(
         script_source: str
     ) -> ScriptIdentifier:
-    '''
+    r'''
 Deprecated, please use addScriptToEvaluateOnNewDocument instead.
 
 .. deprecated:: 1.3
@@ -124,7 +124,7 @@ async def add_script_to_evaluate_on_new_document(
         world_name: typing.Optional[str] = None,
         include_command_line_api: typing.Optional[bool] = None
     ) -> ScriptIdentifier:
-    '''
+    r'''
     Evaluates given script in every frame upon creation (before loading frame's scripts).
 
     :param source:
@@ -137,7 +137,7 @@ async def add_script_to_evaluate_on_new_document(
 
 
 async def bring_to_front() -> None:
-    '''
+    r'''
     Brings page to front (activates tab).
     '''
     session = get_session_context('page.bring_to_front')
@@ -151,7 +151,7 @@ async def capture_screenshot(
         from_surface: typing.Optional[bool] = None,
         capture_beyond_viewport: typing.Optional[bool] = None
     ) -> str:
-    '''
+    r'''
     Capture page screenshot.
 
     :param format_: *(Optional)* Image compression format (defaults to png).
@@ -168,7 +168,7 @@ async def capture_screenshot(
 async def capture_snapshot(
         format_: typing.Optional[str] = None
     ) -> str:
-    '''
+    r'''
     Returns a snapshot of the page as a string. For MHTML format, the serialization includes
     iframes, shadow DOM, external resources, and element-inline styles.
 
@@ -182,7 +182,7 @@ async def capture_snapshot(
 
 
 async def clear_compilation_cache() -> None:
-    '''
+    r'''
     Clears seeded compilation cache.
 
     **EXPERIMENTAL**
@@ -192,7 +192,7 @@ async def clear_compilation_cache() -> None:
 
 
 async def clear_device_metrics_override() -> None:
-    '''
+    r'''
 Clears the overridden device metrics.
 
 .. deprecated:: 1.3
@@ -206,7 +206,7 @@ Clears the overridden device metrics.
 
 
 async def clear_device_orientation_override() -> None:
-    '''
+    r'''
 Clears the overridden Device Orientation.
 
 .. deprecated:: 1.3
@@ -220,7 +220,7 @@ Clears the overridden Device Orientation.
 
 
 async def clear_geolocation_override() -> None:
-    '''
+    r'''
 Clears the overridden Geolocation Position and Error.
 
 .. deprecated:: 1.3
@@ -232,7 +232,7 @@ Clears the overridden Geolocation Position and Error.
 
 
 async def close() -> None:
-    '''
+    r'''
     Tries to close page, running its beforeunload hooks, if any.
 
     **EXPERIMENTAL**
@@ -242,7 +242,7 @@ async def close() -> None:
 
 
 async def crash() -> None:
-    '''
+    r'''
     Crashes renderer on the IO thread, generates minidumps.
 
     **EXPERIMENTAL**
@@ -256,7 +256,7 @@ async def create_isolated_world(
         world_name: typing.Optional[str] = None,
         grant_univeral_access: typing.Optional[bool] = None
     ) -> cdp.runtime.ExecutionContextId:
-    '''
+    r'''
     Creates an isolated world for the given frame.
 
     :param frame_id: Id of the frame in which the isolated world should be created.
@@ -272,7 +272,7 @@ async def delete_cookie(
         cookie_name: str,
         url: str
     ) -> None:
-    '''
+    r'''
 Deletes browser cookie with given name, domain and path.
 
 .. deprecated:: 1.3
@@ -289,7 +289,7 @@ Deletes browser cookie with given name, domain and path.
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables page domain notifications.
     '''
     session = get_session_context('page.disable')
@@ -297,7 +297,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables page domain notifications.
     '''
     session = get_session_context('page.enable')
@@ -308,7 +308,7 @@ async def generate_test_report(
         message: str,
         group: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Generates a report for testing.
 
     **EXPERIMENTAL**
@@ -321,7 +321,7 @@ async def generate_test_report(
 
 
 async def get_app_id() -> typing.Tuple[typing.Optional[str], typing.Optional[str]]:
-    '''
+    r'''
     Returns the unique (PWA) app id.
     Only returns values if the feature flag 'WebAppEnableManifestId' is enabled
 
@@ -337,7 +337,7 @@ async def get_app_id() -> typing.Tuple[typing.Optional[str], typing.Optional[str
 
 
 async def get_app_manifest() -> typing.Tuple[str, typing.List[AppManifestError], typing.Optional[str], typing.Optional[AppManifestParsedProperties]]:
-    '''
+    r'''
 
 
     :returns: A tuple with the following items:
@@ -352,7 +352,7 @@ async def get_app_manifest() -> typing.Tuple[str, typing.List[AppManifestError],
 
 
 async def get_cookies() -> typing.List[cdp.network.Cookie]:
-    '''
+    r'''
 Returns all browser cookies. Depending on the backend support, will return detailed cookie
 information in the ``cookies`` field.
 
@@ -369,7 +369,7 @@ information in the ``cookies`` field.
 
 
 async def get_frame_tree() -> FrameTree:
-    '''
+    r'''
     Returns present frame tree structure.
 
     :returns: Present frame tree structure.
@@ -379,7 +379,7 @@ async def get_frame_tree() -> FrameTree:
 
 
 async def get_installability_errors() -> typing.List[InstallabilityError]:
-    '''
+    r'''
 
 
     **EXPERIMENTAL**
@@ -391,7 +391,7 @@ async def get_installability_errors() -> typing.List[InstallabilityError]:
 
 
 async def get_layout_metrics() -> typing.Tuple[LayoutViewport, VisualViewport, cdp.dom.Rect, LayoutViewport, VisualViewport, cdp.dom.Rect]:
-    '''
+    r'''
     Returns metrics relating to the layouting of the page, such as viewport bounds/scale.
 
     :returns: A tuple with the following items:
@@ -408,7 +408,7 @@ async def get_layout_metrics() -> typing.Tuple[LayoutViewport, VisualViewport, c
 
 
 async def get_manifest_icons() -> typing.Optional[str]:
-    '''
+    r'''
 
 
     **EXPERIMENTAL**
@@ -420,7 +420,7 @@ async def get_manifest_icons() -> typing.Optional[str]:
 
 
 async def get_navigation_history() -> typing.Tuple[int, typing.List[NavigationEntry]]:
-    '''
+    r'''
     Returns navigation history for the current page.
 
     :returns: A tuple with the following items:
@@ -435,7 +435,7 @@ async def get_navigation_history() -> typing.Tuple[int, typing.List[NavigationEn
 async def get_origin_trials(
         frame_id: FrameId
     ) -> typing.List[OriginTrial]:
-    '''
+    r'''
     Get Origin Trials on given frame.
 
     **EXPERIMENTAL**
@@ -450,7 +450,7 @@ async def get_origin_trials(
 async def get_permissions_policy_state(
         frame_id: FrameId
     ) -> typing.List[PermissionsPolicyFeatureState]:
-    '''
+    r'''
     Get Permissions Policy state on given frame.
 
     **EXPERIMENTAL**
@@ -466,7 +466,7 @@ async def get_resource_content(
         frame_id: FrameId,
         url: str
     ) -> typing.Tuple[str, bool]:
-    '''
+    r'''
     Returns content of the given resource.
 
     **EXPERIMENTAL**
@@ -483,7 +483,7 @@ async def get_resource_content(
 
 
 async def get_resource_tree() -> FrameResourceTree:
-    '''
+    r'''
     Returns present frame / resource tree structure.
 
     **EXPERIMENTAL**
@@ -498,7 +498,7 @@ async def handle_java_script_dialog(
         accept: bool,
         prompt_text: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).
 
     :param accept: Whether to accept or dismiss the dialog.
@@ -515,7 +515,7 @@ async def navigate(
         frame_id: typing.Optional[FrameId] = None,
         referrer_policy: typing.Optional[ReferrerPolicy] = None
     ) -> typing.Tuple[FrameId, typing.Optional[cdp.network.LoaderId], typing.Optional[str]]:
-    '''
+    r'''
     Navigates current page to the given URL.
 
     :param url: URL to navigate the page to.
@@ -536,7 +536,7 @@ async def navigate(
 async def navigate_to_history_entry(
         entry_id: int
     ) -> None:
-    '''
+    r'''
     Navigates current page to the given history entry.
 
     :param entry_id: Unique id of the entry to navigate to.
@@ -563,7 +563,7 @@ async def print_to_pdf(
         prefer_css_page_size: typing.Optional[bool] = None,
         transfer_mode: typing.Optional[str] = None
     ) -> typing.Tuple[str, typing.Optional[cdp.io.StreamHandle]]:
-    '''
+    r'''
     Print page as PDF.
 
     :param landscape: *(Optional)* Paper orientation. Defaults to false.
@@ -594,7 +594,7 @@ async def print_to_pdf(
 async def produce_compilation_cache(
         scripts: typing.List[CompilationCacheParams]
     ) -> None:
-    '''
+    r'''
     Requests backend to produce compilation cache for the specified scripts.
     ``scripts`` are appeneded to the list of scripts for which the cache
     would be produced. The list may be reset during page navigation.
@@ -614,7 +614,7 @@ async def reload(
         ignore_cache: typing.Optional[bool] = None,
         script_to_evaluate_on_load: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Reloads given page optionally ignoring the cache.
 
     :param ignore_cache: *(Optional)* If true, browser cache is ignored (as if the user pressed Shift+refresh).
@@ -627,7 +627,7 @@ async def reload(
 async def remove_script_to_evaluate_on_load(
         identifier: ScriptIdentifier
     ) -> None:
-    '''
+    r'''
 Deprecated, please use removeScriptToEvaluateOnNewDocument instead.
 
 .. deprecated:: 1.3
@@ -645,7 +645,7 @@ Deprecated, please use removeScriptToEvaluateOnNewDocument instead.
 async def remove_script_to_evaluate_on_new_document(
         identifier: ScriptIdentifier
     ) -> None:
-    '''
+    r'''
     Removes given script from the list.
 
     :param identifier:
@@ -655,7 +655,7 @@ async def remove_script_to_evaluate_on_new_document(
 
 
 async def reset_navigation_history() -> None:
-    '''
+    r'''
     Resets navigation history for the current page.
     '''
     session = get_session_context('page.reset_navigation_history')
@@ -665,7 +665,7 @@ async def reset_navigation_history() -> None:
 async def screencast_frame_ack(
         session_id: int
     ) -> None:
-    '''
+    r'''
     Acknowledges that a screencast frame has been received by the frontend.
 
     **EXPERIMENTAL**
@@ -683,7 +683,7 @@ async def search_in_resource(
         case_sensitive: typing.Optional[bool] = None,
         is_regex: typing.Optional[bool] = None
     ) -> typing.List[cdp.debugger.SearchMatch]:
-    '''
+    r'''
     Searches for given string in resource content.
 
     **EXPERIMENTAL**
@@ -702,7 +702,7 @@ async def search_in_resource(
 async def set_ad_blocking_enabled(
         enabled: bool
     ) -> None:
-    '''
+    r'''
     Enable Chrome's experimental ad filter on all sites.
 
     **EXPERIMENTAL**
@@ -716,7 +716,7 @@ async def set_ad_blocking_enabled(
 async def set_bypass_csp(
         enabled: bool
     ) -> None:
-    '''
+    r'''
     Enable page Content Security Policy by-passing.
 
     **EXPERIMENTAL**
@@ -741,7 +741,7 @@ async def set_device_metrics_override(
         screen_orientation: typing.Optional[cdp.emulation.ScreenOrientation] = None,
         viewport: typing.Optional[Viewport] = None
     ) -> None:
-    '''
+    r'''
 Overrides the values of device screen dimensions (window.screen.width, window.screen.height,
 window.innerWidth, window.innerHeight, and "device-width"/"device-height"-related CSS media
 query results).
@@ -774,7 +774,7 @@ async def set_device_orientation_override(
         beta: float,
         gamma: float
     ) -> None:
-    '''
+    r'''
 Overrides the Device Orientation.
 
 .. deprecated:: 1.3
@@ -795,7 +795,7 @@ async def set_document_content(
         frame_id: FrameId,
         html: str
     ) -> None:
-    '''
+    r'''
     Sets given markup as the document's HTML.
 
     :param frame_id: Frame id to set HTML for.
@@ -809,7 +809,7 @@ async def set_download_behavior(
         behavior: str,
         download_path: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
 Set the behavior when downloading a file.
 
 .. deprecated:: 1.3
@@ -828,7 +828,7 @@ Set the behavior when downloading a file.
 async def set_font_families(
         font_families: FontFamilies
     ) -> None:
-    '''
+    r'''
     Set generic font families.
 
     **EXPERIMENTAL**
@@ -842,7 +842,7 @@ async def set_font_families(
 async def set_font_sizes(
         font_sizes: FontSizes
     ) -> None:
-    '''
+    r'''
     Set default font sizes.
 
     **EXPERIMENTAL**
@@ -858,7 +858,7 @@ async def set_geolocation_override(
         longitude: typing.Optional[float] = None,
         accuracy: typing.Optional[float] = None
     ) -> None:
-    '''
+    r'''
 Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position
 unavailable.
 
@@ -877,7 +877,7 @@ unavailable.
 async def set_intercept_file_chooser_dialog(
         enabled: bool
     ) -> None:
-    '''
+    r'''
     Intercept file chooser requests and transfer control to protocol clients.
     When file chooser interception is enabled, native file chooser dialog is not shown.
     Instead, a protocol event ``Page.fileChooserOpened`` is emitted.
@@ -893,7 +893,7 @@ async def set_intercept_file_chooser_dialog(
 async def set_lifecycle_events_enabled(
         enabled: bool
     ) -> None:
-    '''
+    r'''
     Controls whether page will emit lifecycle events.
 
     **EXPERIMENTAL**
@@ -907,7 +907,7 @@ async def set_lifecycle_events_enabled(
 async def set_spc_transaction_mode(
         mode: str
     ) -> None:
-    '''
+    r'''
     Sets the Secure Payment Confirmation transaction mode.
     https://w3c.github.io/secure-payment-confirmation/#sctn-automation-set-spc-transaction-mode
 
@@ -923,7 +923,7 @@ async def set_touch_emulation_enabled(
         enabled: bool,
         configuration: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
 Toggles mouse event-based touch event emulation.
 
 .. deprecated:: 1.3
@@ -942,7 +942,7 @@ Toggles mouse event-based touch event emulation.
 async def set_web_lifecycle_state(
         state: str
     ) -> None:
-    '''
+    r'''
     Tries to update the web lifecycle state of the page.
     It will transition the page to the given state according to:
     https://github.com/WICG/web-lifecycle/
@@ -962,7 +962,7 @@ async def start_screencast(
         max_height: typing.Optional[int] = None,
         every_nth_frame: typing.Optional[int] = None
     ) -> None:
-    '''
+    r'''
     Starts sending each frame using the ``screencastFrame`` event.
 
     **EXPERIMENTAL**
@@ -978,7 +978,7 @@ async def start_screencast(
 
 
 async def stop_loading() -> None:
-    '''
+    r'''
     Force the page stop all navigations and pending resource fetches.
     '''
     session = get_session_context('page.stop_loading')
@@ -986,7 +986,7 @@ async def stop_loading() -> None:
 
 
 async def stop_screencast() -> None:
-    '''
+    r'''
     Stops sending each frame in the ``screencastFrame``.
 
     **EXPERIMENTAL**
@@ -996,7 +996,7 @@ async def stop_screencast() -> None:
 
 
 async def wait_for_debugger() -> None:
-    '''
+    r'''
     Pauses page execution. Can be resumed using generic Runtime.runIfWaitingForDebugger.
 
     **EXPERIMENTAL**

@@ -21,7 +21,7 @@ from cdp.performance_timeline import (
 async def enable(
         event_types: typing.List[str]
     ) -> None:
-    '''
+    r'''
     Previously buffered events would be reported before method returns.
     See also: timelineEventAdded
 

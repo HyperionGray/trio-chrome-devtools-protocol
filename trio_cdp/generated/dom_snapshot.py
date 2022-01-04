@@ -35,7 +35,7 @@ async def capture_snapshot(
         include_blended_background_colors: typing.Optional[bool] = None,
         include_text_color_opacities: typing.Optional[bool] = None
     ) -> typing.Tuple[typing.List[DocumentSnapshot], typing.List[str]]:
-    '''
+    r'''
     Returns a document snapshot, including the full DOM tree of the root node (including iframes,
     template contents, and imported documents) in a flattened array, as well as layout and
     white-listed computed style information for the nodes. Shadow DOM in the returned DOM tree is
@@ -56,7 +56,7 @@ async def capture_snapshot(
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables DOM snapshot agent for the given page.
     '''
     session = get_session_context('dom_snapshot.disable')
@@ -64,7 +64,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables DOM snapshot agent for the given page.
     '''
     session = get_session_context('dom_snapshot.enable')
@@ -77,7 +77,7 @@ async def get_snapshot(
         include_paint_order: typing.Optional[bool] = None,
         include_user_agent_shadow_tree: typing.Optional[bool] = None
     ) -> typing.Tuple[typing.List[DOMNode], typing.List[LayoutTreeNode], typing.List[ComputedStyle]]:
-    '''
+    r'''
 Returns a document snapshot, including the full DOM tree of the root node (including iframes,
 template contents, and imported documents) in a flattened array, as well as layout and
 white-listed computed style information for the nodes. Shadow DOM in the returned DOM tree is

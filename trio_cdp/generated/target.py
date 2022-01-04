@@ -27,7 +27,7 @@ from cdp.target import (
 async def activate_target(
         target_id: TargetID
     ) -> None:
-    '''
+    r'''
     Activates (focuses) the target.
 
     :param target_id:
@@ -37,7 +37,7 @@ async def activate_target(
 
 
 async def attach_to_browser_target() -> SessionID:
-    '''
+    r'''
     Attaches to the browser target, only uses flat sessionId mode.
 
     **EXPERIMENTAL**
@@ -52,7 +52,7 @@ async def attach_to_target(
         target_id: TargetID,
         flatten: typing.Optional[bool] = None
     ) -> SessionID:
-    '''
+    r'''
     Attaches to the target with given id.
 
     :param target_id:
@@ -67,7 +67,7 @@ async def auto_attach_related(
         target_id: TargetID,
         wait_for_debugger_on_start: bool
     ) -> None:
-    '''
+    r'''
     Adds the specified target to the list of targets that will be monitored for any related target
     creation (such as child frames, child workers and new versions of service worker) and reported
     through ``attachedToTarget``. The specified target is also auto-attached.
@@ -86,7 +86,7 @@ async def auto_attach_related(
 async def close_target(
         target_id: TargetID
     ) -> bool:
-    '''
+    r'''
     Closes the target. If the target is a page that gets closed too.
 
     :param target_id:
@@ -102,7 +102,7 @@ async def create_browser_context(
         proxy_bypass_list: typing.Optional[str] = None,
         origins_with_universal_network_access: typing.Optional[typing.List[str]] = None
     ) -> cdp.browser.BrowserContextID:
-    '''
+    r'''
     Creates a new empty BrowserContext. Similar to an incognito profile but you can have more than
     one.
 
@@ -127,7 +127,7 @@ async def create_target(
         new_window: typing.Optional[bool] = None,
         background: typing.Optional[bool] = None
     ) -> TargetID:
-    '''
+    r'''
     Creates a new page.
 
     :param url: The initial URL the page will be navigated to. An empty string indicates about:blank.
@@ -147,7 +147,7 @@ async def detach_from_target(
         session_id: typing.Optional[SessionID] = None,
         target_id: typing.Optional[TargetID] = None
     ) -> None:
-    '''
+    r'''
     Detaches session with given id.
 
     :param session_id: *(Optional)* Session to detach.
@@ -160,7 +160,7 @@ async def detach_from_target(
 async def dispose_browser_context(
         browser_context_id: cdp.browser.BrowserContextID
     ) -> None:
-    '''
+    r'''
     Deletes a BrowserContext. All the belonging pages will be closed without calling their
     beforeunload hooks.
 
@@ -176,7 +176,7 @@ async def expose_dev_tools_protocol(
         target_id: TargetID,
         binding_name: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Inject object to the target's main frame that provides a communication
     channel with browser target.
 
@@ -196,7 +196,7 @@ async def expose_dev_tools_protocol(
 
 
 async def get_browser_contexts() -> typing.List[cdp.browser.BrowserContextID]:
-    '''
+    r'''
     Returns all browser contexts created with ``Target.createBrowserContext`` method.
 
     **EXPERIMENTAL**
@@ -210,7 +210,7 @@ async def get_browser_contexts() -> typing.List[cdp.browser.BrowserContextID]:
 async def get_target_info(
         target_id: typing.Optional[TargetID] = None
     ) -> TargetInfo:
-    '''
+    r'''
     Returns information about a target.
 
     **EXPERIMENTAL**
@@ -223,7 +223,7 @@ async def get_target_info(
 
 
 async def get_targets() -> typing.List[TargetInfo]:
-    '''
+    r'''
     Retrieves a list of available targets.
 
     :returns: The list of targets.
@@ -237,7 +237,7 @@ async def send_message_to_target(
         session_id: typing.Optional[SessionID] = None,
         target_id: typing.Optional[TargetID] = None
     ) -> None:
-    '''
+    r'''
 Sends protocol message over session with given id.
 Consider using flat mode instead; see commands attachToTarget, setAutoAttach,
 and crbug.com/991325.
@@ -259,7 +259,7 @@ async def set_auto_attach(
         wait_for_debugger_on_start: bool,
         flatten: typing.Optional[bool] = None
     ) -> None:
-    '''
+    r'''
     Controls whether to automatically attach to new targets which are considered to be related to
     this one. When turned on, attaches to all existing related targets as well. When turned off,
     automatically detaches from all currently attached targets.
@@ -279,7 +279,7 @@ async def set_auto_attach(
 async def set_discover_targets(
         discover: bool
     ) -> None:
-    '''
+    r'''
     Controls whether to discover available targets and notify via
     ``targetCreated/targetInfoChanged/targetDestroyed`` events.
 
@@ -292,7 +292,7 @@ async def set_discover_targets(
 async def set_remote_locations(
         locations: typing.List[RemoteLocation]
     ) -> None:
-    '''
+    r'''
     Enables target discovery for the specified locations, when ``setDiscoverTargets`` was set to
     ``true``.
 

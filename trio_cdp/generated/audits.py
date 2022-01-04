@@ -55,7 +55,7 @@ from cdp.audits import (
 async def check_contrast(
         report_aaa: typing.Optional[bool] = None
     ) -> None:
-    '''
+    r'''
     Runs the contrast check for the target page. Found issues are reported
     using Audits.issueAdded event.
 
@@ -66,7 +66,7 @@ async def check_contrast(
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables issues domain, prevents further issues from being reported to the client.
     '''
     session = get_session_context('audits.disable')
@@ -74,7 +74,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables issues domain, sends the issues collected so far to the client by means of the
     ``issueAdded`` event.
     '''
@@ -88,7 +88,7 @@ async def get_encoded_response(
         quality: typing.Optional[float] = None,
         size_only: typing.Optional[bool] = None
     ) -> typing.Tuple[typing.Optional[str], int, int]:
-    '''
+    r'''
     Returns the response body and size if it were re-encoded with the specified settings. Only
     applies to images.
 

@@ -17,7 +17,7 @@ from cdp.log import (
 
 
 async def clear() -> None:
-    '''
+    r'''
     Clears the log.
     '''
     session = get_session_context('log.clear')
@@ -25,7 +25,7 @@ async def clear() -> None:
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables log domain, prevents further log entries from being reported to the client.
     '''
     session = get_session_context('log.disable')
@@ -33,7 +33,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables log domain, sends the entries collected so far to the client by means of the
     ``entryAdded`` notification.
     '''
@@ -44,7 +44,7 @@ async def enable() -> None:
 async def start_violations_report(
         config: typing.List[ViolationSetting]
     ) -> None:
-    '''
+    r'''
     start violation reporting.
 
     :param config: Configuration for violations.
@@ -54,7 +54,7 @@ async def start_violations_report(
 
 
 async def stop_violations_report() -> None:
-    '''
+    r'''
     Stop violation reporting.
     '''
     session = get_session_context('log.stop_violations_report')

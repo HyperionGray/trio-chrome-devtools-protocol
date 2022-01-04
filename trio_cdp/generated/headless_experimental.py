@@ -21,7 +21,7 @@ async def begin_frame(
         no_display_updates: typing.Optional[bool] = None,
         screenshot: typing.Optional[ScreenshotParams] = None
     ) -> typing.Tuple[bool, typing.Optional[str]]:
-    '''
+    r'''
     Sends a BeginFrame to the target and returns when the frame was completed. Optionally captures a
     screenshot from the resulting frame. Requires that the target was created with enabled
     BeginFrameControl. Designed for use with --run-all-compositor-stages-before-draw, see also
@@ -41,7 +41,7 @@ async def begin_frame(
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables headless events for the target.
     '''
     session = get_session_context('headless_experimental.disable')
@@ -49,7 +49,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables headless events for the target.
     '''
     session = get_session_context('headless_experimental.enable')

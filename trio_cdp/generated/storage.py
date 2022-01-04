@@ -23,7 +23,7 @@ from cdp.storage import (
 async def clear_cookies(
         browser_context_id: typing.Optional[cdp.browser.BrowserContextID] = None
     ) -> None:
-    '''
+    r'''
     Clears cookies.
 
     :param browser_context_id: *(Optional)* Browser context to use when called on the browser endpoint.
@@ -36,7 +36,7 @@ async def clear_data_for_origin(
         origin: str,
         storage_types: str
     ) -> None:
-    '''
+    r'''
     Clears storage for origin.
 
     :param origin: Security origin.
@@ -49,7 +49,7 @@ async def clear_data_for_origin(
 async def clear_trust_tokens(
         issuer_origin: str
     ) -> bool:
-    '''
+    r'''
     Removes all Trust Tokens issued by the provided issuerOrigin.
     Leaves other stored data, including the issuer's Redemption Records, intact.
 
@@ -65,7 +65,7 @@ async def clear_trust_tokens(
 async def get_cookies(
         browser_context_id: typing.Optional[cdp.browser.BrowserContextID] = None
     ) -> typing.List[cdp.network.Cookie]:
-    '''
+    r'''
     Returns all browser cookies.
 
     :param browser_context_id: *(Optional)* Browser context to use when called on the browser endpoint.
@@ -76,7 +76,7 @@ async def get_cookies(
 
 
 async def get_trust_tokens() -> typing.List[TrustTokens]:
-    '''
+    r'''
     Returns the number of stored Trust Tokens per issuer for the
     current browsing context.
 
@@ -91,7 +91,7 @@ async def get_trust_tokens() -> typing.List[TrustTokens]:
 async def get_usage_and_quota(
         origin: str
     ) -> typing.Tuple[float, float, bool, typing.List[UsageForType]]:
-    '''
+    r'''
     Returns usage and quota in bytes.
 
     :param origin: Security origin.
@@ -110,7 +110,7 @@ async def override_quota_for_origin(
         origin: str,
         quota_size: typing.Optional[float] = None
     ) -> None:
-    '''
+    r'''
     Override quota for the specified origin
 
     **EXPERIMENTAL**
@@ -126,7 +126,7 @@ async def set_cookies(
         cookies: typing.List[cdp.network.CookieParam],
         browser_context_id: typing.Optional[cdp.browser.BrowserContextID] = None
     ) -> None:
-    '''
+    r'''
     Sets given cookies.
 
     :param cookies: Cookies to be set.
@@ -139,7 +139,7 @@ async def set_cookies(
 async def track_cache_storage_for_origin(
         origin: str
     ) -> None:
-    '''
+    r'''
     Registers origin to be notified when an update occurs to its cache storage list.
 
     :param origin: Security origin.
@@ -151,7 +151,7 @@ async def track_cache_storage_for_origin(
 async def track_indexed_db_for_origin(
         origin: str
     ) -> None:
-    '''
+    r'''
     Registers origin to be notified when an update occurs to its IndexedDB.
 
     :param origin: Security origin.
@@ -163,7 +163,7 @@ async def track_indexed_db_for_origin(
 async def untrack_cache_storage_for_origin(
         origin: str
     ) -> None:
-    '''
+    r'''
     Unregisters origin from receiving notifications for cache storage.
 
     :param origin: Security origin.
@@ -175,7 +175,7 @@ async def untrack_cache_storage_for_origin(
 async def untrack_indexed_db_for_origin(
         origin: str
     ) -> None:
-    '''
+    r'''
     Unregisters origin from receiving notifications for IndexedDB.
 
     :param origin: Security origin.

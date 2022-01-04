@@ -26,7 +26,7 @@ from cdp.accessibility import (
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables the accessibility domain.
     '''
     session = get_session_context('accessibility.disable')
@@ -34,7 +34,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables the accessibility domain which causes ``AXNodeId``'s to remain consistent between method calls.
     This turns on accessibility for the page, which can impact performance until accessibility is disabled.
     '''
@@ -47,7 +47,7 @@ async def get_ax_node_and_ancestors(
         backend_node_id: typing.Optional[cdp.dom.BackendNodeId] = None,
         object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None
     ) -> typing.List[AXNode]:
-    '''
+    r'''
     Fetches a node and all ancestors up to and including the root.
     Requires ``enable()`` to have been called previously.
 
@@ -66,7 +66,7 @@ async def get_child_ax_nodes(
         id_: AXNodeId,
         frame_id: typing.Optional[cdp.page.FrameId] = None
     ) -> typing.List[AXNode]:
-    '''
+    r'''
     Fetches a particular accessibility node by AXNodeId.
     Requires ``enable()`` to have been called previously.
 
@@ -85,7 +85,7 @@ async def get_full_ax_tree(
         max_depth: typing.Optional[int] = None,
         frame_id: typing.Optional[cdp.page.FrameId] = None
     ) -> typing.List[AXNode]:
-    '''
+    r'''
     Fetches the entire accessibility tree for the root Document
 
     **EXPERIMENTAL**
@@ -105,7 +105,7 @@ async def get_partial_ax_tree(
         object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None,
         fetch_relatives: typing.Optional[bool] = None
     ) -> typing.List[AXNode]:
-    '''
+    r'''
     Fetches the accessibility node and partial accessibility tree for this DOM node, if it exists.
 
     **EXPERIMENTAL**
@@ -123,7 +123,7 @@ async def get_partial_ax_tree(
 async def get_root_ax_node(
         frame_id: typing.Optional[cdp.page.FrameId] = None
     ) -> AXNode:
-    '''
+    r'''
     Fetches the root node.
     Requires ``enable()`` to have been called previously.
 
@@ -143,7 +143,7 @@ async def query_ax_tree(
         accessible_name: typing.Optional[str] = None,
         role: typing.Optional[str] = None
     ) -> typing.List[AXNode]:
-    '''
+    r'''
     Query a DOM node's accessibility subtree for accessible name and role.
     This command computes the name and role for all nodes in the subtree, including those that are
     ignored for accessibility, and returns those that mactch the specified name and role. If no DOM

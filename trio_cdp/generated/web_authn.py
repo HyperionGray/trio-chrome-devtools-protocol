@@ -23,7 +23,7 @@ async def add_credential(
         authenticator_id: AuthenticatorId,
         credential: Credential
     ) -> None:
-    '''
+    r'''
     Adds the credential to the specified authenticator.
 
     :param authenticator_id:
@@ -36,7 +36,7 @@ async def add_credential(
 async def add_virtual_authenticator(
         options: VirtualAuthenticatorOptions
     ) -> AuthenticatorId:
-    '''
+    r'''
     Creates and adds a virtual authenticator.
 
     :param options:
@@ -49,7 +49,7 @@ async def add_virtual_authenticator(
 async def clear_credentials(
         authenticator_id: AuthenticatorId
     ) -> None:
-    '''
+    r'''
     Clears all the credentials from the specified device.
 
     :param authenticator_id:
@@ -59,7 +59,7 @@ async def clear_credentials(
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disable the WebAuthn domain.
     '''
     session = get_session_context('web_authn.disable')
@@ -67,7 +67,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enable the WebAuthn domain and start intercepting credential storage and
     retrieval with a virtual authenticator.
     '''
@@ -79,7 +79,7 @@ async def get_credential(
         authenticator_id: AuthenticatorId,
         credential_id: str
     ) -> Credential:
-    '''
+    r'''
     Returns a single credential stored in the given virtual authenticator that
     matches the credential ID.
 
@@ -94,7 +94,7 @@ async def get_credential(
 async def get_credentials(
         authenticator_id: AuthenticatorId
     ) -> typing.List[Credential]:
-    '''
+    r'''
     Returns all the credentials stored in the given virtual authenticator.
 
     :param authenticator_id:
@@ -108,7 +108,7 @@ async def remove_credential(
         authenticator_id: AuthenticatorId,
         credential_id: str
     ) -> None:
-    '''
+    r'''
     Removes a credential from the authenticator.
 
     :param authenticator_id:
@@ -121,7 +121,7 @@ async def remove_credential(
 async def remove_virtual_authenticator(
         authenticator_id: AuthenticatorId
     ) -> None:
-    '''
+    r'''
     Removes the given authenticator.
 
     :param authenticator_id:
@@ -134,7 +134,7 @@ async def set_automatic_presence_simulation(
         authenticator_id: AuthenticatorId,
         enabled: bool
     ) -> None:
-    '''
+    r'''
     Sets whether tests of user presence will succeed immediately (if true) or fail to resolve (if false) for an authenticator.
     The default is true.
 
@@ -149,7 +149,7 @@ async def set_user_verified(
         authenticator_id: AuthenticatorId,
         is_user_verified: bool
     ) -> None:
-    '''
+    r'''
     Sets whether User Verification succeeds or fails for an authenticator.
     The default is true.
 

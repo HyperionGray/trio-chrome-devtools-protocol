@@ -12,7 +12,7 @@ def test_dom_query_selector():
                 node_id: NodeId,
                 selector: str
             ) -> NodeId:
-            '''
+            r'''
             Executes ``querySelector`` on a given node.
 
             :param node_id: Id of the node to query upon.
@@ -29,7 +29,7 @@ def test_dom_query_selector():
 def test_accessibility_disable():
     expected = dedent("""\
         async def disable() -> None:
-            '''
+            r'''
             Disables the accessibility domain.
             '''
             session = get_session_context('accessibility.disable')
@@ -48,7 +48,7 @@ def test_accessibility_get_partial_ax_tree():
                 object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None,
                 fetch_relatives: typing.Optional[bool] = None
             ) -> typing.List[AXNode]:
-            '''
+            r'''
             Fetches the accessibility node and partial accessibility tree for this DOM node, if it exists.
 
             **EXPERIMENTAL**

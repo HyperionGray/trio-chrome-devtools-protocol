@@ -29,7 +29,7 @@ async def cancel_download(
         guid: str,
         browser_context_id: typing.Optional[BrowserContextID] = None
     ) -> None:
-    '''
+    r'''
     Cancel a download if in progress
 
     **EXPERIMENTAL**
@@ -42,7 +42,7 @@ async def cancel_download(
 
 
 async def close() -> None:
-    '''
+    r'''
     Close browser gracefully.
     '''
     session = get_session_context('browser.close')
@@ -50,7 +50,7 @@ async def close() -> None:
 
 
 async def crash() -> None:
-    '''
+    r'''
     Crashes browser on the main thread.
 
     **EXPERIMENTAL**
@@ -60,7 +60,7 @@ async def crash() -> None:
 
 
 async def crash_gpu_process() -> None:
-    '''
+    r'''
     Crashes GPU process.
 
     **EXPERIMENTAL**
@@ -72,7 +72,7 @@ async def crash_gpu_process() -> None:
 async def execute_browser_command(
         command_id: BrowserCommandId
     ) -> None:
-    '''
+    r'''
     Invoke custom browser commands used by telemetry.
 
     **EXPERIMENTAL**
@@ -84,7 +84,7 @@ async def execute_browser_command(
 
 
 async def get_browser_command_line() -> typing.List[str]:
-    '''
+    r'''
     Returns the command line switches for the browser process if, and only if
     --enable-automation is on the commandline.
 
@@ -100,7 +100,7 @@ async def get_histogram(
         name: str,
         delta: typing.Optional[bool] = None
     ) -> Histogram:
-    '''
+    r'''
     Get a Chrome histogram by name.
 
     **EXPERIMENTAL**
@@ -117,7 +117,7 @@ async def get_histograms(
         query: typing.Optional[str] = None,
         delta: typing.Optional[bool] = None
     ) -> typing.List[Histogram]:
-    '''
+    r'''
     Get Chrome histograms.
 
     **EXPERIMENTAL**
@@ -131,7 +131,7 @@ async def get_histograms(
 
 
 async def get_version() -> typing.Tuple[str, str, str, str, str]:
-    '''
+    r'''
     Returns version information.
 
     :returns: A tuple with the following items:
@@ -149,7 +149,7 @@ async def get_version() -> typing.Tuple[str, str, str, str, str]:
 async def get_window_bounds(
         window_id: WindowID
     ) -> Bounds:
-    '''
+    r'''
     Get position and size of the browser window.
 
     **EXPERIMENTAL**
@@ -164,7 +164,7 @@ async def get_window_bounds(
 async def get_window_for_target(
         target_id: typing.Optional[cdp.target.TargetID] = None
     ) -> typing.Tuple[WindowID, Bounds]:
-    '''
+    r'''
     Get the browser window that contains the devtools target.
 
     **EXPERIMENTAL**
@@ -184,7 +184,7 @@ async def grant_permissions(
         origin: typing.Optional[str] = None,
         browser_context_id: typing.Optional[BrowserContextID] = None
     ) -> None:
-    '''
+    r'''
     Grant specific permissions to the given origin and reject all others.
 
     **EXPERIMENTAL**
@@ -200,7 +200,7 @@ async def grant_permissions(
 async def reset_permissions(
         browser_context_id: typing.Optional[BrowserContextID] = None
     ) -> None:
-    '''
+    r'''
     Reset all permission management for all origins.
 
     **EXPERIMENTAL**
@@ -215,7 +215,7 @@ async def set_dock_tile(
         badge_label: typing.Optional[str] = None,
         image: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Set dock tile details, platform-specific.
 
     **EXPERIMENTAL**
@@ -233,7 +233,7 @@ async def set_download_behavior(
         download_path: typing.Optional[str] = None,
         events_enabled: typing.Optional[bool] = None
     ) -> None:
-    '''
+    r'''
     Set the behavior when downloading a file.
 
     **EXPERIMENTAL**
@@ -253,7 +253,7 @@ async def set_permission(
         origin: typing.Optional[str] = None,
         browser_context_id: typing.Optional[BrowserContextID] = None
     ) -> None:
-    '''
+    r'''
     Set permission settings for given origin.
 
     **EXPERIMENTAL**
@@ -271,7 +271,7 @@ async def set_window_bounds(
         window_id: WindowID,
         bounds: Bounds
     ) -> None:
-    '''
+    r'''
     Set position and/or size of the browser window.
 
     **EXPERIMENTAL**

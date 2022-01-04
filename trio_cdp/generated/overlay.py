@@ -37,7 +37,7 @@ from cdp.overlay import (
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables domain notifications.
     '''
     session = get_session_context('overlay.disable')
@@ -45,7 +45,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables domain notifications.
     '''
     session = get_session_context('overlay.enable')
@@ -55,7 +55,7 @@ async def enable() -> None:
 async def get_grid_highlight_objects_for_test(
         node_ids: typing.List[cdp.dom.NodeId]
     ) -> dict:
-    '''
+    r'''
     For Persistent Grid testing.
 
     :param node_ids: Ids of the node to get highlight object for.
@@ -72,7 +72,7 @@ async def get_highlight_object_for_test(
         color_format: typing.Optional[ColorFormat] = None,
         show_accessibility_info: typing.Optional[bool] = None
     ) -> dict:
-    '''
+    r'''
     For testing.
 
     :param node_id: Id of the node to get highlight object for.
@@ -89,7 +89,7 @@ async def get_highlight_object_for_test(
 async def get_source_order_highlight_object_for_test(
         node_id: cdp.dom.NodeId
     ) -> dict:
-    '''
+    r'''
     For Source Order Viewer testing.
 
     :param node_id: Id of the node to highlight.
@@ -100,7 +100,7 @@ async def get_source_order_highlight_object_for_test(
 
 
 async def hide_highlight() -> None:
-    '''
+    r'''
     Hides any highlight.
     '''
     session = get_session_context('overlay.hide_highlight')
@@ -112,7 +112,7 @@ async def highlight_frame(
         content_color: typing.Optional[cdp.dom.RGBA] = None,
         content_outline_color: typing.Optional[cdp.dom.RGBA] = None
     ) -> None:
-    '''
+    r'''
 Highlights owner element of the frame with given id.
 Deprecated: Doesn't work reliablity and cannot be fixed due to process
 separatation (the owner node might be in a different process). Determine
@@ -137,7 +137,7 @@ async def highlight_node(
         object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None,
         selector: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or
     objectId must be specified.
 
@@ -156,7 +156,7 @@ async def highlight_quad(
         color: typing.Optional[cdp.dom.RGBA] = None,
         outline_color: typing.Optional[cdp.dom.RGBA] = None
     ) -> None:
-    '''
+    r'''
     Highlights given quad. Coordinates are absolute with respect to the main frame viewport.
 
     :param quad: Quad to highlight
@@ -175,7 +175,7 @@ async def highlight_rect(
         color: typing.Optional[cdp.dom.RGBA] = None,
         outline_color: typing.Optional[cdp.dom.RGBA] = None
     ) -> None:
-    '''
+    r'''
     Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.
 
     :param x: X coordinate
@@ -195,7 +195,7 @@ async def highlight_source_order(
         backend_node_id: typing.Optional[cdp.dom.BackendNodeId] = None,
         object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None
     ) -> None:
-    '''
+    r'''
     Highlights the source order of the children of the DOM node with given id or with the given
     JavaScript object wrapper. Either nodeId or objectId must be specified.
 
@@ -212,7 +212,7 @@ async def set_inspect_mode(
         mode: InspectMode,
         highlight_config: typing.Optional[HighlightConfig] = None
     ) -> None:
-    '''
+    r'''
     Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted.
     Backend then generates 'inspectNodeRequested' event upon element selection.
 
@@ -226,7 +226,7 @@ async def set_inspect_mode(
 async def set_paused_in_debugger_message(
         message: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     :param message: *(Optional)* The message to display, also triggers resume and step over controls.
     '''
     session = get_session_context('overlay.set_paused_in_debugger_message')
@@ -236,7 +236,7 @@ async def set_paused_in_debugger_message(
 async def set_show_ad_highlights(
         show: bool
     ) -> None:
-    '''
+    r'''
     Highlights owner element of all frames detected to be ads.
 
     :param show: True for showing ad highlights
@@ -248,7 +248,7 @@ async def set_show_ad_highlights(
 async def set_show_container_query_overlays(
         container_query_highlight_configs: typing.List[ContainerQueryHighlightConfig]
     ) -> None:
-    '''
+    r'''
     :param container_query_highlight_configs: An array of node identifiers and descriptors for the highlight appearance.
     '''
     session = get_session_context('overlay.set_show_container_query_overlays')
@@ -258,7 +258,7 @@ async def set_show_container_query_overlays(
 async def set_show_debug_borders(
         show: bool
     ) -> None:
-    '''
+    r'''
     Requests that backend shows debug borders on layers
 
     :param show: True for showing debug borders
@@ -270,7 +270,7 @@ async def set_show_debug_borders(
 async def set_show_flex_overlays(
         flex_node_highlight_configs: typing.List[FlexNodeHighlightConfig]
     ) -> None:
-    '''
+    r'''
     :param flex_node_highlight_configs: An array of node identifiers and descriptors for the highlight appearance.
     '''
     session = get_session_context('overlay.set_show_flex_overlays')
@@ -280,7 +280,7 @@ async def set_show_flex_overlays(
 async def set_show_fps_counter(
         show: bool
     ) -> None:
-    '''
+    r'''
     Requests that backend shows the FPS counter
 
     :param show: True for showing the FPS counter
@@ -292,7 +292,7 @@ async def set_show_fps_counter(
 async def set_show_grid_overlays(
         grid_node_highlight_configs: typing.List[GridNodeHighlightConfig]
     ) -> None:
-    '''
+    r'''
     Highlight multiple elements with the CSS Grid overlay.
 
     :param grid_node_highlight_configs: An array of node identifiers and descriptors for the highlight appearance.
@@ -304,7 +304,7 @@ async def set_show_grid_overlays(
 async def set_show_hinge(
         hinge_config: typing.Optional[HingeConfig] = None
     ) -> None:
-    '''
+    r'''
     Add a dual screen device hinge
 
     :param hinge_config: *(Optional)* hinge data, null means hideHinge
@@ -316,7 +316,7 @@ async def set_show_hinge(
 async def set_show_hit_test_borders(
         show: bool
     ) -> None:
-    '''
+    r'''
     Requests that backend shows hit-test borders on layers
 
     :param show: True for showing hit-test borders
@@ -328,7 +328,7 @@ async def set_show_hit_test_borders(
 async def set_show_isolated_elements(
         isolated_element_highlight_configs: typing.List[IsolatedElementHighlightConfig]
     ) -> None:
-    '''
+    r'''
     Show elements in isolation mode with overlays.
 
     :param isolated_element_highlight_configs: An array of node identifiers and descriptors for the highlight appearance.
@@ -340,7 +340,7 @@ async def set_show_isolated_elements(
 async def set_show_layout_shift_regions(
         result: bool
     ) -> None:
-    '''
+    r'''
     Requests that backend shows layout shift regions
 
     :param result: True for showing layout shift regions
@@ -352,7 +352,7 @@ async def set_show_layout_shift_regions(
 async def set_show_paint_rects(
         result: bool
     ) -> None:
-    '''
+    r'''
     Requests that backend shows paint rectangles
 
     :param result: True for showing paint rectangles
@@ -364,7 +364,7 @@ async def set_show_paint_rects(
 async def set_show_scroll_bottleneck_rects(
         show: bool
     ) -> None:
-    '''
+    r'''
     Requests that backend shows scroll bottleneck rects
 
     :param show: True for showing scroll bottleneck rects
@@ -376,7 +376,7 @@ async def set_show_scroll_bottleneck_rects(
 async def set_show_scroll_snap_overlays(
         scroll_snap_highlight_configs: typing.List[ScrollSnapHighlightConfig]
     ) -> None:
-    '''
+    r'''
     :param scroll_snap_highlight_configs: An array of node identifiers and descriptors for the highlight appearance.
     '''
     session = get_session_context('overlay.set_show_scroll_snap_overlays')
@@ -386,7 +386,7 @@ async def set_show_scroll_snap_overlays(
 async def set_show_viewport_size_on_resize(
         show: bool
     ) -> None:
-    '''
+    r'''
     Paints viewport size upon main frame resize.
 
     :param show: Whether to paint size or not.
@@ -398,7 +398,7 @@ async def set_show_viewport_size_on_resize(
 async def set_show_web_vitals(
         show: bool
     ) -> None:
-    '''
+    r'''
     Request that backend shows an overlay with web vital metrics.
 
     :param show:

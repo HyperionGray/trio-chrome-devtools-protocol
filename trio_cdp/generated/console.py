@@ -16,7 +16,7 @@ from cdp.console import (
 
 
 async def clear_messages() -> None:
-    '''
+    r'''
     Does nothing.
     '''
     session = get_session_context('console.clear_messages')
@@ -24,7 +24,7 @@ async def clear_messages() -> None:
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables console domain, prevents further console messages from being reported to the client.
     '''
     session = get_session_context('console.disable')
@@ -32,7 +32,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables console domain, sends the messages collected so far to the client by means of the
     ``messageAdded`` notification.
     '''

@@ -16,7 +16,7 @@ from cdp.performance import (
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disable collecting and reporting metrics.
     '''
     session = get_session_context('performance.disable')
@@ -26,7 +26,7 @@ async def disable() -> None:
 async def enable(
         time_domain: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Enable collecting and reporting metrics.
 
     :param time_domain: *(Optional)* Time domain to use for collecting and reporting duration metrics.
@@ -36,7 +36,7 @@ async def enable(
 
 
 async def get_metrics() -> typing.List[Metric]:
-    '''
+    r'''
     Retrieve current values of run-time metrics.
 
     :returns: Current values for run-time metrics.
@@ -48,7 +48,7 @@ async def get_metrics() -> typing.List[Metric]:
 async def set_time_domain(
         time_domain: str
     ) -> None:
-    '''
+    r'''
 Sets time domain to use for collecting and reporting duration metrics.
 Note that this must be called before enabling metrics collection. Calling
 this method while metrics collection is enabled returns an error.

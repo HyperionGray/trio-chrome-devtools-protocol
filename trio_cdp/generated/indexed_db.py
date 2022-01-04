@@ -25,7 +25,7 @@ async def clear_object_store(
         database_name: str,
         object_store_name: str
     ) -> None:
-    '''
+    r'''
     Clears all entries from an object store.
 
     :param security_origin: Security origin.
@@ -40,7 +40,7 @@ async def delete_database(
         security_origin: str,
         database_name: str
     ) -> None:
-    '''
+    r'''
     Deletes a database.
 
     :param security_origin: Security origin.
@@ -56,7 +56,7 @@ async def delete_object_store_entries(
         object_store_name: str,
         key_range: KeyRange
     ) -> None:
-    '''
+    r'''
     Delete a range of entries from an object store
 
     :param security_origin:
@@ -69,7 +69,7 @@ async def delete_object_store_entries(
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables events from backend.
     '''
     session = get_session_context('indexed_db.disable')
@@ -77,7 +77,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables events from backend.
     '''
     session = get_session_context('indexed_db.enable')
@@ -89,7 +89,7 @@ async def get_metadata(
         database_name: str,
         object_store_name: str
     ) -> typing.Tuple[float, float]:
-    '''
+    r'''
     Gets metadata of an object store
 
     :param security_origin: Security origin.
@@ -113,7 +113,7 @@ async def request_data(
         page_size: int,
         key_range: typing.Optional[KeyRange] = None
     ) -> typing.Tuple[typing.List[DataEntry], bool]:
-    '''
+    r'''
     Requests data from object store or index.
 
     :param security_origin: Security origin.
@@ -136,7 +136,7 @@ async def request_database(
         security_origin: str,
         database_name: str
     ) -> DatabaseWithObjectStores:
-    '''
+    r'''
     Requests database with given name in given frame.
 
     :param security_origin: Security origin.
@@ -150,7 +150,7 @@ async def request_database(
 async def request_database_names(
         security_origin: str
     ) -> typing.List[str]:
-    '''
+    r'''
     Requests database names for given security origin.
 
     :param security_origin: Security origin.

@@ -27,7 +27,7 @@ from cdp.security import (
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables tracking security state changes.
     '''
     session = get_session_context('security.disable')
@@ -35,7 +35,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables tracking security state changes.
     '''
     session = get_session_context('security.enable')
@@ -46,7 +46,7 @@ async def handle_certificate_error(
         event_id: int,
         action: CertificateErrorAction
     ) -> None:
-    '''
+    r'''
 Handles a certificate error that fired a certificateError event.
 
 .. deprecated:: 1.3
@@ -63,7 +63,7 @@ Handles a certificate error that fired a certificateError event.
 async def set_ignore_certificate_errors(
         ignore: bool
     ) -> None:
-    '''
+    r'''
     Enable/disable whether all certificate errors should be ignored.
 
     **EXPERIMENTAL**
@@ -77,7 +77,7 @@ async def set_ignore_certificate_errors(
 async def set_override_certificate_errors(
         override: bool
     ) -> None:
-    '''
+    r'''
 Enable/disable overriding certificate errors. If enabled, all certificate error events need to
 be handled by the DevTools client and should be answered with ``handleCertificateError`` commands.
 

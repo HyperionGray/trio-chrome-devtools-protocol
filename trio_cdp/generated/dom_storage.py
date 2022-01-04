@@ -22,7 +22,7 @@ from cdp.dom_storage import (
 async def clear(
         storage_id: StorageId
     ) -> None:
-    '''
+    r'''
     :param storage_id:
     '''
     session = get_session_context('dom_storage.clear')
@@ -30,7 +30,7 @@ async def clear(
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables storage tracking, prevents storage events from being sent to the client.
     '''
     session = get_session_context('dom_storage.disable')
@@ -38,7 +38,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables storage tracking, storage events will now be delivered to the client.
     '''
     session = get_session_context('dom_storage.enable')
@@ -48,7 +48,7 @@ async def enable() -> None:
 async def get_dom_storage_items(
         storage_id: StorageId
     ) -> typing.List[Item]:
-    '''
+    r'''
     :param storage_id:
     :returns: 
     '''
@@ -60,7 +60,7 @@ async def remove_dom_storage_item(
         storage_id: StorageId,
         key: str
     ) -> None:
-    '''
+    r'''
     :param storage_id:
     :param key:
     '''
@@ -73,7 +73,7 @@ async def set_dom_storage_item(
         key: str,
         value: str
     ) -> None:
-    '''
+    r'''
     :param storage_id:
     :param key:
     :param value:

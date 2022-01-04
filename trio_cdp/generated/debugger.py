@@ -33,7 +33,7 @@ async def continue_to_location(
         location: Location,
         target_call_frames: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Continues execution until specific location is reached.
 
     :param location: Location to continue to.
@@ -44,7 +44,7 @@ async def continue_to_location(
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables debugger for given page.
     '''
     session = get_session_context('debugger.disable')
@@ -54,7 +54,7 @@ async def disable() -> None:
 async def enable(
         max_scripts_cache_size: typing.Optional[float] = None
     ) -> cdp.runtime.UniqueDebuggerId:
-    '''
+    r'''
     Enables debugger for the given page. Clients should not assume that the debugging has been
     enabled until the result for this command is received.
 
@@ -76,7 +76,7 @@ async def evaluate_on_call_frame(
         throw_on_side_effect: typing.Optional[bool] = None,
         timeout: typing.Optional[cdp.runtime.TimeDelta] = None
     ) -> typing.Tuple[cdp.runtime.RemoteObject, typing.Optional[cdp.runtime.ExceptionDetails]]:
-    '''
+    r'''
     Evaluates expression on a given call frame.
 
     :param call_frame_id: Call frame identifier to evaluate on.
@@ -102,7 +102,7 @@ async def get_possible_breakpoints(
         end: typing.Optional[Location] = None,
         restrict_to_function: typing.Optional[bool] = None
     ) -> typing.List[BreakLocation]:
-    '''
+    r'''
     Returns possible locations for breakpoint. scriptId in start and end range locations should be
     the same.
 
@@ -118,7 +118,7 @@ async def get_possible_breakpoints(
 async def get_script_source(
         script_id: cdp.runtime.ScriptId
     ) -> typing.Tuple[str, typing.Optional[str]]:
-    '''
+    r'''
     Returns source for the script with given id.
 
     :param script_id: Id of the script to get source for.
@@ -134,7 +134,7 @@ async def get_script_source(
 async def get_stack_trace(
         stack_trace_id: cdp.runtime.StackTraceId
     ) -> cdp.runtime.StackTrace:
-    '''
+    r'''
     Returns stack trace with given ``stackTraceId``.
 
     **EXPERIMENTAL**
@@ -149,7 +149,7 @@ async def get_stack_trace(
 async def get_wasm_bytecode(
         script_id: cdp.runtime.ScriptId
     ) -> str:
-    '''
+    r'''
 This command is deprecated. Use getScriptSource instead.
 
 .. deprecated:: 1.3
@@ -164,7 +164,7 @@ This command is deprecated. Use getScriptSource instead.
 
 
 async def pause() -> None:
-    '''
+    r'''
     Stops on the next JavaScript statement.
     '''
     session = get_session_context('debugger.pause')
@@ -174,7 +174,7 @@ async def pause() -> None:
 async def pause_on_async_call(
         parent_stack_trace_id: cdp.runtime.StackTraceId
     ) -> None:
-    '''
+    r'''
 
 
 .. deprecated:: 1.3
@@ -192,7 +192,7 @@ async def pause_on_async_call(
 async def remove_breakpoint(
         breakpoint_id: BreakpointId
     ) -> None:
-    '''
+    r'''
     Removes JavaScript breakpoint.
 
     :param breakpoint_id:
@@ -204,7 +204,7 @@ async def remove_breakpoint(
 async def restart_frame(
         call_frame_id: CallFrameId
     ) -> typing.Tuple[typing.List[CallFrame], typing.Optional[cdp.runtime.StackTrace], typing.Optional[cdp.runtime.StackTraceId]]:
-    '''
+    r'''
 Restarts particular call frame from the beginning.
 
 .. deprecated:: 1.3
@@ -225,7 +225,7 @@ Restarts particular call frame from the beginning.
 async def resume(
         terminate_on_resume: typing.Optional[bool] = None
     ) -> None:
-    '''
+    r'''
     Resumes JavaScript execution.
 
     :param terminate_on_resume: *(Optional)* Set to true to terminate execution upon resuming execution. In contrast to Runtime.terminateExecution, this will allows to execute further JavaScript (i.e. via evaluation) until execution of the paused code is actually resumed, at which point termination is triggered. If execution is currently not paused, this parameter has no effect.
@@ -240,7 +240,7 @@ async def search_in_content(
         case_sensitive: typing.Optional[bool] = None,
         is_regex: typing.Optional[bool] = None
     ) -> typing.List[SearchMatch]:
-    '''
+    r'''
     Searches for given string in script content.
 
     :param script_id: Id of the script to search in.
@@ -256,7 +256,7 @@ async def search_in_content(
 async def set_async_call_stack_depth(
         max_depth: int
     ) -> None:
-    '''
+    r'''
     Enables or disables async call stacks tracking.
 
     :param max_depth: Maximum depth of async call stacks. Setting to ```0``` will effectively disable collecting async call stacks (default).
@@ -268,7 +268,7 @@ async def set_async_call_stack_depth(
 async def set_blackbox_patterns(
         patterns: typing.List[str]
     ) -> None:
-    '''
+    r'''
     Replace previous blackbox patterns with passed ones. Forces backend to skip stepping/pausing in
     scripts with url matching one of the patterns. VM will try to leave blackboxed script by
     performing 'step in' several times, finally resorting to 'step out' if unsuccessful.
@@ -285,7 +285,7 @@ async def set_blackboxed_ranges(
         script_id: cdp.runtime.ScriptId,
         positions: typing.List[ScriptPosition]
     ) -> None:
-    '''
+    r'''
     Makes backend skip steps in the script in blackboxed ranges. VM will try leave blacklisted
     scripts by performing 'step in' several times, finally resorting to 'step out' if unsuccessful.
     Positions array contains positions where blackbox state is changed. First interval isn't
@@ -304,7 +304,7 @@ async def set_breakpoint(
         location: Location,
         condition: typing.Optional[str] = None
     ) -> typing.Tuple[BreakpointId, Location]:
-    '''
+    r'''
     Sets JavaScript breakpoint at a given location.
 
     :param location: Location to set breakpoint in.
@@ -326,7 +326,7 @@ async def set_breakpoint_by_url(
         column_number: typing.Optional[int] = None,
         condition: typing.Optional[str] = None
     ) -> typing.Tuple[BreakpointId, typing.List[Location]]:
-    '''
+    r'''
     Sets JavaScript breakpoint at given location specified either by URL or URL regex. Once this
     command is issued, all existing parsed scripts will have breakpoints resolved and returned in
     ``locations`` property. Further matching script parsing will result in subsequent
@@ -351,7 +351,7 @@ async def set_breakpoint_on_function_call(
         object_id: cdp.runtime.RemoteObjectId,
         condition: typing.Optional[str] = None
     ) -> BreakpointId:
-    '''
+    r'''
     Sets JavaScript breakpoint before each call to the given function.
     If another function was created from the same source as a given one,
     calling it will also trigger the breakpoint.
@@ -369,7 +369,7 @@ async def set_breakpoint_on_function_call(
 async def set_breakpoints_active(
         active: bool
     ) -> None:
-    '''
+    r'''
     Activates / deactivates all breakpoints on the page.
 
     :param active: New value for breakpoints active state.
@@ -381,7 +381,7 @@ async def set_breakpoints_active(
 async def set_instrumentation_breakpoint(
         instrumentation: str
     ) -> BreakpointId:
-    '''
+    r'''
     Sets instrumentation breakpoint.
 
     :param instrumentation: Instrumentation name.
@@ -394,7 +394,7 @@ async def set_instrumentation_breakpoint(
 async def set_pause_on_exceptions(
         state: str
     ) -> None:
-    '''
+    r'''
     Defines pause on exceptions state. Can be set to stop on all exceptions, uncaught exceptions or
     no exceptions. Initial pause on exceptions state is ``none``.
 
@@ -407,7 +407,7 @@ async def set_pause_on_exceptions(
 async def set_return_value(
         new_value: cdp.runtime.CallArgument
     ) -> None:
-    '''
+    r'''
     Changes return value in top frame. Available only at return break position.
 
     **EXPERIMENTAL**
@@ -423,7 +423,7 @@ async def set_script_source(
         script_source: str,
         dry_run: typing.Optional[bool] = None
     ) -> typing.Tuple[typing.Optional[typing.List[CallFrame]], typing.Optional[bool], typing.Optional[cdp.runtime.StackTrace], typing.Optional[cdp.runtime.StackTraceId], typing.Optional[cdp.runtime.ExceptionDetails]]:
-    '''
+    r'''
     Edits JavaScript source live.
 
     :param script_id: Id of the script to edit.
@@ -444,7 +444,7 @@ async def set_script_source(
 async def set_skip_all_pauses(
         skip: bool
     ) -> None:
-    '''
+    r'''
     Makes page not interrupt on any pauses (breakpoint, exception, dom exception etc).
 
     :param skip: New value for skip pauses state.
@@ -459,7 +459,7 @@ async def set_variable_value(
         new_value: cdp.runtime.CallArgument,
         call_frame_id: CallFrameId
     ) -> None:
-    '''
+    r'''
     Changes value of variable in a callframe. Object-based scopes are not supported and must be
     mutated manually.
 
@@ -476,7 +476,7 @@ async def step_into(
         break_on_async_call: typing.Optional[bool] = None,
         skip_list: typing.Optional[typing.List[LocationRange]] = None
     ) -> None:
-    '''
+    r'''
     Steps into the function call.
 
     :param break_on_async_call: **(EXPERIMENTAL)** *(Optional)* Debugger will pause on the execution of the first async task which was scheduled before next pause.
@@ -487,7 +487,7 @@ async def step_into(
 
 
 async def step_out() -> None:
-    '''
+    r'''
     Steps out of the function call.
     '''
     session = get_session_context('debugger.step_out')
@@ -497,7 +497,7 @@ async def step_out() -> None:
 async def step_over(
         skip_list: typing.Optional[typing.List[LocationRange]] = None
     ) -> None:
-    '''
+    r'''
     Steps over the statement.
 
     :param skip_list: **(EXPERIMENTAL)** *(Optional)* The skipList specifies location ranges that should be skipped on step over.

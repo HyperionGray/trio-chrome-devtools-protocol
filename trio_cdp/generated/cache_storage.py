@@ -22,7 +22,7 @@ from cdp.cache_storage import (
 async def delete_cache(
         cache_id: CacheId
     ) -> None:
-    '''
+    r'''
     Deletes a cache.
 
     :param cache_id: Id of cache for deletion.
@@ -35,7 +35,7 @@ async def delete_entry(
         cache_id: CacheId,
         request: str
     ) -> None:
-    '''
+    r'''
     Deletes a cache entry.
 
     :param cache_id: Id of cache where the entry will be deleted.
@@ -48,7 +48,7 @@ async def delete_entry(
 async def request_cache_names(
         security_origin: str
     ) -> typing.List[Cache]:
-    '''
+    r'''
     Requests cache names.
 
     :param security_origin: Security origin.
@@ -63,7 +63,7 @@ async def request_cached_response(
         request_url: str,
         request_headers: typing.List[Header]
     ) -> CachedResponse:
-    '''
+    r'''
     Fetches cache entry.
 
     :param cache_id: Id of cache that contains the entry.
@@ -81,7 +81,7 @@ async def request_entries(
         page_size: typing.Optional[int] = None,
         path_filter: typing.Optional[str] = None
     ) -> typing.Tuple[typing.List[DataEntry], float]:
-    '''
+    r'''
     Requests data from cache.
 
     :param cache_id: ID of cache to get entries from.

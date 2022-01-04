@@ -48,7 +48,7 @@ async def add_rule(
         rule_text: str,
         location: SourceRange
     ) -> CSSRule:
-    '''
+    r'''
     Inserts a new rule with the given ``ruleText`` in a stylesheet with given ``styleSheetId``, at the
     position specified by ``location``.
 
@@ -64,7 +64,7 @@ async def add_rule(
 async def collect_class_names(
         style_sheet_id: StyleSheetId
     ) -> typing.List[str]:
-    '''
+    r'''
     Returns all class names from specified stylesheet.
 
     :param style_sheet_id:
@@ -77,7 +77,7 @@ async def collect_class_names(
 async def create_style_sheet(
         frame_id: cdp.page.FrameId
     ) -> StyleSheetId:
-    '''
+    r'''
     Creates a new special "via-inspector" stylesheet in the frame with given ``frameId``.
 
     :param frame_id: Identifier of the frame where "via-inspector" stylesheet should be created.
@@ -88,7 +88,7 @@ async def create_style_sheet(
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables the CSS agent for the given page.
     '''
     session = get_session_context('css.disable')
@@ -96,7 +96,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables the CSS agent for the given page. Clients should not assume that the CSS agent has been
     enabled until the result of this command is received.
     '''
@@ -108,7 +108,7 @@ async def force_pseudo_state(
         node_id: cdp.dom.NodeId,
         forced_pseudo_classes: typing.List[str]
     ) -> None:
-    '''
+    r'''
     Ensures that the given node will have specified pseudo-classes whenever its style is computed by
     the browser.
 
@@ -122,7 +122,7 @@ async def force_pseudo_state(
 async def get_background_colors(
         node_id: cdp.dom.NodeId
     ) -> typing.Tuple[typing.Optional[typing.List[str]], typing.Optional[str], typing.Optional[str]]:
-    '''
+    r'''
     :param node_id: Id of the node to get background colors for.
     :returns: A tuple with the following items:
 
@@ -137,7 +137,7 @@ async def get_background_colors(
 async def get_computed_style_for_node(
         node_id: cdp.dom.NodeId
     ) -> typing.List[CSSComputedStyleProperty]:
-    '''
+    r'''
     Returns the computed style for a DOM node identified by ``nodeId``.
 
     :param node_id:
@@ -150,7 +150,7 @@ async def get_computed_style_for_node(
 async def get_inline_styles_for_node(
         node_id: cdp.dom.NodeId
     ) -> typing.Tuple[typing.Optional[CSSStyle], typing.Optional[CSSStyle]]:
-    '''
+    r'''
     Returns the styles defined inline (explicitly in the "style" attribute and implicitly, using DOM
     attributes) for a DOM node identified by ``nodeId``.
 
@@ -167,7 +167,7 @@ async def get_inline_styles_for_node(
 async def get_matched_styles_for_node(
         node_id: cdp.dom.NodeId
     ) -> typing.Tuple[typing.Optional[CSSStyle], typing.Optional[CSSStyle], typing.Optional[typing.List[RuleMatch]], typing.Optional[typing.List[PseudoElementMatches]], typing.Optional[typing.List[InheritedStyleEntry]], typing.Optional[typing.List[CSSKeyframesRule]]]:
-    '''
+    r'''
     Returns requested styles for a DOM node identified by ``nodeId``.
 
     :param node_id:
@@ -185,7 +185,7 @@ async def get_matched_styles_for_node(
 
 
 async def get_media_queries() -> typing.List[CSSMedia]:
-    '''
+    r'''
     Returns all media queries parsed by the rendering engine.
 
     :returns: 
@@ -197,7 +197,7 @@ async def get_media_queries() -> typing.List[CSSMedia]:
 async def get_platform_fonts_for_node(
         node_id: cdp.dom.NodeId
     ) -> typing.List[PlatformFontUsage]:
-    '''
+    r'''
     Requests information about platform fonts which we used to render child TextNodes in the given
     node.
 
@@ -211,7 +211,7 @@ async def get_platform_fonts_for_node(
 async def get_style_sheet_text(
         style_sheet_id: StyleSheetId
     ) -> str:
-    '''
+    r'''
     Returns the current textual content for a stylesheet.
 
     :param style_sheet_id:
@@ -226,7 +226,7 @@ async def set_container_query_text(
         range_: SourceRange,
         text: str
     ) -> CSSContainerQuery:
-    '''
+    r'''
     Modifies the expression of a container query.
 
     **EXPERIMENTAL**
@@ -245,7 +245,7 @@ async def set_effective_property_value_for_node(
         property_name: str,
         value: str
     ) -> None:
-    '''
+    r'''
     Find a rule with the given active property for the given node and set the new value for this
     property
 
@@ -262,7 +262,7 @@ async def set_keyframe_key(
         range_: SourceRange,
         key_text: str
     ) -> Value:
-    '''
+    r'''
     Modifies the keyframe rule key text.
 
     :param style_sheet_id:
@@ -277,7 +277,7 @@ async def set_keyframe_key(
 async def set_local_fonts_enabled(
         enabled: bool
     ) -> None:
-    '''
+    r'''
     Enables/disables rendering of local CSS fonts (enabled by default).
 
     **EXPERIMENTAL**
@@ -293,7 +293,7 @@ async def set_media_text(
         range_: SourceRange,
         text: str
     ) -> CSSMedia:
-    '''
+    r'''
     Modifies the rule selector.
 
     :param style_sheet_id:
@@ -310,7 +310,7 @@ async def set_rule_selector(
         range_: SourceRange,
         selector: str
     ) -> SelectorList:
-    '''
+    r'''
     Modifies the rule selector.
 
     :param style_sheet_id:
@@ -326,7 +326,7 @@ async def set_style_sheet_text(
         style_sheet_id: StyleSheetId,
         text: str
     ) -> typing.Optional[str]:
-    '''
+    r'''
     Sets the new stylesheet text.
 
     :param style_sheet_id:
@@ -340,7 +340,7 @@ async def set_style_sheet_text(
 async def set_style_texts(
         edits: typing.List[StyleDeclarationEdit]
     ) -> typing.List[CSSStyle]:
-    '''
+    r'''
     Applies specified style edits one after another in the given order.
 
     :param edits:
@@ -351,7 +351,7 @@ async def set_style_texts(
 
 
 async def start_rule_usage_tracking() -> None:
-    '''
+    r'''
     Enables the selector recording.
     '''
     session = get_session_context('css.start_rule_usage_tracking')
@@ -359,7 +359,7 @@ async def start_rule_usage_tracking() -> None:
 
 
 async def stop_rule_usage_tracking() -> typing.List[RuleUsage]:
-    '''
+    r'''
     Stop tracking rule usage and return the list of rules that were used since last call to
     ``takeCoverageDelta`` (or since start of coverage instrumentation)
 
@@ -370,7 +370,7 @@ async def stop_rule_usage_tracking() -> typing.List[RuleUsage]:
 
 
 async def take_computed_style_updates() -> typing.List[cdp.dom.NodeId]:
-    '''
+    r'''
     Polls the next batch of computed style updates.
 
     **EXPERIMENTAL**
@@ -382,7 +382,7 @@ async def take_computed_style_updates() -> typing.List[cdp.dom.NodeId]:
 
 
 async def take_coverage_delta() -> typing.Tuple[typing.List[RuleUsage], float]:
-    '''
+    r'''
     Obtain list of rules that became used since last call to this method (or since start of coverage
     instrumentation)
 
@@ -398,7 +398,7 @@ async def take_coverage_delta() -> typing.Tuple[typing.List[RuleUsage], float]:
 async def track_computed_style_updates(
         properties_to_track: typing.List[CSSComputedStyleProperty]
     ) -> None:
-    '''
+    r'''
     Starts tracking the given computed styles for updates. The specified array of properties
     replaces the one previously specified. Pass empty array to disable tracking.
     Use takeComputedStyleUpdates to retrieve the list of nodes that had properties modified.

@@ -13,7 +13,7 @@ import cdp.event_breakpoints
 async def remove_instrumentation_breakpoint(
         event_name: str
     ) -> None:
-    '''
+    r'''
     Removes breakpoint on particular native event.
 
     :param event_name: Instrumentation name to stop on.
@@ -25,7 +25,7 @@ async def remove_instrumentation_breakpoint(
 async def set_instrumentation_breakpoint(
         event_name: str
     ) -> None:
-    '''
+    r'''
     Sets breakpoint on particular native event.
 
     :param event_name: Instrumentation name to stop on.

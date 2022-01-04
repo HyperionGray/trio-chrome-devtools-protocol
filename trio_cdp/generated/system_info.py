@@ -23,7 +23,7 @@ from cdp.system_info import (
 
 
 async def get_info() -> typing.Tuple[GPUInfo, str, str, str]:
-    '''
+    r'''
     Returns information about the system.
 
     :returns: A tuple with the following items:
@@ -38,7 +38,7 @@ async def get_info() -> typing.Tuple[GPUInfo, str, str, str]:
 
 
 async def get_process_info() -> typing.List[ProcessInfo]:
-    '''
+    r'''
     Returns information about all running processes.
 
     :returns: An array of process info blocks.

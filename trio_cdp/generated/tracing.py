@@ -23,7 +23,7 @@ from cdp.tracing import (
 
 
 async def end() -> None:
-    '''
+    r'''
     Stop trace events collection.
     '''
     session = get_session_context('tracing.end')
@@ -31,7 +31,7 @@ async def end() -> None:
 
 
 async def get_categories() -> typing.List[str]:
-    '''
+    r'''
     Gets supported tracing categories.
 
     :returns: A list of supported tracing categories.
@@ -43,7 +43,7 @@ async def get_categories() -> typing.List[str]:
 async def record_clock_sync_marker(
         sync_id: str
     ) -> None:
-    '''
+    r'''
     Record a clock sync marker in the trace.
 
     :param sync_id: The ID of this clock sync marker
@@ -56,7 +56,7 @@ async def request_memory_dump(
         deterministic: typing.Optional[bool] = None,
         level_of_detail: typing.Optional[MemoryDumpLevelOfDetail] = None
     ) -> typing.Tuple[str, bool]:
-    '''
+    r'''
     Request a global memory dump.
 
     :param deterministic: *(Optional)* Enables more deterministic results by forcing garbage collection
@@ -81,7 +81,7 @@ async def start(
         perfetto_config: typing.Optional[str] = None,
         tracing_backend: typing.Optional[TracingBackend] = None
     ) -> None:
-    '''
+    r'''
     Start trace events collection.
 
     :param categories: **(DEPRECATED)** *(Optional)* Category/tag filter

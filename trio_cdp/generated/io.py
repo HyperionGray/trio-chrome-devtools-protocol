@@ -17,7 +17,7 @@ from cdp.io import (
 async def close(
         handle: StreamHandle
     ) -> None:
-    '''
+    r'''
     Close the stream, discard any temporary backing storage.
 
     :param handle: Handle of the stream to close.
@@ -31,7 +31,7 @@ async def read(
         offset: typing.Optional[int] = None,
         size: typing.Optional[int] = None
     ) -> typing.Tuple[typing.Optional[bool], str, bool]:
-    '''
+    r'''
     Read a chunk of the stream
 
     :param handle: Handle of the stream to read.
@@ -50,7 +50,7 @@ async def read(
 async def resolve_blob(
         object_id: cdp.runtime.RemoteObjectId
     ) -> str:
-    '''
+    r'''
     Return UUID of Blob object specified by a remote object id.
 
     :param object_id: Object id of a Blob object wrapper.

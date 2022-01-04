@@ -25,7 +25,7 @@ from cdp.media import (
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables the Media domain.
     '''
     session = get_session_context('media.disable')
@@ -33,7 +33,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables the Media domain
     '''
     session = get_session_context('media.enable')

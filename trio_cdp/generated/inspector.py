@@ -17,7 +17,7 @@ from cdp.inspector import (
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables inspector domain notifications.
     '''
     session = get_session_context('inspector.disable')
@@ -25,7 +25,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables inspector domain notifications.
     '''
     session = get_session_context('inspector.enable')

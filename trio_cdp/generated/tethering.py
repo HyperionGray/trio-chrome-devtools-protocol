@@ -17,7 +17,7 @@ from cdp.tethering import (
 async def bind(
         port: int
     ) -> None:
-    '''
+    r'''
     Request browser port binding.
 
     :param port: Port number to bind.
@@ -29,7 +29,7 @@ async def bind(
 async def unbind(
         port: int
     ) -> None:
-    '''
+    r'''
     Request browser port unbinding.
 
     :param port: Port number to unbind.
