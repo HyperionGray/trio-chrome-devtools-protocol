@@ -41,6 +41,20 @@ async def disable() -> None:
     return await session.execute(cdp.service_worker.disable())
 
 
+async def dispatch_periodic_sync_event(
+        origin: str,
+        registration_id: RegistrationID,
+        tag: str
+    ) -> None:
+    '''
+    :param origin:
+    :param registration_id:
+    :param tag:
+    '''
+    session = get_session_context('service_worker.dispatch_periodic_sync_event')
+    return await session.execute(cdp.service_worker.dispatch_periodic_sync_event(origin, registration_id, tag))
+
+
 async def dispatch_sync_event(
         origin: str,
         registration_id: RegistrationID,

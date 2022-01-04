@@ -42,9 +42,9 @@ async def execute_sql(
     :param query:
     :returns: A tuple with the following items:
 
-        0. **columnNames** – 
-        1. **values** – 
-        2. **sqlError** – 
+        0. **columnNames** - 
+        1. **values** - 
+        2. **sqlError** - 
     '''
     session = get_session_context('database.execute_sql')
     return await session.execute(cdp.database.execute_sql(database_id, query))

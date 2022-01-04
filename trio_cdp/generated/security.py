@@ -13,11 +13,16 @@ from cdp.security import (
     CertificateError,
     CertificateErrorAction,
     CertificateId,
+    CertificateSecurityState,
     InsecureContentStatus,
     MixedContentType,
+    SafetyTipInfo,
+    SafetyTipStatus,
     SecurityState,
     SecurityStateChanged,
-    SecurityStateExplanation
+    SecurityStateExplanation,
+    VisibleSecurityState,
+    VisibleSecurityStateChanged
 )
 
 
@@ -49,7 +54,6 @@ Handles a certificate error that fired a certificateError event.
 :param event_id: The ID of the event.
 :param action: The action to take on the certificate error.
 
-
 .. deprecated:: 1.3
 '''
     session = get_session_context('security.handle_certificate_error')
@@ -80,7 +84,6 @@ be handled by the DevTools client and should be answered with ``handleCertificat
 .. deprecated:: 1.3
 
 :param override: If true, certificate errors will be overridden.
-
 
 .. deprecated:: 1.3
 '''

@@ -53,9 +53,9 @@ async def get_dom_counters() -> typing.Tuple[int, int, int]:
 
     :returns: A tuple with the following items:
 
-        0. **documents** – 
-        1. **nodes** – 
-        2. **jsEventListeners** – 
+        0. **documents** - 
+        1. **nodes** - 
+        2. **jsEventListeners** - 
     '''
     session = get_session_context('memory.get_dom_counters')
     return await session.execute(cdp.memory.get_dom_counters())

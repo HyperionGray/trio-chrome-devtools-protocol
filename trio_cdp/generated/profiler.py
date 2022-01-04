@@ -15,6 +15,7 @@ from cdp.profiler import (
     CoverageRange,
     FunctionCoverage,
     PositionTickInfo,
+    PreciseCoverageDeltaUpdate,
     Profile,
     ProfileNode,
     ScriptCoverage,
@@ -64,8 +65,9 @@ async def start() -> None:
 
 async def start_precise_coverage(
         call_count: typing.Optional[bool] = None,
-        detailed: typing.Optional[bool] = None
-    ) -> None:
+        detailed: typing.Optional[bool] = None,
+        allow_triggered_updates: typing.Optional[bool] = None
+    ) -> float:
     '''
     Enable precise code coverage. Coverage data for JavaScript executed before enabling precise code
     coverage may be incomplete. Enabling prevents running optimized code and resets execution
@@ -73,9 +75,11 @@ async def start_precise_coverage(
 
     :param call_count: *(Optional)* Collect accurate call counts beyond simple 'covered' or 'not covered'.
     :param detailed: *(Optional)* Collect block-based coverage.
+    :param allow_triggered_updates: *(Optional)* Allow the backend to send updates on its own initiative
+    :returns: Monotonically increasing time (in seconds) when the coverage update was taken in the backend.
     '''
     session = get_session_context('profiler.start_precise_coverage')
-    return await session.execute(cdp.profiler.start_precise_coverage(call_count, detailed))
+    return await session.execute(cdp.profiler.start_precise_coverage(call_count, detailed, allow_triggered_updates))
 
 
 async def start_type_profile() -> None:
@@ -117,12 +121,15 @@ async def stop_type_profile() -> None:
     return await session.execute(cdp.profiler.stop_type_profile())
 
 
-async def take_precise_coverage() -> typing.List[ScriptCoverage]:
+async def take_precise_coverage() -> typing.Tuple[typing.List[ScriptCoverage], float]:
     '''
     Collect coverage data for the current isolate, and resets execution counters. Precise code
     coverage needs to have started.
 
-    :returns: Coverage data for the current isolate.
+    :returns: A tuple with the following items:
+
+        0. **result** - Coverage data for the current isolate.
+        1. **timestamp** - Monotonically increasing time (in seconds) when the coverage update was taken in the backend.
     '''
     session = get_session_context('profiler.take_precise_coverage')
     return await session.execute(cdp.profiler.take_precise_coverage())

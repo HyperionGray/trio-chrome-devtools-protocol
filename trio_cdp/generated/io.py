@@ -39,9 +39,9 @@ async def read(
     :param size: *(Optional)* Maximum number of bytes to read (left upon the agent discretion if not specified).
     :returns: A tuple with the following items:
 
-        0. **base64Encoded** – *(Optional)* Set if the data is base64-encoded
-        1. **data** – Data that were read.
-        2. **eof** – Set if the end-of-file condition occured while reading.
+        0. **base64Encoded** - *(Optional)* Set if the data is base64-encoded
+        1. **data** - Data that were read.
+        2. **eof** - Set if the end-of-file condition occurred while reading.
     '''
     session = get_session_context('io.read')
     return await session.execute(cdp.io.read(handle, offset, size))

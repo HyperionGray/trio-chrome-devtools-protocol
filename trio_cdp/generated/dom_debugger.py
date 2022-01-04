@@ -10,6 +10,7 @@ from ..context import get_connection_context, get_session_context
 
 import cdp.dom_debugger
 from cdp.dom_debugger import (
+    CSPViolationType,
     DOMBreakpointType,
     EventListener
 )
@@ -84,6 +85,20 @@ async def remove_xhr_breakpoint(
     '''
     session = get_session_context('dom_debugger.remove_xhr_breakpoint')
     return await session.execute(cdp.dom_debugger.remove_xhr_breakpoint(url))
+
+
+async def set_break_on_csp_violation(
+        violation_types: typing.List[CSPViolationType]
+    ) -> None:
+    '''
+    Sets breakpoint on particular CSP violations.
+
+    **EXPERIMENTAL**
+
+    :param violation_types: CSP Violations to stop upon.
+    '''
+    session = get_session_context('dom_debugger.set_break_on_csp_violation')
+    return await session.execute(cdp.dom_debugger.set_break_on_csp_violation(violation_types))
 
 
 async def set_dom_breakpoint(

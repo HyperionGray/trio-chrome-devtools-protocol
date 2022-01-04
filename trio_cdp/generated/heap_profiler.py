@@ -115,20 +115,28 @@ async def stop_sampling() -> SamplingHeapProfile:
 
 
 async def stop_tracking_heap_objects(
-        report_progress: typing.Optional[bool] = None
+        report_progress: typing.Optional[bool] = None,
+        treat_global_objects_as_roots: typing.Optional[bool] = None,
+        capture_numeric_value: typing.Optional[bool] = None
     ) -> None:
     '''
     :param report_progress: *(Optional)* If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken when the tracking is stopped.
+    :param treat_global_objects_as_roots: *(Optional)*
+    :param capture_numeric_value: *(Optional)* If true, numerical values are included in the snapshot
     '''
     session = get_session_context('heap_profiler.stop_tracking_heap_objects')
-    return await session.execute(cdp.heap_profiler.stop_tracking_heap_objects(report_progress))
+    return await session.execute(cdp.heap_profiler.stop_tracking_heap_objects(report_progress, treat_global_objects_as_roots, capture_numeric_value))
 
 
 async def take_heap_snapshot(
-        report_progress: typing.Optional[bool] = None
+        report_progress: typing.Optional[bool] = None,
+        treat_global_objects_as_roots: typing.Optional[bool] = None,
+        capture_numeric_value: typing.Optional[bool] = None
     ) -> None:
     '''
     :param report_progress: *(Optional)* If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
+    :param treat_global_objects_as_roots: *(Optional)* If true, a raw snapshot without artificial roots will be generated
+    :param capture_numeric_value: *(Optional)* If true, numerical values are included in the snapshot
     '''
     session = get_session_context('heap_profiler.take_heap_snapshot')
-    return await session.execute(cdp.heap_profiler.take_heap_snapshot(report_progress))
+    return await session.execute(cdp.heap_profiler.take_heap_snapshot(report_progress, treat_global_objects_as_roots, capture_numeric_value))

@@ -77,21 +77,21 @@ async def request_cached_response(
 
 async def request_entries(
         cache_id: CacheId,
-        skip_count: int,
-        page_size: int,
+        skip_count: typing.Optional[int] = None,
+        page_size: typing.Optional[int] = None,
         path_filter: typing.Optional[str] = None
     ) -> typing.Tuple[typing.List[DataEntry], float]:
     '''
     Requests data from cache.
 
     :param cache_id: ID of cache to get entries from.
-    :param skip_count: Number of records to skip.
-    :param page_size: Number of records to fetch.
+    :param skip_count: *(Optional)* Number of records to skip.
+    :param page_size: *(Optional)* Number of records to fetch.
     :param path_filter: *(Optional)* If present, only return the entries containing this substring in the path
     :returns: A tuple with the following items:
 
-        0. **cacheDataEntries** – Array of object store data entries.
-        1. **returnCount** – Count of returned entries from this storage. If pathFilter is empty, it is the count of all entries from this storage.
+        0. **cacheDataEntries** - Array of object store data entries.
+        1. **returnCount** - Count of returned entries from this storage. If pathFilter is empty, it is the count of all entries from this storage.
     '''
     session = get_session_context('cache_storage.request_entries')
     return await session.execute(cdp.cache_storage.request_entries(cache_id, skip_count, page_size, path_filter))

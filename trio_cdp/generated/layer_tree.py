@@ -24,12 +24,15 @@ from cdp.layer_tree import (
 
 async def compositing_reasons(
         layer_id: LayerId
-    ) -> typing.List[str]:
+    ) -> typing.Tuple[typing.List[str], typing.List[str]]:
     '''
     Provides the reasons why the given layer was composited.
 
     :param layer_id: The id of the layer for which we want to get the reasons it was composited.
-    :returns: A list of strings specifying reasons for the given layer to become composited.
+    :returns: A tuple with the following items:
+
+        0. **compositingReasons** - A list of strings specifying reasons for the given layer to become composited.
+        1. **compositingReasonIds** - A list of strings specifying reason IDs for the given layer to become composited.
     '''
     session = get_session_context('layer_tree.compositing_reasons')
     return await session.execute(cdp.layer_tree.compositing_reasons(layer_id))

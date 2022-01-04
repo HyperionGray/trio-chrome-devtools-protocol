@@ -14,6 +14,7 @@ from cdp.web_authn import (
     AuthenticatorProtocol,
     AuthenticatorTransport,
     Credential,
+    Ctap2Version,
     VirtualAuthenticatorOptions
 )
 
@@ -74,6 +75,22 @@ async def enable() -> None:
     return await session.execute(cdp.web_authn.enable())
 
 
+async def get_credential(
+        authenticator_id: AuthenticatorId,
+        credential_id: str
+    ) -> Credential:
+    '''
+    Returns a single credential stored in the given virtual authenticator that
+    matches the credential ID.
+
+    :param authenticator_id:
+    :param credential_id:
+    :returns: 
+    '''
+    session = get_session_context('web_authn.get_credential')
+    return await session.execute(cdp.web_authn.get_credential(authenticator_id, credential_id))
+
+
 async def get_credentials(
         authenticator_id: AuthenticatorId
     ) -> typing.List[Credential]:
@@ -87,6 +104,20 @@ async def get_credentials(
     return await session.execute(cdp.web_authn.get_credentials(authenticator_id))
 
 
+async def remove_credential(
+        authenticator_id: AuthenticatorId,
+        credential_id: str
+    ) -> None:
+    '''
+    Removes a credential from the authenticator.
+
+    :param authenticator_id:
+    :param credential_id:
+    '''
+    session = get_session_context('web_authn.remove_credential')
+    return await session.execute(cdp.web_authn.remove_credential(authenticator_id, credential_id))
+
+
 async def remove_virtual_authenticator(
         authenticator_id: AuthenticatorId
     ) -> None:
@@ -97,6 +128,21 @@ async def remove_virtual_authenticator(
     '''
     session = get_session_context('web_authn.remove_virtual_authenticator')
     return await session.execute(cdp.web_authn.remove_virtual_authenticator(authenticator_id))
+
+
+async def set_automatic_presence_simulation(
+        authenticator_id: AuthenticatorId,
+        enabled: bool
+    ) -> None:
+    '''
+    Sets whether tests of user presence will succeed immediately (if true) or fail to resolve (if false) for an authenticator.
+    The default is true.
+
+    :param authenticator_id:
+    :param enabled:
+    '''
+    session = get_session_context('web_authn.set_automatic_presence_simulation')
+    return await session.execute(cdp.web_authn.set_automatic_presence_simulation(authenticator_id, enabled))
 
 
 async def set_user_verified(

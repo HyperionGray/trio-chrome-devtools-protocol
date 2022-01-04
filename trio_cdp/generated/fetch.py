@@ -26,7 +26,8 @@ async def continue_request(
         url: typing.Optional[str] = None,
         method: typing.Optional[str] = None,
         post_data: typing.Optional[str] = None,
-        headers: typing.Optional[typing.List[HeaderEntry]] = None
+        headers: typing.Optional[typing.List[HeaderEntry]] = None,
+        intercept_response: typing.Optional[bool] = None
     ) -> None:
     '''
     Continues the request, optionally modifying some of its parameters.
@@ -34,11 +35,36 @@ async def continue_request(
     :param request_id: An id the client received in requestPaused event.
     :param url: *(Optional)* If set, the request url will be modified in a way that's not observable by page.
     :param method: *(Optional)* If set, the request method is overridden.
-    :param post_data: *(Optional)* If set, overrides the post data in the request.
-    :param headers: *(Optional)* If set, overrides the request headrts.
+    :param post_data: *(Optional)* If set, overrides the post data in the request. (Encoded as a base64 string when passed over JSON)
+    :param headers: *(Optional)* If set, overrides the request headers.
+    :param intercept_response: **(EXPERIMENTAL)** *(Optional)* If set, overrides response interception behavior for this request.
     '''
     session = get_session_context('fetch.continue_request')
-    return await session.execute(cdp.fetch.continue_request(request_id, url, method, post_data, headers))
+    return await session.execute(cdp.fetch.continue_request(request_id, url, method, post_data, headers, intercept_response))
+
+
+async def continue_response(
+        request_id: RequestId,
+        response_code: typing.Optional[int] = None,
+        response_phrase: typing.Optional[str] = None,
+        response_headers: typing.Optional[typing.List[HeaderEntry]] = None,
+        binary_response_headers: typing.Optional[str] = None
+    ) -> None:
+    '''
+    Continues loading of the paused response, optionally modifying the
+    response headers. If either responseCode or headers are modified, all of them
+    must be present.
+
+    **EXPERIMENTAL**
+
+    :param request_id: An id the client received in requestPaused event.
+    :param response_code: *(Optional)* An HTTP response code. If absent, original response code will be used.
+    :param response_phrase: *(Optional)* A textual representation of responseCode. If absent, a standard phrase matching responseCode is used.
+    :param response_headers: *(Optional)* Response headers. If absent, original response headers will be used.
+    :param binary_response_headers: *(Optional)* Alternative way of specifying response headers as a \0-separated series of name: value pairs. Prefer the above method unless you need to represent some non-UTF8 values that can't be transmitted over the protocol as text. (Encoded as a base64 string when passed over JSON)
+    '''
+    session = get_session_context('fetch.continue_response')
+    return await session.execute(cdp.fetch.continue_response(request_id, response_code, response_phrase, response_headers, binary_response_headers))
 
 
 async def continue_with_auth(
@@ -95,7 +121,8 @@ async def fail_request(
 async def fulfill_request(
         request_id: RequestId,
         response_code: int,
-        response_headers: typing.List[HeaderEntry],
+        response_headers: typing.Optional[typing.List[HeaderEntry]] = None,
+        binary_response_headers: typing.Optional[str] = None,
         body: typing.Optional[str] = None,
         response_phrase: typing.Optional[str] = None
     ) -> None:
@@ -104,12 +131,13 @@ async def fulfill_request(
 
     :param request_id: An id the client received in requestPaused event.
     :param response_code: An HTTP response code.
-    :param response_headers: Response headers.
-    :param body: *(Optional)* A response body.
-    :param response_phrase: *(Optional)* A textual representation of responseCode. If absent, a standard phrase mathcing responseCode is used.
+    :param response_headers: *(Optional)* Response headers.
+    :param binary_response_headers: *(Optional)* Alternative way of specifying response headers as a \0-separated series of name: value pairs. Prefer the above method unless you need to represent some non-UTF8 values that can't be transmitted over the protocol as text. (Encoded as a base64 string when passed over JSON)
+    :param body: *(Optional)* A response body. If absent, original response body will be used if the request is intercepted at the response stage and empty body will be used if the request is intercepted at the request stage. (Encoded as a base64 string when passed over JSON)
+    :param response_phrase: *(Optional)* A textual representation of responseCode. If absent, a standard phrase matching responseCode is used.
     '''
     session = get_session_context('fetch.fulfill_request')
-    return await session.execute(cdp.fetch.fulfill_request(request_id, response_code, response_headers, body, response_phrase))
+    return await session.execute(cdp.fetch.fulfill_request(request_id, response_code, response_headers, binary_response_headers, body, response_phrase))
 
 
 async def get_response_body(
@@ -126,8 +154,8 @@ async def get_response_body(
     :param request_id: Identifier for the intercepted request to get body for.
     :returns: A tuple with the following items:
 
-        0. **body** – Response body.
-        1. **base64Encoded** – True, if content was sent as base64.
+        0. **body** - Response body.
+        1. **base64Encoded** - True, if content was sent as base64.
     '''
     session = get_session_context('fetch.get_response_body')
     return await session.execute(cdp.fetch.get_response_body(request_id))

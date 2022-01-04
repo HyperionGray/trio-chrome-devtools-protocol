@@ -53,6 +53,18 @@ async def set_sink_to_use(
     return await session.execute(cdp.cast.set_sink_to_use(sink_name))
 
 
+async def start_desktop_mirroring(
+        sink_name: str
+    ) -> None:
+    '''
+    Starts mirroring the desktop to the sink.
+
+    :param sink_name:
+    '''
+    session = get_session_context('cast.start_desktop_mirroring')
+    return await session.execute(cdp.cast.start_desktop_mirroring(sink_name))
+
+
 async def start_tab_mirroring(
         sink_name: str
     ) -> None:

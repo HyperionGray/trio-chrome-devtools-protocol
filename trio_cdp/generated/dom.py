@@ -15,10 +15,12 @@ from cdp.dom import (
     BackendNode,
     BackendNodeId,
     BoxModel,
+    CSSComputedStyleProperty,
     CharacterDataModified,
     ChildNodeCountUpdated,
     ChildNodeInserted,
     ChildNodeRemoved,
+    CompatibilityMode,
     DistributedNodesUpdated,
     DocumentUpdated,
     InlineStyleInvalidated,
@@ -172,6 +174,25 @@ async def get_box_model(
     return await session.execute(cdp.dom.get_box_model(node_id, backend_node_id, object_id))
 
 
+async def get_container_for_node(
+        node_id: NodeId,
+        container_name: typing.Optional[str] = None
+    ) -> typing.Optional[NodeId]:
+    '''
+    Returns the container of the given node based on container query conditions.
+    If containerName is given, it will find the nearest container with a matching name;
+    otherwise it will find the nearest container regardless of its container name.
+
+    **EXPERIMENTAL**
+
+    :param node_id:
+    :param container_name: *(Optional)*
+    :returns: *(Optional)* The container node for the given node, or null if not found.
+    '''
+    session = get_session_context('dom.get_container_for_node')
+    return await session.execute(cdp.dom.get_container_for_node(node_id, container_name))
+
+
 async def get_content_quads(
         node_id: typing.Optional[NodeId] = None,
         backend_node_id: typing.Optional[BackendNodeId] = None,
@@ -228,12 +249,18 @@ async def get_flattened_document(
         pierce: typing.Optional[bool] = None
     ) -> typing.List[Node]:
     '''
-    Returns the root DOM node (and optionally the subtree) to the caller.
+Returns the root DOM node (and optionally the subtree) to the caller.
+Deprecated, as it is not designed to work well with the rest of the DOM agent.
+Use DOMSnapshot.captureSnapshot instead.
 
-    :param depth: *(Optional)* The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
-    :param pierce: *(Optional)* Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
-    :returns: Resulting node.
-    '''
+.. deprecated:: 1.3
+
+:param depth: *(Optional)* The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+:param pierce: *(Optional)* Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+:returns: Resulting node.
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('dom.get_flattened_document')
     return await session.execute(cdp.dom.get_flattened_document(depth, pierce))
 
@@ -249,8 +276,8 @@ async def get_frame_owner(
     :param frame_id:
     :returns: A tuple with the following items:
 
-        0. **backendNodeId** – Resulting node.
-        1. **nodeId** – *(Optional)* Id of the node at given coordinates, only when enabled and requested document.
+        0. **backendNodeId** - Resulting node.
+        1. **nodeId** - *(Optional)* Id of the node at given coordinates, only when enabled and requested document.
     '''
     session = get_session_context('dom.get_frame_owner')
     return await session.execute(cdp.dom.get_frame_owner(frame_id))
@@ -259,24 +286,59 @@ async def get_frame_owner(
 async def get_node_for_location(
         x: int,
         y: int,
-        include_user_agent_shadow_dom: typing.Optional[bool] = None
-    ) -> typing.Tuple[BackendNodeId, typing.Optional[NodeId]]:
+        include_user_agent_shadow_dom: typing.Optional[bool] = None,
+        ignore_pointer_events_none: typing.Optional[bool] = None
+    ) -> typing.Tuple[BackendNodeId, cdp.page.FrameId, typing.Optional[NodeId]]:
     '''
     Returns node id at given location. Depending on whether DOM domain is enabled, nodeId is
     either returned or not.
 
-    **EXPERIMENTAL**
-
     :param x: X coordinate.
     :param y: Y coordinate.
     :param include_user_agent_shadow_dom: *(Optional)* False to skip to the nearest non-UA shadow root ancestor (default: false).
+    :param ignore_pointer_events_none: *(Optional)* Whether to ignore pointer-events: none on elements and hit test them.
     :returns: A tuple with the following items:
 
-        0. **backendNodeId** – Resulting node.
-        1. **nodeId** – *(Optional)* Id of the node at given coordinates, only when enabled and requested document.
+        0. **backendNodeId** - Resulting node.
+        1. **frameId** - Frame this node belongs to.
+        2. **nodeId** - *(Optional)* Id of the node at given coordinates, only when enabled and requested document.
     '''
     session = get_session_context('dom.get_node_for_location')
-    return await session.execute(cdp.dom.get_node_for_location(x, y, include_user_agent_shadow_dom))
+    return await session.execute(cdp.dom.get_node_for_location(x, y, include_user_agent_shadow_dom, ignore_pointer_events_none))
+
+
+async def get_node_stack_traces(
+        node_id: NodeId
+    ) -> typing.Optional[cdp.runtime.StackTrace]:
+    '''
+    Gets stack traces associated with a Node. As of now, only provides stack trace for Node creation.
+
+    **EXPERIMENTAL**
+
+    :param node_id: Id of the node to get stack traces for.
+    :returns: *(Optional)* Creation stack trace, if available.
+    '''
+    session = get_session_context('dom.get_node_stack_traces')
+    return await session.execute(cdp.dom.get_node_stack_traces(node_id))
+
+
+async def get_nodes_for_subtree_by_style(
+        node_id: NodeId,
+        computed_styles: typing.List[CSSComputedStyleProperty],
+        pierce: typing.Optional[bool] = None
+    ) -> typing.List[NodeId]:
+    '''
+    Finds nodes with a given computed style in a subtree.
+
+    **EXPERIMENTAL**
+
+    :param node_id: Node ID pointing to the root of a subtree.
+    :param computed_styles: The style to filter nodes by (includes nodes if any of properties matches).
+    :param pierce: *(Optional)* Whether or not iframes and shadow roots in the same target should be traversed when returning the results (default is false).
+    :returns: Resulting nodes.
+    '''
+    session = get_session_context('dom.get_nodes_for_subtree_by_style')
+    return await session.execute(cdp.dom.get_nodes_for_subtree_by_style(node_id, computed_styles, pierce))
 
 
 async def get_outer_html(
@@ -294,6 +356,22 @@ async def get_outer_html(
     '''
     session = get_session_context('dom.get_outer_html')
     return await session.execute(cdp.dom.get_outer_html(node_id, backend_node_id, object_id))
+
+
+async def get_querying_descendants_for_container(
+        node_id: NodeId
+    ) -> typing.List[NodeId]:
+    '''
+    Returns the descendants of a container query container that have
+    container queries against this container.
+
+    **EXPERIMENTAL**
+
+    :param node_id: Id of the container node to find querying descendants from.
+    :returns: Descendant nodes with container queries against the given container.
+    '''
+    session = get_session_context('dom.get_querying_descendants_for_container')
+    return await session.execute(cdp.dom.get_querying_descendants_for_container(node_id))
 
 
 async def get_relayout_boundary(
@@ -396,8 +474,8 @@ async def perform_search(
     :param include_user_agent_shadow_dom: *(Optional)* True to search in user agent shadow DOM.
     :returns: A tuple with the following items:
 
-        0. **searchId** – Unique search session identifier.
-        1. **resultCount** – Number of search results.
+        0. **searchId** - Unique search session identifier.
+        1. **resultCount** - Number of search results.
     '''
     session = get_session_context('dom.perform_search')
     return await session.execute(cdp.dom.perform_search(query, include_user_agent_shadow_dom))
@@ -551,6 +629,28 @@ async def resolve_node(
     return await session.execute(cdp.dom.resolve_node(node_id, backend_node_id, object_group, execution_context_id))
 
 
+async def scroll_into_view_if_needed(
+        node_id: typing.Optional[NodeId] = None,
+        backend_node_id: typing.Optional[BackendNodeId] = None,
+        object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None,
+        rect: typing.Optional[Rect] = None
+    ) -> None:
+    '''
+    Scrolls the specified rect of the given node into view if not already visible.
+    Note: exactly one between nodeId, backendNodeId and objectId should be passed
+    to identify the node.
+
+    **EXPERIMENTAL**
+
+    :param node_id: *(Optional)* Identifier of the node.
+    :param backend_node_id: *(Optional)* Identifier of the backend node.
+    :param object_id: *(Optional)* JavaScript object id of the node wrapper.
+    :param rect: *(Optional)* The rect to be scrolled into view, relative to the node's border box, in CSS pixels. When omitted, center of the node will be used, similar to Element.scrollIntoView.
+    '''
+    session = get_session_context('dom.scroll_into_view_if_needed')
+    return await session.execute(cdp.dom.scroll_into_view_if_needed(node_id, backend_node_id, object_id, rect))
+
+
 async def set_attribute_value(
         node_id: NodeId,
         name: str,
@@ -630,6 +730,20 @@ async def set_node_name(
     '''
     session = get_session_context('dom.set_node_name')
     return await session.execute(cdp.dom.set_node_name(node_id, name))
+
+
+async def set_node_stack_traces_enabled(
+        enable: bool
+    ) -> None:
+    '''
+    Sets if stack traces should be captured for Nodes. See ``Node.getNodeStackTraces``. Default is disabled.
+
+    **EXPERIMENTAL**
+
+    :param enable: Enable or disable.
+    '''
+    session = get_session_context('dom.set_node_stack_traces_enabled')
+    return await session.execute(cdp.dom.set_node_stack_traces_enabled(enable))
 
 
 async def set_node_value(
