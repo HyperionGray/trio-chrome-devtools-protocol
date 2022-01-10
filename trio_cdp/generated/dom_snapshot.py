@@ -30,27 +30,33 @@ from cdp.dom_snapshot import (
 
 async def capture_snapshot(
         computed_styles: typing.List[str],
-        include_dom_rects: typing.Optional[bool] = None
+        include_paint_order: typing.Optional[bool] = None,
+        include_dom_rects: typing.Optional[bool] = None,
+        include_blended_background_colors: typing.Optional[bool] = None,
+        include_text_color_opacities: typing.Optional[bool] = None
     ) -> typing.Tuple[typing.List[DocumentSnapshot], typing.List[str]]:
-    '''
+    r'''
     Returns a document snapshot, including the full DOM tree of the root node (including iframes,
     template contents, and imported documents) in a flattened array, as well as layout and
     white-listed computed style information for the nodes. Shadow DOM in the returned DOM tree is
     flattened.
 
     :param computed_styles: Whitelist of computed styles to return.
+    :param include_paint_order: *(Optional)* Whether to include layout object paint orders into the snapshot.
     :param include_dom_rects: *(Optional)* Whether to include DOM rectangles (offsetRects, clientRects, scrollRects) into the snapshot
+    :param include_blended_background_colors: **(EXPERIMENTAL)** *(Optional)* Whether to include blended background colors in the snapshot (default: false). Blended background color is achieved by blending background colors of all elements that overlap with the current element.
+    :param include_text_color_opacities: **(EXPERIMENTAL)** *(Optional)* Whether to include text color opacity in the snapshot (default: false). An element might have the opacity property set that affects the text color of the element. The final text color opacity is computed based on the opacity of all overlapping elements.
     :returns: A tuple with the following items:
 
-        0. **documents** – The nodes in the DOM tree. The DOMNode at index 0 corresponds to the root document.
-        1. **strings** – Shared string table that all string properties refer to with indexes.
+        0. **documents** - The nodes in the DOM tree. The DOMNode at index 0 corresponds to the root document.
+        1. **strings** - Shared string table that all string properties refer to with indexes.
     '''
     session = get_session_context('dom_snapshot.capture_snapshot')
-    return await session.execute(cdp.dom_snapshot.capture_snapshot(computed_styles, include_dom_rects))
+    return await session.execute(cdp.dom_snapshot.capture_snapshot(computed_styles, include_paint_order, include_dom_rects, include_blended_background_colors, include_text_color_opacities))
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables DOM snapshot agent for the given page.
     '''
     session = get_session_context('dom_snapshot.disable')
@@ -58,7 +64,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables DOM snapshot agent for the given page.
     '''
     session = get_session_context('dom_snapshot.enable')
@@ -71,7 +77,7 @@ async def get_snapshot(
         include_paint_order: typing.Optional[bool] = None,
         include_user_agent_shadow_tree: typing.Optional[bool] = None
     ) -> typing.Tuple[typing.List[DOMNode], typing.List[LayoutTreeNode], typing.List[ComputedStyle]]:
-    '''
+    r'''
 Returns a document snapshot, including the full DOM tree of the root node (including iframes,
 template contents, and imported documents) in a flattened array, as well as layout and
 white-listed computed style information for the nodes. Shadow DOM in the returned DOM tree is
@@ -85,10 +91,9 @@ flattened.
 :param include_user_agent_shadow_tree: *(Optional)* Whether to include UA shadow tree in the snapshot (default false).
 :returns: A tuple with the following items:
 
-    0. **domNodes** – The nodes in the DOM tree. The DOMNode at index 0 corresponds to the root document.
-    1. **layoutTreeNodes** – The nodes in the layout tree.
-    2. **computedStyles** – Whitelisted ComputedStyle properties for each node in the layout tree.
-
+    0. **domNodes** - The nodes in the DOM tree. The DOMNode at index 0 corresponds to the root document.
+    1. **layoutTreeNodes** - The nodes in the layout tree.
+    2. **computedStyles** - Whitelisted ComputedStyle properties for each node in the layout tree.
 
 .. deprecated:: 1.3
 '''

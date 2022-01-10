@@ -21,7 +21,7 @@ from cdp.animation import (
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables animation domain notifications.
     '''
     session = get_session_context('animation.disable')
@@ -29,7 +29,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables animation domain notifications.
     '''
     session = get_session_context('animation.enable')
@@ -39,7 +39,7 @@ async def enable() -> None:
 async def get_current_time(
         id_: str
     ) -> float:
-    '''
+    r'''
     Returns the current time of the an animation.
 
     :param id_: Id of animation.
@@ -50,7 +50,7 @@ async def get_current_time(
 
 
 async def get_playback_rate() -> float:
-    '''
+    r'''
     Gets the playback rate of the document timeline.
 
     :returns: Playback rate for animations on page.
@@ -62,7 +62,7 @@ async def get_playback_rate() -> float:
 async def release_animations(
         animations: typing.List[str]
     ) -> None:
-    '''
+    r'''
     Releases a set of animations to no longer be manipulated.
 
     :param animations: List of animation ids to seek.
@@ -74,7 +74,7 @@ async def release_animations(
 async def resolve_animation(
         animation_id: str
     ) -> cdp.runtime.RemoteObject:
-    '''
+    r'''
     Gets the remote object of the Animation.
 
     :param animation_id: Animation id.
@@ -88,7 +88,7 @@ async def seek_animations(
         animations: typing.List[str],
         current_time: float
     ) -> None:
-    '''
+    r'''
     Seek a set of animations to a particular time within each animation.
 
     :param animations: List of animation ids to seek.
@@ -102,7 +102,7 @@ async def set_paused(
         animations: typing.List[str],
         paused: bool
     ) -> None:
-    '''
+    r'''
     Sets the paused state of a set of animations.
 
     :param animations: Animations to set the pause state of.
@@ -115,7 +115,7 @@ async def set_paused(
 async def set_playback_rate(
         playback_rate: float
     ) -> None:
-    '''
+    r'''
     Sets the playback rate of the document timeline.
 
     :param playback_rate: Playback rate for animations on page
@@ -129,7 +129,7 @@ async def set_timing(
         duration: float,
         delay: float
     ) -> None:
-    '''
+    r'''
     Sets the timing of an animation node.
 
     :param animation_id: Animation id.

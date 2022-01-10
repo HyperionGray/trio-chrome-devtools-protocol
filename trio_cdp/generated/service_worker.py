@@ -27,7 +27,7 @@ async def deliver_push_message(
         registration_id: RegistrationID,
         data: str
     ) -> None:
-    '''
+    r'''
     :param origin:
     :param registration_id:
     :param data:
@@ -41,13 +41,27 @@ async def disable() -> None:
     return await session.execute(cdp.service_worker.disable())
 
 
+async def dispatch_periodic_sync_event(
+        origin: str,
+        registration_id: RegistrationID,
+        tag: str
+    ) -> None:
+    r'''
+    :param origin:
+    :param registration_id:
+    :param tag:
+    '''
+    session = get_session_context('service_worker.dispatch_periodic_sync_event')
+    return await session.execute(cdp.service_worker.dispatch_periodic_sync_event(origin, registration_id, tag))
+
+
 async def dispatch_sync_event(
         origin: str,
         registration_id: RegistrationID,
         tag: str,
         last_chance: bool
     ) -> None:
-    '''
+    r'''
     :param origin:
     :param registration_id:
     :param tag:
@@ -65,7 +79,7 @@ async def enable() -> None:
 async def inspect_worker(
         version_id: str
     ) -> None:
-    '''
+    r'''
     :param version_id:
     '''
     session = get_session_context('service_worker.inspect_worker')
@@ -75,7 +89,7 @@ async def inspect_worker(
 async def set_force_update_on_page_load(
         force_update_on_page_load: bool
     ) -> None:
-    '''
+    r'''
     :param force_update_on_page_load:
     '''
     session = get_session_context('service_worker.set_force_update_on_page_load')
@@ -85,7 +99,7 @@ async def set_force_update_on_page_load(
 async def skip_waiting(
         scope_url: str
     ) -> None:
-    '''
+    r'''
     :param scope_url:
     '''
     session = get_session_context('service_worker.skip_waiting')
@@ -95,7 +109,7 @@ async def skip_waiting(
 async def start_worker(
         scope_url: str
     ) -> None:
-    '''
+    r'''
     :param scope_url:
     '''
     session = get_session_context('service_worker.start_worker')
@@ -110,7 +124,7 @@ async def stop_all_workers() -> None:
 async def stop_worker(
         version_id: str
     ) -> None:
-    '''
+    r'''
     :param version_id:
     '''
     session = get_session_context('service_worker.stop_worker')
@@ -120,7 +134,7 @@ async def stop_worker(
 async def unregister(
         scope_url: str
     ) -> None:
-    '''
+    r'''
     :param scope_url:
     '''
     session = get_session_context('service_worker.unregister')
@@ -130,7 +144,7 @@ async def unregister(
 async def update_registration(
         scope_url: str
     ) -> None:
-    '''
+    r'''
     :param scope_url:
     '''
     session = get_session_context('service_worker.update_registration')

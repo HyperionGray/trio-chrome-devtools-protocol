@@ -9,6 +9,78 @@ import typing
 from ..context import get_connection_context, get_session_context
 
 import cdp.audits
+from cdp.audits import (
+    AffectedCookie,
+    AffectedFrame,
+    AffectedRequest,
+    AttributionReportingIssueDetails,
+    AttributionReportingIssueType,
+    BlockedByResponseIssueDetails,
+    BlockedByResponseReason,
+    ClientHintIssueDetails,
+    ClientHintIssueReason,
+    ContentSecurityPolicyIssueDetails,
+    ContentSecurityPolicyViolationType,
+    CorsIssueDetails,
+    DeprecationIssueDetails,
+    GenericIssueDetails,
+    GenericIssueErrorType,
+    HeavyAdIssueDetails,
+    HeavyAdReason,
+    HeavyAdResolutionStatus,
+    InspectorIssue,
+    InspectorIssueCode,
+    InspectorIssueDetails,
+    IssueAdded,
+    IssueId,
+    LowTextContrastIssueDetails,
+    MixedContentIssueDetails,
+    MixedContentResolutionStatus,
+    MixedContentResourceType,
+    NavigatorUserAgentIssueDetails,
+    QuirksModeIssueDetails,
+    SameSiteCookieExclusionReason,
+    SameSiteCookieIssueDetails,
+    SameSiteCookieOperation,
+    SameSiteCookieWarningReason,
+    SharedArrayBufferIssueDetails,
+    SharedArrayBufferIssueType,
+    SourceCodeLocation,
+    TrustedWebActivityIssueDetails,
+    TwaQualityEnforcementViolationType,
+    WasmCrossOriginModuleSharingIssueDetails
+)
+
+
+async def check_contrast(
+        report_aaa: typing.Optional[bool] = None
+    ) -> None:
+    r'''
+    Runs the contrast check for the target page. Found issues are reported
+    using Audits.issueAdded event.
+
+    :param report_aaa: *(Optional)* Whether to report WCAG AAA level issues. Default is false.
+    '''
+    session = get_session_context('audits.check_contrast')
+    return await session.execute(cdp.audits.check_contrast(report_aaa))
+
+
+async def disable() -> None:
+    r'''
+    Disables issues domain, prevents further issues from being reported to the client.
+    '''
+    session = get_session_context('audits.disable')
+    return await session.execute(cdp.audits.disable())
+
+
+async def enable() -> None:
+    r'''
+    Enables issues domain, sends the issues collected so far to the client by means of the
+    ``issueAdded`` event.
+    '''
+    session = get_session_context('audits.enable')
+    return await session.execute(cdp.audits.enable())
+
 
 async def get_encoded_response(
         request_id: cdp.network.RequestId,
@@ -16,7 +88,7 @@ async def get_encoded_response(
         quality: typing.Optional[float] = None,
         size_only: typing.Optional[bool] = None
     ) -> typing.Tuple[typing.Optional[str], int, int]:
-    '''
+    r'''
     Returns the response body and size if it were re-encoded with the specified settings. Only
     applies to images.
 
@@ -26,9 +98,9 @@ async def get_encoded_response(
     :param size_only: *(Optional)* Whether to only return the size information (defaults to false).
     :returns: A tuple with the following items:
 
-        0. **body** – *(Optional)* The encoded body as a base64 string. Omitted if sizeOnly is true.
-        1. **originalSize** – Size before re-encoding.
-        2. **encodedSize** – Size after re-encoding.
+        0. **body** - *(Optional)* The encoded body as a base64 string. Omitted if sizeOnly is true. (Encoded as a base64 string when passed over JSON)
+        1. **originalSize** - Size before re-encoding.
+        2. **encodedSize** - Size after re-encoding.
     '''
     session = get_session_context('audits.get_encoded_response')
     return await session.execute(cdp.audits.get_encoded_response(request_id, encoding, quality, size_only))

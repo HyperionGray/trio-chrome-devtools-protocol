@@ -11,7 +11,7 @@ from ..context import get_connection_context, get_session_context
 import cdp.device_orientation
 
 async def clear_device_orientation_override() -> None:
-    '''
+    r'''
     Clears the overridden Device Orientation.
     '''
     session = get_session_context('device_orientation.clear_device_orientation_override')
@@ -23,7 +23,7 @@ async def set_device_orientation_override(
         beta: float,
         gamma: float
     ) -> None:
-    '''
+    r'''
     Overrides the Device Orientation.
 
     :param alpha: Mock alpha

@@ -10,19 +10,37 @@ from ..context import get_connection_context, get_session_context
 
 import cdp.web_audio
 from cdp.web_audio import (
+    AudioListener,
+    AudioListenerCreated,
+    AudioListenerWillBeDestroyed,
+    AudioNode,
+    AudioNodeCreated,
+    AudioNodeWillBeDestroyed,
+    AudioParam,
+    AudioParamCreated,
+    AudioParamWillBeDestroyed,
+    AutomationRate,
     BaseAudioContext,
+    ChannelCountMode,
+    ChannelInterpretation,
     ContextChanged,
     ContextCreated,
-    ContextDestroyed,
-    ContextId,
     ContextRealtimeData,
     ContextState,
-    ContextType
+    ContextType,
+    ContextWillBeDestroyed,
+    GraphObjectId,
+    NodeParamConnected,
+    NodeParamDisconnected,
+    NodeType,
+    NodesConnected,
+    NodesDisconnected,
+    ParamType
 )
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables the WebAudio domain.
     '''
     session = get_session_context('web_audio.disable')
@@ -30,7 +48,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables the WebAudio domain and starts sending context lifetime events.
     '''
     session = get_session_context('web_audio.enable')
@@ -38,9 +56,9 @@ async def enable() -> None:
 
 
 async def get_realtime_data(
-        context_id: ContextId
+        context_id: GraphObjectId
     ) -> ContextRealtimeData:
-    '''
+    r'''
     Fetch the realtime data from the registered contexts.
 
     :param context_id:

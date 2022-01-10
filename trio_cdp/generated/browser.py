@@ -11,16 +11,38 @@ from ..context import get_connection_context, get_session_context
 import cdp.browser
 from cdp.browser import (
     Bounds,
+    BrowserCommandId,
+    BrowserContextID,
     Bucket,
+    DownloadProgress,
+    DownloadWillBegin,
     Histogram,
+    PermissionDescriptor,
+    PermissionSetting,
     PermissionType,
     WindowID,
     WindowState
 )
 
 
-async def close() -> None:
+async def cancel_download(
+        guid: str,
+        browser_context_id: typing.Optional[BrowserContextID] = None
+    ) -> None:
+    r'''
+    Cancel a download if in progress
+
+    **EXPERIMENTAL**
+
+    :param guid: Global unique identifier of the download.
+    :param browser_context_id: *(Optional)* BrowserContext to perform the action in. When omitted, default browser context is used.
     '''
+    session = get_session_context('browser.cancel_download')
+    return await session.execute(cdp.browser.cancel_download(guid, browser_context_id))
+
+
+async def close() -> None:
+    r'''
     Close browser gracefully.
     '''
     session = get_session_context('browser.close')
@@ -28,7 +50,7 @@ async def close() -> None:
 
 
 async def crash() -> None:
-    '''
+    r'''
     Crashes browser on the main thread.
 
     **EXPERIMENTAL**
@@ -38,7 +60,7 @@ async def crash() -> None:
 
 
 async def crash_gpu_process() -> None:
-    '''
+    r'''
     Crashes GPU process.
 
     **EXPERIMENTAL**
@@ -47,8 +69,22 @@ async def crash_gpu_process() -> None:
     return await session.execute(cdp.browser.crash_gpu_process())
 
 
-async def get_browser_command_line() -> typing.List[str]:
+async def execute_browser_command(
+        command_id: BrowserCommandId
+    ) -> None:
+    r'''
+    Invoke custom browser commands used by telemetry.
+
+    **EXPERIMENTAL**
+
+    :param command_id:
     '''
+    session = get_session_context('browser.execute_browser_command')
+    return await session.execute(cdp.browser.execute_browser_command(command_id))
+
+
+async def get_browser_command_line() -> typing.List[str]:
+    r'''
     Returns the command line switches for the browser process if, and only if
     --enable-automation is on the commandline.
 
@@ -64,7 +100,7 @@ async def get_histogram(
         name: str,
         delta: typing.Optional[bool] = None
     ) -> Histogram:
-    '''
+    r'''
     Get a Chrome histogram by name.
 
     **EXPERIMENTAL**
@@ -81,7 +117,7 @@ async def get_histograms(
         query: typing.Optional[str] = None,
         delta: typing.Optional[bool] = None
     ) -> typing.List[Histogram]:
-    '''
+    r'''
     Get Chrome histograms.
 
     **EXPERIMENTAL**
@@ -95,16 +131,16 @@ async def get_histograms(
 
 
 async def get_version() -> typing.Tuple[str, str, str, str, str]:
-    '''
+    r'''
     Returns version information.
 
     :returns: A tuple with the following items:
 
-        0. **protocolVersion** – Protocol version.
-        1. **product** – Product name.
-        2. **revision** – Product revision.
-        3. **userAgent** – User-Agent.
-        4. **jsVersion** – V8 version.
+        0. **protocolVersion** - Protocol version.
+        1. **product** - Product name.
+        2. **revision** - Product revision.
+        3. **userAgent** - User-Agent.
+        4. **jsVersion** - V8 version.
     '''
     session = get_session_context('browser.get_version')
     return await session.execute(cdp.browser.get_version())
@@ -113,7 +149,7 @@ async def get_version() -> typing.Tuple[str, str, str, str, str]:
 async def get_window_bounds(
         window_id: WindowID
     ) -> Bounds:
-    '''
+    r'''
     Get position and size of the browser window.
 
     **EXPERIMENTAL**
@@ -128,7 +164,7 @@ async def get_window_bounds(
 async def get_window_for_target(
         target_id: typing.Optional[cdp.target.TargetID] = None
     ) -> typing.Tuple[WindowID, Bounds]:
-    '''
+    r'''
     Get the browser window that contains the devtools target.
 
     **EXPERIMENTAL**
@@ -136,35 +172,35 @@ async def get_window_for_target(
     :param target_id: *(Optional)* Devtools agent host id. If called as a part of the session, associated targetId is used.
     :returns: A tuple with the following items:
 
-        0. **windowId** – Browser window id.
-        1. **bounds** – Bounds information of the window. When window state is 'minimized', the restored window position and size are returned.
+        0. **windowId** - Browser window id.
+        1. **bounds** - Bounds information of the window. When window state is 'minimized', the restored window position and size are returned.
     '''
     session = get_session_context('browser.get_window_for_target')
     return await session.execute(cdp.browser.get_window_for_target(target_id))
 
 
 async def grant_permissions(
-        origin: str,
         permissions: typing.List[PermissionType],
-        browser_context_id: typing.Optional[cdp.target.BrowserContextID] = None
+        origin: typing.Optional[str] = None,
+        browser_context_id: typing.Optional[BrowserContextID] = None
     ) -> None:
-    '''
+    r'''
     Grant specific permissions to the given origin and reject all others.
 
     **EXPERIMENTAL**
 
-    :param origin:
     :param permissions:
+    :param origin: *(Optional)* Origin the permission applies to, all origins if not specified.
     :param browser_context_id: *(Optional)* BrowserContext to override permissions. When omitted, default browser context is used.
     '''
     session = get_session_context('browser.grant_permissions')
-    return await session.execute(cdp.browser.grant_permissions(origin, permissions, browser_context_id))
+    return await session.execute(cdp.browser.grant_permissions(permissions, origin, browser_context_id))
 
 
 async def reset_permissions(
-        browser_context_id: typing.Optional[cdp.target.BrowserContextID] = None
+        browser_context_id: typing.Optional[BrowserContextID] = None
     ) -> None:
-    '''
+    r'''
     Reset all permission management for all origins.
 
     **EXPERIMENTAL**
@@ -179,23 +215,63 @@ async def set_dock_tile(
         badge_label: typing.Optional[str] = None,
         image: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Set dock tile details, platform-specific.
 
     **EXPERIMENTAL**
 
     :param badge_label: *(Optional)*
-    :param image: *(Optional)* Png encoded image.
+    :param image: *(Optional)* Png encoded image. (Encoded as a base64 string when passed over JSON)
     '''
     session = get_session_context('browser.set_dock_tile')
     return await session.execute(cdp.browser.set_dock_tile(badge_label, image))
+
+
+async def set_download_behavior(
+        behavior: str,
+        browser_context_id: typing.Optional[BrowserContextID] = None,
+        download_path: typing.Optional[str] = None,
+        events_enabled: typing.Optional[bool] = None
+    ) -> None:
+    r'''
+    Set the behavior when downloading a file.
+
+    **EXPERIMENTAL**
+
+    :param behavior: Whether to allow all or deny all download requests, or use default Chrome behavior if available (otherwise deny). ``allowAndName`` allows download and names files according to their dowmload guids.
+    :param browser_context_id: *(Optional)* BrowserContext to set download behavior. When omitted, default browser context is used.
+    :param download_path: *(Optional)* The default path to save downloaded files to. This is required if behavior is set to 'allow' or 'allowAndName'.
+    :param events_enabled: *(Optional)* Whether to emit download events (defaults to false).
+    '''
+    session = get_session_context('browser.set_download_behavior')
+    return await session.execute(cdp.browser.set_download_behavior(behavior, browser_context_id, download_path, events_enabled))
+
+
+async def set_permission(
+        permission: PermissionDescriptor,
+        setting: PermissionSetting,
+        origin: typing.Optional[str] = None,
+        browser_context_id: typing.Optional[BrowserContextID] = None
+    ) -> None:
+    r'''
+    Set permission settings for given origin.
+
+    **EXPERIMENTAL**
+
+    :param permission: Descriptor of permission to override.
+    :param setting: Setting of the permission.
+    :param origin: *(Optional)* Origin the permission applies to, all origins if not specified.
+    :param browser_context_id: *(Optional)* Context to override. When omitted, default browser context is used.
+    '''
+    session = get_session_context('browser.set_permission')
+    return await session.execute(cdp.browser.set_permission(permission, setting, origin, browser_context_id))
 
 
 async def set_window_bounds(
         window_id: WindowID,
         bounds: Bounds
     ) -> None:
-    '''
+    r'''
     Set position and/or size of the browser window.
 
     **EXPERIMENTAL**

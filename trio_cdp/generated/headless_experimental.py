@@ -21,7 +21,7 @@ async def begin_frame(
         no_display_updates: typing.Optional[bool] = None,
         screenshot: typing.Optional[ScreenshotParams] = None
     ) -> typing.Tuple[bool, typing.Optional[str]]:
-    '''
+    r'''
     Sends a BeginFrame to the target and returns when the frame was completed. Optionally captures a
     screenshot from the resulting frame. Requires that the target was created with enabled
     BeginFrameControl. Designed for use with --run-all-compositor-stages-before-draw, see also
@@ -33,15 +33,15 @@ async def begin_frame(
     :param screenshot: *(Optional)* If set, a screenshot of the frame will be captured and returned in the response. Otherwise, no screenshot will be captured. Note that capturing a screenshot can fail, for example, during renderer initialization. In such a case, no screenshot data will be returned.
     :returns: A tuple with the following items:
 
-        0. **hasDamage** – Whether the BeginFrame resulted in damage and, thus, a new frame was committed to the display. Reported for diagnostic uses, may be removed in the future.
-        1. **screenshotData** – *(Optional)* Base64-encoded image data of the screenshot, if one was requested and successfully taken.
+        0. **hasDamage** - Whether the BeginFrame resulted in damage and, thus, a new frame was committed to the display. Reported for diagnostic uses, may be removed in the future.
+        1. **screenshotData** - *(Optional)* Base64-encoded image data of the screenshot, if one was requested and successfully taken. (Encoded as a base64 string when passed over JSON)
     '''
     session = get_session_context('headless_experimental.begin_frame')
     return await session.execute(cdp.headless_experimental.begin_frame(frame_time_ticks, interval, no_display_updates, screenshot))
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables headless events for the target.
     '''
     session = get_session_context('headless_experimental.disable')
@@ -49,7 +49,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables headless events for the target.
     '''
     session = get_session_context('headless_experimental.enable')

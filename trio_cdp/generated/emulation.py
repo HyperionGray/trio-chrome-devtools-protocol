@@ -10,14 +10,19 @@ from ..context import get_connection_context, get_session_context
 
 import cdp.emulation
 from cdp.emulation import (
+    DisabledImageType,
+    DisplayFeature,
+    MediaFeature,
     ScreenOrientation,
+    UserAgentBrandVersion,
+    UserAgentMetadata,
     VirtualTimeBudgetExpired,
     VirtualTimePolicy
 )
 
 
 async def can_emulate() -> bool:
-    '''
+    r'''
     Tells whether emulation is supported.
 
     :returns: True if emulation is supported.
@@ -27,23 +32,33 @@ async def can_emulate() -> bool:
 
 
 async def clear_device_metrics_override() -> None:
-    '''
-    Clears the overriden device metrics.
+    r'''
+    Clears the overridden device metrics.
     '''
     session = get_session_context('emulation.clear_device_metrics_override')
     return await session.execute(cdp.emulation.clear_device_metrics_override())
 
 
 async def clear_geolocation_override() -> None:
-    '''
-    Clears the overriden Geolocation Position and Error.
+    r'''
+    Clears the overridden Geolocation Position and Error.
     '''
     session = get_session_context('emulation.clear_geolocation_override')
     return await session.execute(cdp.emulation.clear_geolocation_override())
 
 
-async def reset_page_scale_factor() -> None:
+async def clear_idle_override() -> None:
+    r'''
+    Clears Idle state overrides.
+
+    **EXPERIMENTAL**
     '''
+    session = get_session_context('emulation.clear_idle_override')
+    return await session.execute(cdp.emulation.clear_idle_override())
+
+
+async def reset_page_scale_factor() -> None:
+    r'''
     Requests that page scale factor is reset to initial values.
 
     **EXPERIMENTAL**
@@ -52,10 +67,24 @@ async def reset_page_scale_factor() -> None:
     return await session.execute(cdp.emulation.reset_page_scale_factor())
 
 
+async def set_auto_dark_mode_override(
+        enabled: typing.Optional[bool] = None
+    ) -> None:
+    r'''
+    Automatically render all web contents using a dark theme.
+
+    **EXPERIMENTAL**
+
+    :param enabled: *(Optional)* Whether to enable or disable automatic dark mode. If not specified, any existing override will be cleared.
+    '''
+    session = get_session_context('emulation.set_auto_dark_mode_override')
+    return await session.execute(cdp.emulation.set_auto_dark_mode_override(enabled))
+
+
 async def set_cpu_throttling_rate(
         rate: float
     ) -> None:
-    '''
+    r'''
     Enables CPU throttling to emulate slow CPUs.
 
     **EXPERIMENTAL**
@@ -69,7 +98,7 @@ async def set_cpu_throttling_rate(
 async def set_default_background_color_override(
         color: typing.Optional[cdp.dom.RGBA] = None
     ) -> None:
-    '''
+    r'''
     Sets or clears an override of the default background color of the frame. This override is used
     if the content does not specify one.
 
@@ -91,9 +120,10 @@ async def set_device_metrics_override(
         position_y: typing.Optional[int] = None,
         dont_set_visible_size: typing.Optional[bool] = None,
         screen_orientation: typing.Optional[ScreenOrientation] = None,
-        viewport: typing.Optional[cdp.page.Viewport] = None
+        viewport: typing.Optional[cdp.page.Viewport] = None,
+        display_feature: typing.Optional[DisplayFeature] = None
     ) -> None:
-    '''
+    r'''
     Overrides the values of device screen dimensions (window.screen.width, window.screen.height,
     window.innerWidth, window.innerHeight, and "device-width"/"device-height"-related CSS media
     query results).
@@ -110,15 +140,30 @@ async def set_device_metrics_override(
     :param dont_set_visible_size: **(EXPERIMENTAL)** *(Optional)* Do not set visible view size, rely upon explicit setVisibleSize call.
     :param screen_orientation: *(Optional)* Screen orientation override.
     :param viewport: **(EXPERIMENTAL)** *(Optional)* If set, the visible area of the page will be overridden to this viewport. This viewport change is not observed by the page, e.g. viewport-relative elements do not change positions.
+    :param display_feature: **(EXPERIMENTAL)** *(Optional)* If set, the display feature of a multi-segment screen. If not set, multi-segment support is turned-off.
     '''
     session = get_session_context('emulation.set_device_metrics_override')
-    return await session.execute(cdp.emulation.set_device_metrics_override(width, height, device_scale_factor, mobile, scale, screen_width, screen_height, position_x, position_y, dont_set_visible_size, screen_orientation, viewport))
+    return await session.execute(cdp.emulation.set_device_metrics_override(width, height, device_scale_factor, mobile, scale, screen_width, screen_height, position_x, position_y, dont_set_visible_size, screen_orientation, viewport, display_feature))
+
+
+async def set_disabled_image_types(
+        image_types: typing.List[DisabledImageType]
+    ) -> None:
+    r'''
+
+
+    **EXPERIMENTAL**
+
+    :param image_types: Image types to disable.
+    '''
+    session = get_session_context('emulation.set_disabled_image_types')
+    return await session.execute(cdp.emulation.set_disabled_image_types(image_types))
 
 
 async def set_document_cookie_disabled(
         disabled: bool
     ) -> None:
-    '''
+    r'''
 
 
     **EXPERIMENTAL**
@@ -133,7 +178,7 @@ async def set_emit_touch_events_for_mouse(
         enabled: bool,
         configuration: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
 
 
     **EXPERIMENTAL**
@@ -146,21 +191,37 @@ async def set_emit_touch_events_for_mouse(
 
 
 async def set_emulated_media(
-        media: str
+        media: typing.Optional[str] = None,
+        features: typing.Optional[typing.List[MediaFeature]] = None
     ) -> None:
-    '''
-    Emulates the given media for CSS media queries.
+    r'''
+    Emulates the given media type or media feature for CSS media queries.
 
-    :param media: Media type to emulate. Empty string disables the override.
+    :param media: *(Optional)* Media type to emulate. Empty string disables the override.
+    :param features: *(Optional)* Media features to emulate.
     '''
     session = get_session_context('emulation.set_emulated_media')
-    return await session.execute(cdp.emulation.set_emulated_media(media))
+    return await session.execute(cdp.emulation.set_emulated_media(media, features))
+
+
+async def set_emulated_vision_deficiency(
+        type_: str
+    ) -> None:
+    r'''
+    Emulates the given vision deficiency.
+
+    **EXPERIMENTAL**
+
+    :param type_: Vision deficiency to emulate.
+    '''
+    session = get_session_context('emulation.set_emulated_vision_deficiency')
+    return await session.execute(cdp.emulation.set_emulated_vision_deficiency(type_))
 
 
 async def set_focus_emulation_enabled(
         enabled: bool
     ) -> None:
-    '''
+    r'''
     Enables or disables simulating a focused and active page.
 
     **EXPERIMENTAL**
@@ -176,7 +237,7 @@ async def set_geolocation_override(
         longitude: typing.Optional[float] = None,
         accuracy: typing.Optional[float] = None
     ) -> None:
-    '''
+    r'''
     Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position
     unavailable.
 
@@ -188,10 +249,40 @@ async def set_geolocation_override(
     return await session.execute(cdp.emulation.set_geolocation_override(latitude, longitude, accuracy))
 
 
+async def set_idle_override(
+        is_user_active: bool,
+        is_screen_unlocked: bool
+    ) -> None:
+    r'''
+    Overrides the Idle state.
+
+    **EXPERIMENTAL**
+
+    :param is_user_active: Mock isUserActive
+    :param is_screen_unlocked: Mock isScreenUnlocked
+    '''
+    session = get_session_context('emulation.set_idle_override')
+    return await session.execute(cdp.emulation.set_idle_override(is_user_active, is_screen_unlocked))
+
+
+async def set_locale_override(
+        locale: typing.Optional[str] = None
+    ) -> None:
+    r'''
+    Overrides default host system locale with the specified one.
+
+    **EXPERIMENTAL**
+
+    :param locale: *(Optional)* ICU style C locale (e.g. "en_US"). If not specified or empty, disables the override and restores default host system locale.
+    '''
+    session = get_session_context('emulation.set_locale_override')
+    return await session.execute(cdp.emulation.set_locale_override(locale))
+
+
 async def set_navigator_overrides(
         platform: str
     ) -> None:
-    '''
+    r'''
 Overrides value returned by the javascript navigator object.
 
 .. deprecated:: 1.3
@@ -199,7 +290,6 @@ Overrides value returned by the javascript navigator object.
 **EXPERIMENTAL**
 
 :param platform: The platform navigator.platform should return.
-
 
 .. deprecated:: 1.3
 '''
@@ -210,7 +300,7 @@ Overrides value returned by the javascript navigator object.
 async def set_page_scale_factor(
         page_scale_factor: float
     ) -> None:
-    '''
+    r'''
     Sets a specified page scale factor.
 
     **EXPERIMENTAL**
@@ -224,7 +314,7 @@ async def set_page_scale_factor(
 async def set_script_execution_disabled(
         value: bool
     ) -> None:
-    '''
+    r'''
     Switches script execution in the page.
 
     :param value: Whether script execution should be disabled in the page.
@@ -236,7 +326,7 @@ async def set_script_execution_disabled(
 async def set_scrollbars_hidden(
         hidden: bool
     ) -> None:
-    '''
+    r'''
 
 
     **EXPERIMENTAL**
@@ -250,7 +340,7 @@ async def set_scrollbars_hidden(
 async def set_timezone_override(
         timezone_id: str
     ) -> None:
-    '''
+    r'''
     Overrides default host system timezone with the specified one.
 
     **EXPERIMENTAL**
@@ -265,7 +355,7 @@ async def set_touch_emulation_enabled(
         enabled: bool,
         max_touch_points: typing.Optional[int] = None
     ) -> None:
-    '''
+    r'''
     Enables touch on platforms which do not support them.
 
     :param enabled: Whether the touch event emulation should be enabled.
@@ -278,17 +368,19 @@ async def set_touch_emulation_enabled(
 async def set_user_agent_override(
         user_agent: str,
         accept_language: typing.Optional[str] = None,
-        platform: typing.Optional[str] = None
+        platform: typing.Optional[str] = None,
+        user_agent_metadata: typing.Optional[UserAgentMetadata] = None
     ) -> None:
-    '''
+    r'''
     Allows overriding user agent with the given string.
 
     :param user_agent: User agent to use.
     :param accept_language: *(Optional)* Browser langugage to emulate.
     :param platform: *(Optional)* The platform navigator.platform should return.
+    :param user_agent_metadata: **(EXPERIMENTAL)** *(Optional)* To be sent in Sec-CH-UA-* headers and returned in navigator.userAgentData
     '''
     session = get_session_context('emulation.set_user_agent_override')
-    return await session.execute(cdp.emulation.set_user_agent_override(user_agent, accept_language, platform))
+    return await session.execute(cdp.emulation.set_user_agent_override(user_agent, accept_language, platform, user_agent_metadata))
 
 
 async def set_virtual_time_policy(
@@ -298,7 +390,7 @@ async def set_virtual_time_policy(
         wait_for_navigation: typing.Optional[bool] = None,
         initial_virtual_time: typing.Optional[cdp.network.TimeSinceEpoch] = None
     ) -> float:
-    '''
+    r'''
     Turns on virtual time for all frames (replacing real-time with a synthetic time source) and sets
     the current virtual time policy.  Note this supersedes any previous time budget.
 
@@ -308,7 +400,7 @@ async def set_virtual_time_policy(
     :param budget: *(Optional)* If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
     :param max_virtual_time_task_starvation_count: *(Optional)* If set this specifies the maximum number of tasks that can be run before virtual is forced forwards to prevent deadlock.
     :param wait_for_navigation: *(Optional)* If set the virtual time policy change should be deferred until any frame starts navigating. Note any previous deferred policy change is superseded.
-    :param initial_virtual_time: *(Optional)* If set, base::Time::Now will be overriden to initially return this value.
+    :param initial_virtual_time: *(Optional)* If set, base::Time::Now will be overridden to initially return this value.
     :returns: Absolute timestamp at which virtual time was first enabled (up time in milliseconds).
     '''
     session = get_session_context('emulation.set_virtual_time_policy')
@@ -319,7 +411,7 @@ async def set_visible_size(
         width: int,
         height: int
     ) -> None:
-    '''
+    r'''
 Resizes the frame/viewport of the page. Note that this does not affect the frame's container
 (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported
 on Android.
@@ -330,7 +422,6 @@ on Android.
 
 :param width: Frame width (DIP).
 :param height: Frame height (DIP).
-
 
 .. deprecated:: 1.3
 '''

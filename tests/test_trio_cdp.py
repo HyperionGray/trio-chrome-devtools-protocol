@@ -47,6 +47,7 @@ async def test_connection_execute(nursery):
                         'title': 'New Tab',
                         'url': 'about:newtab',
                         'attached': False,
+                        'canAccessOpener': False,
                     }],
                 }
             }

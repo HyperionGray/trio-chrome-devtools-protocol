@@ -21,7 +21,7 @@ from cdp.background_service import (
 async def clear_events(
         service: ServiceName
     ) -> None:
-    '''
+    r'''
     Clears all stored data for the service.
 
     :param service:
@@ -34,7 +34,7 @@ async def set_recording(
         should_record: bool,
         service: ServiceName
     ) -> None:
-    '''
+    r'''
     Set the recording state for the service.
 
     :param should_record:
@@ -47,7 +47,7 @@ async def set_recording(
 async def start_observing(
         service: ServiceName
     ) -> None:
-    '''
+    r'''
     Enables event updates for the service.
 
     :param service:
@@ -59,7 +59,7 @@ async def start_observing(
 async def stop_observing(
         service: ServiceName
     ) -> None:
-    '''
+    r'''
     Disables event updates for the service.
 
     :param service:

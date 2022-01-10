@@ -15,7 +15,7 @@ from cdp.schema import (
 
 
 async def get_domains() -> typing.List[Domain]:
-    '''
+    r'''
     Returns supported domains.
 
     :returns: List of supported domains.

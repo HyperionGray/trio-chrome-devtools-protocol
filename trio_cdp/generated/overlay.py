@@ -10,17 +10,34 @@ from ..context import get_connection_context, get_session_context
 
 import cdp.overlay
 from cdp.overlay import (
+    BoxStyle,
+    ColorFormat,
+    ContainerQueryContainerHighlightConfig,
+    ContainerQueryHighlightConfig,
+    ContrastAlgorithm,
+    FlexContainerHighlightConfig,
+    FlexItemHighlightConfig,
+    FlexNodeHighlightConfig,
+    GridHighlightConfig,
+    GridNodeHighlightConfig,
     HighlightConfig,
+    HingeConfig,
     InspectMode,
     InspectModeCanceled,
     InspectNodeRequested,
+    IsolatedElementHighlightConfig,
+    IsolationModeHighlightConfig,
+    LineStyle,
     NodeHighlightRequested,
-    ScreenshotRequested
+    ScreenshotRequested,
+    ScrollSnapContainerHighlightConfig,
+    ScrollSnapHighlightConfig,
+    SourceOrderConfig
 )
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables domain notifications.
     '''
     session = get_session_context('overlay.disable')
@@ -28,32 +45,62 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables domain notifications.
     '''
     session = get_session_context('overlay.enable')
     return await session.execute(cdp.overlay.enable())
 
 
+async def get_grid_highlight_objects_for_test(
+        node_ids: typing.List[cdp.dom.NodeId]
+    ) -> dict:
+    r'''
+    For Persistent Grid testing.
+
+    :param node_ids: Ids of the node to get highlight object for.
+    :returns: Grid Highlight data for the node ids provided.
+    '''
+    session = get_session_context('overlay.get_grid_highlight_objects_for_test')
+    return await session.execute(cdp.overlay.get_grid_highlight_objects_for_test(node_ids))
+
+
 async def get_highlight_object_for_test(
         node_id: cdp.dom.NodeId,
         include_distance: typing.Optional[bool] = None,
-        include_style: typing.Optional[bool] = None
+        include_style: typing.Optional[bool] = None,
+        color_format: typing.Optional[ColorFormat] = None,
+        show_accessibility_info: typing.Optional[bool] = None
     ) -> dict:
-    '''
+    r'''
     For testing.
 
     :param node_id: Id of the node to get highlight object for.
     :param include_distance: *(Optional)* Whether to include distance info.
     :param include_style: *(Optional)* Whether to include style info.
+    :param color_format: *(Optional)* The color format to get config with (default: hex).
+    :param show_accessibility_info: *(Optional)* Whether to show accessibility info (default: true).
     :returns: Highlight data for the node.
     '''
     session = get_session_context('overlay.get_highlight_object_for_test')
-    return await session.execute(cdp.overlay.get_highlight_object_for_test(node_id, include_distance, include_style))
+    return await session.execute(cdp.overlay.get_highlight_object_for_test(node_id, include_distance, include_style, color_format, show_accessibility_info))
+
+
+async def get_source_order_highlight_object_for_test(
+        node_id: cdp.dom.NodeId
+    ) -> dict:
+    r'''
+    For Source Order Viewer testing.
+
+    :param node_id: Id of the node to highlight.
+    :returns: Source order highlight data for the node id provided.
+    '''
+    session = get_session_context('overlay.get_source_order_highlight_object_for_test')
+    return await session.execute(cdp.overlay.get_source_order_highlight_object_for_test(node_id))
 
 
 async def hide_highlight() -> None:
-    '''
+    r'''
     Hides any highlight.
     '''
     session = get_session_context('overlay.hide_highlight')
@@ -65,13 +112,20 @@ async def highlight_frame(
         content_color: typing.Optional[cdp.dom.RGBA] = None,
         content_outline_color: typing.Optional[cdp.dom.RGBA] = None
     ) -> None:
-    '''
-    Highlights owner element of the frame with given id.
+    r'''
+Highlights owner element of the frame with given id.
+Deprecated: Doesn't work reliablity and cannot be fixed due to process
+separatation (the owner node might be in a different process). Determine
+the owner node in the client and use highlightNode.
 
-    :param frame_id: Identifier of the frame to highlight.
-    :param content_color: *(Optional)* The content box highlight fill color (default: transparent).
-    :param content_outline_color: *(Optional)* The content box highlight outline color (default: transparent).
-    '''
+.. deprecated:: 1.3
+
+:param frame_id: Identifier of the frame to highlight.
+:param content_color: *(Optional)* The content box highlight fill color (default: transparent).
+:param content_outline_color: *(Optional)* The content box highlight outline color (default: transparent).
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('overlay.highlight_frame')
     return await session.execute(cdp.overlay.highlight_frame(frame_id, content_color, content_outline_color))
 
@@ -83,7 +137,7 @@ async def highlight_node(
         object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None,
         selector: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or
     objectId must be specified.
 
@@ -102,7 +156,7 @@ async def highlight_quad(
         color: typing.Optional[cdp.dom.RGBA] = None,
         outline_color: typing.Optional[cdp.dom.RGBA] = None
     ) -> None:
-    '''
+    r'''
     Highlights given quad. Coordinates are absolute with respect to the main frame viewport.
 
     :param quad: Quad to highlight
@@ -121,7 +175,7 @@ async def highlight_rect(
         color: typing.Optional[cdp.dom.RGBA] = None,
         outline_color: typing.Optional[cdp.dom.RGBA] = None
     ) -> None:
-    '''
+    r'''
     Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.
 
     :param x: X coordinate
@@ -135,11 +189,30 @@ async def highlight_rect(
     return await session.execute(cdp.overlay.highlight_rect(x, y, width, height, color, outline_color))
 
 
+async def highlight_source_order(
+        source_order_config: SourceOrderConfig,
+        node_id: typing.Optional[cdp.dom.NodeId] = None,
+        backend_node_id: typing.Optional[cdp.dom.BackendNodeId] = None,
+        object_id: typing.Optional[cdp.runtime.RemoteObjectId] = None
+    ) -> None:
+    r'''
+    Highlights the source order of the children of the DOM node with given id or with the given
+    JavaScript object wrapper. Either nodeId or objectId must be specified.
+
+    :param source_order_config: A descriptor for the appearance of the overlay drawing.
+    :param node_id: *(Optional)* Identifier of the node to highlight.
+    :param backend_node_id: *(Optional)* Identifier of the backend node to highlight.
+    :param object_id: *(Optional)* JavaScript object id of the node to be highlighted.
+    '''
+    session = get_session_context('overlay.highlight_source_order')
+    return await session.execute(cdp.overlay.highlight_source_order(source_order_config, node_id, backend_node_id, object_id))
+
+
 async def set_inspect_mode(
         mode: InspectMode,
         highlight_config: typing.Optional[HighlightConfig] = None
     ) -> None:
-    '''
+    r'''
     Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted.
     Backend then generates 'inspectNodeRequested' event upon element selection.
 
@@ -153,7 +226,7 @@ async def set_inspect_mode(
 async def set_paused_in_debugger_message(
         message: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     :param message: *(Optional)* The message to display, also triggers resume and step over controls.
     '''
     session = get_session_context('overlay.set_paused_in_debugger_message')
@@ -163,7 +236,7 @@ async def set_paused_in_debugger_message(
 async def set_show_ad_highlights(
         show: bool
     ) -> None:
-    '''
+    r'''
     Highlights owner element of all frames detected to be ads.
 
     :param show: True for showing ad highlights
@@ -172,10 +245,20 @@ async def set_show_ad_highlights(
     return await session.execute(cdp.overlay.set_show_ad_highlights(show))
 
 
+async def set_show_container_query_overlays(
+        container_query_highlight_configs: typing.List[ContainerQueryHighlightConfig]
+    ) -> None:
+    r'''
+    :param container_query_highlight_configs: An array of node identifiers and descriptors for the highlight appearance.
+    '''
+    session = get_session_context('overlay.set_show_container_query_overlays')
+    return await session.execute(cdp.overlay.set_show_container_query_overlays(container_query_highlight_configs))
+
+
 async def set_show_debug_borders(
         show: bool
     ) -> None:
-    '''
+    r'''
     Requests that backend shows debug borders on layers
 
     :param show: True for showing debug borders
@@ -184,10 +267,20 @@ async def set_show_debug_borders(
     return await session.execute(cdp.overlay.set_show_debug_borders(show))
 
 
+async def set_show_flex_overlays(
+        flex_node_highlight_configs: typing.List[FlexNodeHighlightConfig]
+    ) -> None:
+    r'''
+    :param flex_node_highlight_configs: An array of node identifiers and descriptors for the highlight appearance.
+    '''
+    session = get_session_context('overlay.set_show_flex_overlays')
+    return await session.execute(cdp.overlay.set_show_flex_overlays(flex_node_highlight_configs))
+
+
 async def set_show_fps_counter(
         show: bool
     ) -> None:
-    '''
+    r'''
     Requests that backend shows the FPS counter
 
     :param show: True for showing the FPS counter
@@ -196,10 +289,34 @@ async def set_show_fps_counter(
     return await session.execute(cdp.overlay.set_show_fps_counter(show))
 
 
+async def set_show_grid_overlays(
+        grid_node_highlight_configs: typing.List[GridNodeHighlightConfig]
+    ) -> None:
+    r'''
+    Highlight multiple elements with the CSS Grid overlay.
+
+    :param grid_node_highlight_configs: An array of node identifiers and descriptors for the highlight appearance.
+    '''
+    session = get_session_context('overlay.set_show_grid_overlays')
+    return await session.execute(cdp.overlay.set_show_grid_overlays(grid_node_highlight_configs))
+
+
+async def set_show_hinge(
+        hinge_config: typing.Optional[HingeConfig] = None
+    ) -> None:
+    r'''
+    Add a dual screen device hinge
+
+    :param hinge_config: *(Optional)* hinge data, null means hideHinge
+    '''
+    session = get_session_context('overlay.set_show_hinge')
+    return await session.execute(cdp.overlay.set_show_hinge(hinge_config))
+
+
 async def set_show_hit_test_borders(
         show: bool
     ) -> None:
-    '''
+    r'''
     Requests that backend shows hit-test borders on layers
 
     :param show: True for showing hit-test borders
@@ -208,10 +325,22 @@ async def set_show_hit_test_borders(
     return await session.execute(cdp.overlay.set_show_hit_test_borders(show))
 
 
+async def set_show_isolated_elements(
+        isolated_element_highlight_configs: typing.List[IsolatedElementHighlightConfig]
+    ) -> None:
+    r'''
+    Show elements in isolation mode with overlays.
+
+    :param isolated_element_highlight_configs: An array of node identifiers and descriptors for the highlight appearance.
+    '''
+    session = get_session_context('overlay.set_show_isolated_elements')
+    return await session.execute(cdp.overlay.set_show_isolated_elements(isolated_element_highlight_configs))
+
+
 async def set_show_layout_shift_regions(
         result: bool
     ) -> None:
-    '''
+    r'''
     Requests that backend shows layout shift regions
 
     :param result: True for showing layout shift regions
@@ -223,7 +352,7 @@ async def set_show_layout_shift_regions(
 async def set_show_paint_rects(
         result: bool
     ) -> None:
-    '''
+    r'''
     Requests that backend shows paint rectangles
 
     :param result: True for showing paint rectangles
@@ -235,7 +364,7 @@ async def set_show_paint_rects(
 async def set_show_scroll_bottleneck_rects(
         show: bool
     ) -> None:
-    '''
+    r'''
     Requests that backend shows scroll bottleneck rects
 
     :param show: True for showing scroll bottleneck rects
@@ -244,13 +373,35 @@ async def set_show_scroll_bottleneck_rects(
     return await session.execute(cdp.overlay.set_show_scroll_bottleneck_rects(show))
 
 
+async def set_show_scroll_snap_overlays(
+        scroll_snap_highlight_configs: typing.List[ScrollSnapHighlightConfig]
+    ) -> None:
+    r'''
+    :param scroll_snap_highlight_configs: An array of node identifiers and descriptors for the highlight appearance.
+    '''
+    session = get_session_context('overlay.set_show_scroll_snap_overlays')
+    return await session.execute(cdp.overlay.set_show_scroll_snap_overlays(scroll_snap_highlight_configs))
+
+
 async def set_show_viewport_size_on_resize(
         show: bool
     ) -> None:
-    '''
+    r'''
     Paints viewport size upon main frame resize.
 
     :param show: Whether to paint size or not.
     '''
     session = get_session_context('overlay.set_show_viewport_size_on_resize')
     return await session.execute(cdp.overlay.set_show_viewport_size_on_resize(show))
+
+
+async def set_show_web_vitals(
+        show: bool
+    ) -> None:
+    r'''
+    Request that backend shows an overlay with web vital metrics.
+
+    :param show:
+    '''
+    session = get_session_context('overlay.set_show_web_vitals')
+    return await session.execute(cdp.overlay.set_show_web_vitals(show))

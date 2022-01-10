@@ -16,23 +16,27 @@ from cdp.performance import (
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disable collecting and reporting metrics.
     '''
     session = get_session_context('performance.disable')
     return await session.execute(cdp.performance.disable())
 
 
-async def enable() -> None:
-    '''
+async def enable(
+        time_domain: typing.Optional[str] = None
+    ) -> None:
+    r'''
     Enable collecting and reporting metrics.
+
+    :param time_domain: *(Optional)* Time domain to use for collecting and reporting duration metrics.
     '''
     session = get_session_context('performance.enable')
-    return await session.execute(cdp.performance.enable())
+    return await session.execute(cdp.performance.enable(time_domain))
 
 
 async def get_metrics() -> typing.List[Metric]:
-    '''
+    r'''
     Retrieve current values of run-time metrics.
 
     :returns: Current values for run-time metrics.
@@ -44,14 +48,18 @@ async def get_metrics() -> typing.List[Metric]:
 async def set_time_domain(
         time_domain: str
     ) -> None:
-    '''
-    Sets time domain to use for collecting and reporting duration metrics.
-    Note that this must be called before enabling metrics collection. Calling
-    this method while metrics collection is enabled returns an error.
+    r'''
+Sets time domain to use for collecting and reporting duration metrics.
+Note that this must be called before enabling metrics collection. Calling
+this method while metrics collection is enabled returns an error.
 
-    **EXPERIMENTAL**
+.. deprecated:: 1.3
 
-    :param time_domain: Time domain
-    '''
+**EXPERIMENTAL**
+
+:param time_domain: Time domain
+
+.. deprecated:: 1.3
+'''
     session = get_session_context('performance.set_time_domain')
     return await session.execute(cdp.performance.set_time_domain(time_domain))

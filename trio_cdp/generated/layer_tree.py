@@ -24,19 +24,22 @@ from cdp.layer_tree import (
 
 async def compositing_reasons(
         layer_id: LayerId
-    ) -> typing.List[str]:
-    '''
+    ) -> typing.Tuple[typing.List[str], typing.List[str]]:
+    r'''
     Provides the reasons why the given layer was composited.
 
     :param layer_id: The id of the layer for which we want to get the reasons it was composited.
-    :returns: A list of strings specifying reasons for the given layer to become composited.
+    :returns: A tuple with the following items:
+
+        0. **compositingReasons** - A list of strings specifying reasons for the given layer to become composited.
+        1. **compositingReasonIds** - A list of strings specifying reason IDs for the given layer to become composited.
     '''
     session = get_session_context('layer_tree.compositing_reasons')
     return await session.execute(cdp.layer_tree.compositing_reasons(layer_id))
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables compositing tree inspection.
     '''
     session = get_session_context('layer_tree.disable')
@@ -44,7 +47,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables compositing tree inspection.
     '''
     session = get_session_context('layer_tree.enable')
@@ -54,7 +57,7 @@ async def enable() -> None:
 async def load_snapshot(
         tiles: typing.List[PictureTile]
     ) -> SnapshotId:
-    '''
+    r'''
     Returns the snapshot identifier.
 
     :param tiles: An array of tiles composing the snapshot.
@@ -67,7 +70,7 @@ async def load_snapshot(
 async def make_snapshot(
         layer_id: LayerId
     ) -> SnapshotId:
-    '''
+    r'''
     Returns the layer snapshot identifier.
 
     :param layer_id: The id of the layer.
@@ -83,7 +86,7 @@ async def profile_snapshot(
         min_duration: typing.Optional[float] = None,
         clip_rect: typing.Optional[cdp.dom.Rect] = None
     ) -> typing.List[PaintProfile]:
-    '''
+    r'''
     :param snapshot_id: The id of the layer snapshot.
     :param min_repeat_count: *(Optional)* The maximum number of times to replay the snapshot (1, if not specified).
     :param min_duration: *(Optional)* The minimum duration (in seconds) to replay the snapshot.
@@ -97,7 +100,7 @@ async def profile_snapshot(
 async def release_snapshot(
         snapshot_id: SnapshotId
     ) -> None:
-    '''
+    r'''
     Releases layer snapshot captured by the back-end.
 
     :param snapshot_id: The id of the layer snapshot.
@@ -112,7 +115,7 @@ async def replay_snapshot(
         to_step: typing.Optional[int] = None,
         scale: typing.Optional[float] = None
     ) -> str:
-    '''
+    r'''
     Replays the layer snapshot and returns the resulting bitmap.
 
     :param snapshot_id: The id of the layer snapshot.
@@ -128,7 +131,7 @@ async def replay_snapshot(
 async def snapshot_command_log(
         snapshot_id: SnapshotId
     ) -> typing.List[dict]:
-    '''
+    r'''
     Replays the layer snapshot and returns canvas log.
 
     :param snapshot_id: The id of the layer snapshot.

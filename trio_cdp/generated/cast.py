@@ -17,7 +17,7 @@ from cdp.cast import (
 
 
 async def disable() -> None:
-    '''
+    r'''
     Stops observing for sinks and issues.
     '''
     session = get_session_context('cast.disable')
@@ -27,7 +27,7 @@ async def disable() -> None:
 async def enable(
         presentation_url: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Starts observing for sinks that can be used for tab mirroring, and if set,
     sinks compatible with ``presentationUrl`` as well. When sinks are found, a
     ``sinksUpdated`` event is fired.
@@ -43,7 +43,7 @@ async def enable(
 async def set_sink_to_use(
         sink_name: str
     ) -> None:
-    '''
+    r'''
     Sets a sink to be used when the web page requests the browser to choose a
     sink via Presentation API, Remote Playback API, or Cast SDK.
 
@@ -53,10 +53,22 @@ async def set_sink_to_use(
     return await session.execute(cdp.cast.set_sink_to_use(sink_name))
 
 
+async def start_desktop_mirroring(
+        sink_name: str
+    ) -> None:
+    r'''
+    Starts mirroring the desktop to the sink.
+
+    :param sink_name:
+    '''
+    session = get_session_context('cast.start_desktop_mirroring')
+    return await session.execute(cdp.cast.start_desktop_mirroring(sink_name))
+
+
 async def start_tab_mirroring(
         sink_name: str
     ) -> None:
-    '''
+    r'''
     Starts mirroring the tab to the sink.
 
     :param sink_name:
@@ -68,7 +80,7 @@ async def start_tab_mirroring(
 async def stop_casting(
         sink_name: str
     ) -> None:
-    '''
+    r'''
     Stops the active Cast session on the sink.
 
     :param sink_name:

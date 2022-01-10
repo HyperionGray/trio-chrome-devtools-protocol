@@ -18,7 +18,7 @@ from cdp.database import (
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables database tracking, prevents database events from being sent to the client.
     '''
     session = get_session_context('database.disable')
@@ -26,7 +26,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables database tracking, database events will now be delivered to the client.
     '''
     session = get_session_context('database.enable')
@@ -37,14 +37,14 @@ async def execute_sql(
         database_id: DatabaseId,
         query: str
     ) -> typing.Tuple[typing.Optional[typing.List[str]], typing.Optional[typing.List[typing.Any]], typing.Optional[Error]]:
-    '''
+    r'''
     :param database_id:
     :param query:
     :returns: A tuple with the following items:
 
-        0. **columnNames** – 
-        1. **values** – 
-        2. **sqlError** – 
+        0. **columnNames** - 
+        1. **values** - 
+        2. **sqlError** - 
     '''
     session = get_session_context('database.execute_sql')
     return await session.execute(cdp.database.execute_sql(database_id, query))
@@ -53,7 +53,7 @@ async def execute_sql(
 async def get_database_table_names(
         database_id: DatabaseId
     ) -> typing.List[str]:
-    '''
+    r'''
     :param database_id:
     :returns: 
     '''

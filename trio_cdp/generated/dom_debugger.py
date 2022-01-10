@@ -10,6 +10,7 @@ from ..context import get_connection_context, get_session_context
 
 import cdp.dom_debugger
 from cdp.dom_debugger import (
+    CSPViolationType,
     DOMBreakpointType,
     EventListener
 )
@@ -20,7 +21,7 @@ async def get_event_listeners(
         depth: typing.Optional[int] = None,
         pierce: typing.Optional[bool] = None
     ) -> typing.List[EventListener]:
-    '''
+    r'''
     Returns event listeners of the given object.
 
     :param object_id: Identifier of the object to return listeners for.
@@ -36,7 +37,7 @@ async def remove_dom_breakpoint(
         node_id: cdp.dom.NodeId,
         type_: DOMBreakpointType
     ) -> None:
-    '''
+    r'''
     Removes DOM breakpoint that was set using ``setDOMBreakpoint``.
 
     :param node_id: Identifier of the node to remove breakpoint from.
@@ -50,7 +51,7 @@ async def remove_event_listener_breakpoint(
         event_name: str,
         target_name: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Removes breakpoint on particular DOM event.
 
     :param event_name: Event name.
@@ -63,7 +64,7 @@ async def remove_event_listener_breakpoint(
 async def remove_instrumentation_breakpoint(
         event_name: str
     ) -> None:
-    '''
+    r'''
     Removes breakpoint on particular native event.
 
     **EXPERIMENTAL**
@@ -77,7 +78,7 @@ async def remove_instrumentation_breakpoint(
 async def remove_xhr_breakpoint(
         url: str
     ) -> None:
-    '''
+    r'''
     Removes breakpoint from XMLHttpRequest.
 
     :param url: Resource URL substring.
@@ -86,11 +87,25 @@ async def remove_xhr_breakpoint(
     return await session.execute(cdp.dom_debugger.remove_xhr_breakpoint(url))
 
 
+async def set_break_on_csp_violation(
+        violation_types: typing.List[CSPViolationType]
+    ) -> None:
+    r'''
+    Sets breakpoint on particular CSP violations.
+
+    **EXPERIMENTAL**
+
+    :param violation_types: CSP Violations to stop upon.
+    '''
+    session = get_session_context('dom_debugger.set_break_on_csp_violation')
+    return await session.execute(cdp.dom_debugger.set_break_on_csp_violation(violation_types))
+
+
 async def set_dom_breakpoint(
         node_id: cdp.dom.NodeId,
         type_: DOMBreakpointType
     ) -> None:
-    '''
+    r'''
     Sets breakpoint on particular operation with DOM.
 
     :param node_id: Identifier of the node to set breakpoint on.
@@ -104,7 +119,7 @@ async def set_event_listener_breakpoint(
         event_name: str,
         target_name: typing.Optional[str] = None
     ) -> None:
-    '''
+    r'''
     Sets breakpoint on particular DOM event.
 
     :param event_name: DOM Event name to stop on (any DOM event will do).
@@ -117,7 +132,7 @@ async def set_event_listener_breakpoint(
 async def set_instrumentation_breakpoint(
         event_name: str
     ) -> None:
-    '''
+    r'''
     Sets breakpoint on particular native event.
 
     **EXPERIMENTAL**
@@ -131,7 +146,7 @@ async def set_instrumentation_breakpoint(
 async def set_xhr_breakpoint(
         url: str
     ) -> None:
-    '''
+    r'''
     Sets breakpoint on XMLHttpRequest.
 
     :param url: Resource URL substring. All XHRs having this substring in the URL will get stopped upon.

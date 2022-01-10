@@ -18,7 +18,7 @@ from cdp.memory import (
 
 
 async def forcibly_purge_java_script_memory() -> None:
-    '''
+    r'''
     Simulate OomIntervention by purging V8 memory.
     '''
     session = get_session_context('memory.forcibly_purge_java_script_memory')
@@ -26,7 +26,7 @@ async def forcibly_purge_java_script_memory() -> None:
 
 
 async def get_all_time_sampling_profile() -> SamplingProfile:
-    '''
+    r'''
     Retrieve native memory allocations profile
     collected since renderer process startup.
 
@@ -37,7 +37,7 @@ async def get_all_time_sampling_profile() -> SamplingProfile:
 
 
 async def get_browser_sampling_profile() -> SamplingProfile:
-    '''
+    r'''
     Retrieve native memory allocations profile
     collected since browser process startup.
 
@@ -48,21 +48,21 @@ async def get_browser_sampling_profile() -> SamplingProfile:
 
 
 async def get_dom_counters() -> typing.Tuple[int, int, int]:
-    '''
+    r'''
 
 
     :returns: A tuple with the following items:
 
-        0. **documents** – 
-        1. **nodes** – 
-        2. **jsEventListeners** – 
+        0. **documents** - 
+        1. **nodes** - 
+        2. **jsEventListeners** - 
     '''
     session = get_session_context('memory.get_dom_counters')
     return await session.execute(cdp.memory.get_dom_counters())
 
 
 async def get_sampling_profile() -> SamplingProfile:
-    '''
+    r'''
     Retrieve native memory allocations profile collected since last
     ``startSampling`` call.
 
@@ -80,7 +80,7 @@ async def prepare_for_leak_detection() -> None:
 async def set_pressure_notifications_suppressed(
         suppressed: bool
     ) -> None:
-    '''
+    r'''
     Enable/disable suppressing memory pressure notifications in all processes.
 
     :param suppressed: If true, memory pressure notifications will be suppressed.
@@ -92,7 +92,7 @@ async def set_pressure_notifications_suppressed(
 async def simulate_pressure_notification(
         level: PressureLevel
     ) -> None:
-    '''
+    r'''
     Simulate a memory pressure notification in all processes.
 
     :param level: Memory pressure level of the notification.
@@ -105,7 +105,7 @@ async def start_sampling(
         sampling_interval: typing.Optional[int] = None,
         suppress_randomness: typing.Optional[bool] = None
     ) -> None:
-    '''
+    r'''
     Start collecting native memory profile.
 
     :param sampling_interval: *(Optional)* Average number of bytes between samples.
@@ -116,7 +116,7 @@ async def start_sampling(
 
 
 async def stop_sampling() -> None:
-    '''
+    r'''
     Stop collecting native memory profile.
     '''
     session = get_session_context('memory.stop_sampling')

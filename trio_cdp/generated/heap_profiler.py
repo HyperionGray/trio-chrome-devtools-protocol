@@ -25,7 +25,7 @@ from cdp.heap_profiler import (
 async def add_inspected_heap_object(
         heap_object_id: HeapSnapshotObjectId
     ) -> None:
-    '''
+    r'''
     Enables console to refer to the node with given id via $x (see Command Line API for more details
     $x functions).
 
@@ -53,7 +53,7 @@ async def enable() -> None:
 async def get_heap_object_id(
         object_id: cdp.runtime.RemoteObjectId
     ) -> HeapSnapshotObjectId:
-    '''
+    r'''
     :param object_id: Identifier of the object to get heap object id for.
     :returns: Id of the heap snapshot object corresponding to the passed remote object id.
     '''
@@ -65,7 +65,7 @@ async def get_object_by_heap_object_id(
         object_id: HeapSnapshotObjectId,
         object_group: typing.Optional[str] = None
     ) -> cdp.runtime.RemoteObject:
-    '''
+    r'''
     :param object_id:
     :param object_group: *(Optional)* Symbolic group name that can be used to release multiple objects.
     :returns: Evaluation result.
@@ -75,7 +75,7 @@ async def get_object_by_heap_object_id(
 
 
 async def get_sampling_profile() -> SamplingHeapProfile:
-    '''
+    r'''
 
 
     :returns: Return the sampling profile being collected.
@@ -87,7 +87,7 @@ async def get_sampling_profile() -> SamplingHeapProfile:
 async def start_sampling(
         sampling_interval: typing.Optional[float] = None
     ) -> None:
-    '''
+    r'''
     :param sampling_interval: *(Optional)* Average sample interval in bytes. Poisson distribution is used for the intervals. The default value is 32768 bytes.
     '''
     session = get_session_context('heap_profiler.start_sampling')
@@ -97,7 +97,7 @@ async def start_sampling(
 async def start_tracking_heap_objects(
         track_allocations: typing.Optional[bool] = None
     ) -> None:
-    '''
+    r'''
     :param track_allocations: *(Optional)*
     '''
     session = get_session_context('heap_profiler.start_tracking_heap_objects')
@@ -105,7 +105,7 @@ async def start_tracking_heap_objects(
 
 
 async def stop_sampling() -> SamplingHeapProfile:
-    '''
+    r'''
 
 
     :returns: Recorded sampling heap profile.
@@ -115,20 +115,28 @@ async def stop_sampling() -> SamplingHeapProfile:
 
 
 async def stop_tracking_heap_objects(
-        report_progress: typing.Optional[bool] = None
+        report_progress: typing.Optional[bool] = None,
+        treat_global_objects_as_roots: typing.Optional[bool] = None,
+        capture_numeric_value: typing.Optional[bool] = None
     ) -> None:
-    '''
+    r'''
     :param report_progress: *(Optional)* If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken when the tracking is stopped.
+    :param treat_global_objects_as_roots: *(Optional)*
+    :param capture_numeric_value: *(Optional)* If true, numerical values are included in the snapshot
     '''
     session = get_session_context('heap_profiler.stop_tracking_heap_objects')
-    return await session.execute(cdp.heap_profiler.stop_tracking_heap_objects(report_progress))
+    return await session.execute(cdp.heap_profiler.stop_tracking_heap_objects(report_progress, treat_global_objects_as_roots, capture_numeric_value))
 
 
 async def take_heap_snapshot(
-        report_progress: typing.Optional[bool] = None
+        report_progress: typing.Optional[bool] = None,
+        treat_global_objects_as_roots: typing.Optional[bool] = None,
+        capture_numeric_value: typing.Optional[bool] = None
     ) -> None:
-    '''
+    r'''
     :param report_progress: *(Optional)* If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
+    :param treat_global_objects_as_roots: *(Optional)* If true, a raw snapshot without artificial roots will be generated
+    :param capture_numeric_value: *(Optional)* If true, numerical values are included in the snapshot
     '''
     session = get_session_context('heap_profiler.take_heap_snapshot')
-    return await session.execute(cdp.heap_profiler.take_heap_snapshot(report_progress))
+    return await session.execute(cdp.heap_profiler.take_heap_snapshot(report_progress, treat_global_objects_as_roots, capture_numeric_value))

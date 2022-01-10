@@ -25,7 +25,7 @@ async def clear_object_store(
         database_name: str,
         object_store_name: str
     ) -> None:
-    '''
+    r'''
     Clears all entries from an object store.
 
     :param security_origin: Security origin.
@@ -40,7 +40,7 @@ async def delete_database(
         security_origin: str,
         database_name: str
     ) -> None:
-    '''
+    r'''
     Deletes a database.
 
     :param security_origin: Security origin.
@@ -56,7 +56,7 @@ async def delete_object_store_entries(
         object_store_name: str,
         key_range: KeyRange
     ) -> None:
-    '''
+    r'''
     Delete a range of entries from an object store
 
     :param security_origin:
@@ -69,7 +69,7 @@ async def delete_object_store_entries(
 
 
 async def disable() -> None:
-    '''
+    r'''
     Disables events from backend.
     '''
     session = get_session_context('indexed_db.disable')
@@ -77,7 +77,7 @@ async def disable() -> None:
 
 
 async def enable() -> None:
-    '''
+    r'''
     Enables events from backend.
     '''
     session = get_session_context('indexed_db.enable')
@@ -89,7 +89,7 @@ async def get_metadata(
         database_name: str,
         object_store_name: str
     ) -> typing.Tuple[float, float]:
-    '''
+    r'''
     Gets metadata of an object store
 
     :param security_origin: Security origin.
@@ -97,8 +97,8 @@ async def get_metadata(
     :param object_store_name: Object store name.
     :returns: A tuple with the following items:
 
-        0. **entriesCount** – the entries count
-        1. **keyGeneratorValue** – the current value of key generator, to become the next inserted key into the object store. Valid if objectStore.autoIncrement is true.
+        0. **entriesCount** - the entries count
+        1. **keyGeneratorValue** - the current value of key generator, to become the next inserted key into the object store. Valid if objectStore.autoIncrement is true.
     '''
     session = get_session_context('indexed_db.get_metadata')
     return await session.execute(cdp.indexed_db.get_metadata(security_origin, database_name, object_store_name))
@@ -113,7 +113,7 @@ async def request_data(
         page_size: int,
         key_range: typing.Optional[KeyRange] = None
     ) -> typing.Tuple[typing.List[DataEntry], bool]:
-    '''
+    r'''
     Requests data from object store or index.
 
     :param security_origin: Security origin.
@@ -125,8 +125,8 @@ async def request_data(
     :param key_range: *(Optional)* Key range.
     :returns: A tuple with the following items:
 
-        0. **objectStoreDataEntries** – Array of object store data entries.
-        1. **hasMore** – If true, there are more entries to fetch in the given range.
+        0. **objectStoreDataEntries** - Array of object store data entries.
+        1. **hasMore** - If true, there are more entries to fetch in the given range.
     '''
     session = get_session_context('indexed_db.request_data')
     return await session.execute(cdp.indexed_db.request_data(security_origin, database_name, object_store_name, index_name, skip_count, page_size, key_range))
@@ -136,7 +136,7 @@ async def request_database(
         security_origin: str,
         database_name: str
     ) -> DatabaseWithObjectStores:
-    '''
+    r'''
     Requests database with given name in given frame.
 
     :param security_origin: Security origin.
@@ -150,7 +150,7 @@ async def request_database(
 async def request_database_names(
         security_origin: str
     ) -> typing.List[str]:
-    '''
+    r'''
     Requests database names for given security origin.
 
     :param security_origin: Security origin.
