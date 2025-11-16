@@ -5,6 +5,7 @@
 
 from . import accessibility
 from . import animation
+from . import application_cache
 from . import audits
 from . import background_service
 from . import browser
@@ -20,7 +21,6 @@ from . import dom_debugger
 from . import dom_snapshot
 from . import dom_storage
 from . import emulation
-from . import event_breakpoints
 from . import fetch
 from . import headless_experimental
 from . import heap_profiler
@@ -30,13 +30,11 @@ from . import inspector
 from . import io
 from . import layer_tree
 from . import log
-from . import media
 from . import memory
 from . import network
 from . import overlay
 from . import page
 from . import performance
-from . import performance_timeline
 from . import profiler
 from . import runtime
 from . import schema

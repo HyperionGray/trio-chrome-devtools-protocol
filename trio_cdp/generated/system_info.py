@@ -13,7 +13,6 @@ from cdp.system_info import (
     GPUDevice,
     GPUInfo,
     ImageDecodeAcceleratorCapability,
-    ImageType,
     ProcessInfo,
     Size,
     SubsamplingFormat,

@@ -16,14 +16,14 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.7"
 chrome-devtools-protocol = "^0.4.0"
-trio = "^0.13.0"
-trio_websocket = "^0.8.0"
+trio = "^0.22.0"
+trio_websocket = "^0.9.0"
 
-[tool.poetry.dev-dependencies]
-mypy = "^0.770"
-pytest = "^5.4.1"
-pytest-cov = "^2.8.1"
-pytest-trio = "^0.5.2"
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.0"
+pytest = "^7.0"
+pytest-cov = "^4.0"
+pytest-trio = "^0.8.0"
 sphinx = "^3.0.1"
 sphinx-rtd-theme = "^0.4.3"
 sphinx-autodoc-typehints = "^1.10.3"

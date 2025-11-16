@@ -140,15 +140,27 @@ def format_annotation(current_module: types.ModuleType, ann: typing.Any):
             ann_str = f'{ann.__module__}.{ann.__name__}'
         else:
             ann_str = ann.__name__
-    elif ann._name == 'Any':
+    elif hasattr(ann, '_name') and ann._name == 'Any':
         ann_str = 'typing.Any'
-    elif ann._name == 'List':
+    elif hasattr(ann, '_name') and ann._name == 'List':
         nested_ann = format_annotation(current_module, ann.__args__[0])
         ann_str = f'typing.List[{nested_ann}]'
-    elif ann._name == 'Tuple':
+    elif hasattr(ann, '_name') and ann._name == 'Dict':
+        key_ann = format_annotation(current_module, ann.__args__[0])
+        val_ann = format_annotation(current_module, ann.__args__[1])
+        ann_str = f'typing.Dict[{key_ann}, {val_ann}]'
+    elif hasattr(ann, '_name') and ann._name == 'Tuple':
         nested_anns = ', '.join(format_annotation(current_module, a) for a in ann.__args__)
         ann_str = f'typing.Tuple[{nested_anns}]'
-    elif ann._name is None and len(ann.__args__) > 1:
+    elif hasattr(ann, '_name') and ann._name == 'Generator':
+        nested_anns = ', '.join(format_annotation(current_module, a) for a in ann.__args__)
+        ann_str = f'typing.Generator[{nested_anns}]'
+    elif hasattr(ann, '_name') and ann._name == 'Optional':
+        # Optional is actually Union[X, None]
+        opt_type = [a for a in ann.__args__ if a is not type(None)][0]
+        nested_ann = format_annotation(current_module, opt_type)
+        ann_str = f'typing.Optional[{nested_ann}]'
+    elif hasattr(ann, '_name') and ann._name is None and hasattr(ann, '__args__') and len(ann.__args__) > 1:
         # For some reason union annotations don't have a name?
         # If the union has two members and one of them is NoneType, then it's really
         # a typing.Optional.
