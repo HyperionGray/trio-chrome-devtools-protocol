@@ -148,6 +148,10 @@ def format_annotation(current_module: types.ModuleType, ann: typing.Any):
     elif ann._name == 'Tuple':
         nested_anns = ', '.join(format_annotation(current_module, a) for a in ann.__args__)
         ann_str = f'typing.Tuple[{nested_anns}]'
+    elif ann._name == 'Optional':
+        # Handle Optional type hint
+        nested_ann = format_annotation(current_module, ann.__args__[0])
+        ann_str = f'typing.Optional[{nested_ann}]'
     elif ann._name is None and len(ann.__args__) > 1:
         # For some reason union annotations don't have a name?
         # If the union has two members and one of them is NoneType, then it's really
