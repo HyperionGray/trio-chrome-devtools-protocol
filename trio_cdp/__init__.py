@@ -18,6 +18,12 @@ from trio_websocket import ( # type: ignore
 
 from .context import connection_context, session_context
 from .generated import *
+# Import util separately to avoid circular import issues
+try:
+    from . import util
+except ImportError:
+    # If generated imports fail, util can still be imported directly
+    pass
 
 
 logger = logging.getLogger('trio_cdp')
