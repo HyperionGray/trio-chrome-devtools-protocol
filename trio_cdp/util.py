@@ -10,6 +10,7 @@ import typing
 from dataclasses import dataclass
 
 import cdp
+import trio
 from cdp import dom, input_, page, runtime
 
 if typing.TYPE_CHECKING:
@@ -68,7 +69,6 @@ class Keyboard:
         """
         await self.down(key, key if len(key) == 1 else None)
         if delay > 0:
-            import trio
             await trio.sleep(delay)
         await self.up(key)
     
@@ -82,7 +82,6 @@ class Keyboard:
         for char in text:
             await self.press(char, delay)
             if delay > 0:
-                import trio
                 await trio.sleep(delay)
 
 
@@ -268,16 +267,13 @@ class ElementHandle:
         
         return result.result.value if result.result else None
     
-    async def get_text_content(self) -> str:
+    async def get_outer_html(self) -> str:
         """
-        Get the text content of the element.
+        Get the outer HTML of the element.
         
-        :return: Text content
+        :return: Outer HTML string
         """
         outer_html = await self.session.execute(dom.get_outer_html(self.node_id))
-        # This is a simplified approach - in production you might want to use
-        # runtime evaluation for more accurate text extraction
-        # For now, return the HTML (caller can parse it if needed)
         return outer_html
 
 
