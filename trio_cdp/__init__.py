@@ -192,6 +192,25 @@ class CdpBase:
         if to_remove:
             self.channels[type(event)] -= to_remove
 
+    def _close_channels(self):
+        '''
+        Close all open channels. This will cause any async for loops using
+        listen() to exit gracefully.
+        '''
+        # Collect all unique senders (same sender may be registered for multiple event types)
+        all_senders = set()
+        for senders in self.channels.values():
+            all_senders.update(senders)
+        
+        # Close each sender once
+        for sender in all_senders:
+            try:
+                sender.close()
+            except trio.BrokenResourceError:
+                # Channel may already be closed
+                pass
+        self.channels.clear()
+
 
 class CdpConnection(CdpBase, trio.abc.AsyncResource):
     '''
@@ -224,8 +243,20 @@ class CdpConnection(CdpBase, trio.abc.AsyncResource):
         (``execute()``, ``listen()``, etc.) will raise
         ``CdpConnectionClosed`` after the CDP connection is closed.
 
+        This also closes all open channels in the connection and all sessions,
+        which will cause all ``async for session.listen(...)`` loops to exit
+        gracefully.
+
         It is safe to call this multiple times.
         '''
+        # Close all channels in all sessions
+        for session in self.sessions.values():
+            session._close_channels()
+        
+        # Close all channels in the root connection
+        self._close_channels()
+        
+        # Close the WebSocket connection
         await self.ws.aclose()
 
     @asynccontextmanager
