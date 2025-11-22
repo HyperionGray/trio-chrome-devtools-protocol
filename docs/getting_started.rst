@@ -120,6 +120,63 @@ we get the outer HTML of the node. This snippet shows some new APIs, but the
 mechanics of sending commands and getting responses are the same as the previous
 snippets.
 
-A more complete version of this example can be found in ``examples/get_title.py`` in
-the repository. There is also a screenshot example in ``examples/screenshot.py``. The 
-unit tests in ``tests/`` also provide some helpful sample code.
+Listening to Events
+-------------------
+
+Trio CDP provides two patterns for handling browser events:
+
+Using ``wait_for()``
+~~~~~~~~~~~~~~~~~~~~
+
+The ``wait_for()`` method is useful when you need to wait for a single event before
+continuing execution. We've already seen this in the navigation example above, where
+we wait for ``page.LoadEventFired``. Here's the pattern:
+
+.. code::
+
+    async with session.wait_for(page.LoadEventFired) as event_proxy:
+        # Trigger an action that will cause the event
+        await page.navigate(url='https://example.com')
+    # After the context exits, event_proxy.value contains the event
+    print(f"Page loaded at timestamp: {event_proxy.value.timestamp}")
+
+Using ``listen()``
+~~~~~~~~~~~~~~~~~~
+
+The ``listen()`` method returns an async iterator that continuously yields events as
+they occur. This is useful for monitoring ongoing activity, such as network requests:
+
+.. code::
+
+    # Enable network events
+    await network.enable()
+    
+    # Listen for network events
+    async for event in session.listen(
+        network.RequestWillBeSent,
+        network.ResponseReceived
+    ):
+        if isinstance(event, network.RequestWillBeSent):
+            print(f"Request: {event.request.url}")
+        elif isinstance(event, network.ResponseReceived):
+            print(f"Response: {event.response.url} (status: {event.response.status})")
+
+You can listen to multiple event types at once by passing them all to ``listen()``.
+The iterator will yield events of any of the specified types as they occur.
+
+**Important:** Don't forget to enable events for the domain you're interested in!
+For example, call ``await network.enable()`` before listening to network events,
+or ``await page.enable()`` before listening to page events. You can also use the
+context managers ``session.page_enable()`` or ``session.dom_enable()`` for automatic
+cleanup.
+
+Examples
+--------
+
+A more complete version of the basic example can be found in ``examples/get_title.py`` in
+the repository. There are additional examples showing:
+
+- ``examples/screenshot.py`` - Taking screenshots of web pages
+- ``examples/network_events.py`` - Monitoring network events using both ``wait_for()`` and ``listen()``
+
+The unit tests in ``tests/`` also provide helpful sample code.

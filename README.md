@@ -41,4 +41,5 @@ async with open_cdp(cdp_url) as conn:
 ```
 
 This example code is explained [in the documentation](https://trio-cdp.readthedocs.io)
-and more example code can be found in the `examples/` directory of this repository.
+and more example code can be found in the `examples/` directory of this repository,
+including examples for taking screenshots and monitoring network events.
