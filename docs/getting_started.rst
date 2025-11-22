@@ -3,6 +3,53 @@ Getting Started
 
 .. highlight:: python
 
+Connecting to Chrome
+--------------------
+
+Trio CDP provides flexible ways to connect to a Chrome browser (or any browser that
+supports the Chrome DevTools Protocol).
+
+Starting Chrome with Remote Debugging
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+First, start Chrome with remote debugging enabled::
+
+    $ chrome --remote-debugging-port=9222
+
+You can use any port number you prefer. Chrome will display the debugging URL in the
+console when it starts.
+
+Connecting Programmatically
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The simplest way to connect is by using an HTTP URL::
+
+    from trio_cdp import open_cdp
+
+    async with open_cdp('http://localhost:9222') as conn:
+        # Your code here
+        ...
+
+The library will automatically discover the WebSocket URL from Chrome's HTTP endpoint.
+
+Alternatively, you can use the discovery function explicitly::
+
+    from trio_cdp import find_chrome_debugger_url, open_cdp
+
+    # Discover the WebSocket URL
+    browser_url = find_chrome_debugger_url(port=9222)
+    
+    async with open_cdp(browser_url) as conn:
+        ...
+
+You can also provide a WebSocket URL directly if you already have it::
+
+    async with open_cdp('ws://localhost:9222/devtools/browser/...') as conn:
+        ...
+
+Basic Example
+-------------
+
 The following example shows how to connect to browser, navigate to a specified web page,
 and then extract the page title.
 
