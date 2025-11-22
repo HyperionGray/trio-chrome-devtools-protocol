@@ -125,7 +125,8 @@ async def test_connection_browser_error(nursery):
 @pytest.fixture
 def session_handler():
     ''' This fixture is used for the session tests below. It expects to receive an
-    "attachToTarget" command followed by a "querySelector" command. '''
+    "attachToTarget" command followed by a "querySelector" command, and optionally a
+    "detachFromTarget" command when the session closes. '''
     async def handler(request):
         # It's tricky to catch exceptions from the server, so exceptions are
         # logged instead.
@@ -162,6 +163,21 @@ def session_handler():
             }
             logging.info('Server sending:  %r', response)
             await ws.send_message(json.dumps(response))
+            
+            # Handle optional "detachFromTarget" command when session closes.
+            try:
+                command = json.loads(await ws.get_message())
+                if command['method'] == 'Target.detachFromTarget':
+                    logging.info('Server received:  %r', command)
+                    response = {
+                        'id': command['id'],
+                        'result': {}
+                    }
+                    logging.info('Server sending:  %r', response)
+                    await ws.send_message(json.dumps(response))
+            except trio.EndOfChannel:
+                # Connection closed before detach command, that's fine
+                pass
         except Exception:
             logging.exception('Server exception')
     return handler
