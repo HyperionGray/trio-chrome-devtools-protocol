@@ -15,4 +15,5 @@ responses, and events over a single connection.
    installation
    getting_started
    api
+   utilities
    changelog

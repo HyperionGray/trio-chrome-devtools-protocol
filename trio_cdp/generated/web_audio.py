@@ -10,32 +10,14 @@ from ..context import get_connection_context, get_session_context
 
 import cdp.web_audio
 from cdp.web_audio import (
-    AudioListener,
-    AudioListenerCreated,
-    AudioListenerWillBeDestroyed,
-    AudioNode,
-    AudioNodeCreated,
-    AudioNodeWillBeDestroyed,
-    AudioParam,
-    AudioParamCreated,
-    AudioParamWillBeDestroyed,
-    AutomationRate,
     BaseAudioContext,
-    ChannelCountMode,
-    ChannelInterpretation,
     ContextChanged,
     ContextCreated,
+    ContextDestroyed,
+    ContextId,
     ContextRealtimeData,
     ContextState,
-    ContextType,
-    ContextWillBeDestroyed,
-    GraphObjectId,
-    NodeParamConnected,
-    NodeParamDisconnected,
-    NodeType,
-    NodesConnected,
-    NodesDisconnected,
-    ParamType
+    ContextType
 )
 
 
@@ -56,7 +38,7 @@ async def enable() -> None:
 
 
 async def get_realtime_data(
-        context_id: GraphObjectId
+        context_id: ContextId
     ) -> ContextRealtimeData:
     r'''
     Fetch the realtime data from the registered contexts.

@@ -13,11 +13,9 @@ from cdp.tracing import (
     BufferUsage,
     DataCollected,
     MemoryDumpConfig,
-    MemoryDumpLevelOfDetail,
     StreamCompression,
     StreamFormat,
     TraceConfig,
-    TracingBackend,
     TracingComplete
 )
 
@@ -52,22 +50,17 @@ async def record_clock_sync_marker(
     return await session.execute(cdp.tracing.record_clock_sync_marker(sync_id))
 
 
-async def request_memory_dump(
-        deterministic: typing.Optional[bool] = None,
-        level_of_detail: typing.Optional[MemoryDumpLevelOfDetail] = None
-    ) -> typing.Tuple[str, bool]:
+async def request_memory_dump() -> typing.Tuple[str, bool]:
     r'''
     Request a global memory dump.
 
-    :param deterministic: *(Optional)* Enables more deterministic results by forcing garbage collection
-    :param level_of_detail: *(Optional)* Specifies level of details in memory dump. Defaults to "detailed".
     :returns: A tuple with the following items:
 
         0. **dumpGuid** - GUID of the resulting global memory dump.
         1. **success** - True iff the global memory dump succeeded.
     '''
     session = get_session_context('tracing.request_memory_dump')
-    return await session.execute(cdp.tracing.request_memory_dump(deterministic, level_of_detail))
+    return await session.execute(cdp.tracing.request_memory_dump())
 
 
 async def start(
@@ -77,9 +70,7 @@ async def start(
         transfer_mode: typing.Optional[str] = None,
         stream_format: typing.Optional[StreamFormat] = None,
         stream_compression: typing.Optional[StreamCompression] = None,
-        trace_config: typing.Optional[TraceConfig] = None,
-        perfetto_config: typing.Optional[str] = None,
-        tracing_backend: typing.Optional[TracingBackend] = None
+        trace_config: typing.Optional[TraceConfig] = None
     ) -> None:
     r'''
     Start trace events collection.
@@ -89,10 +80,8 @@ async def start(
     :param buffer_usage_reporting_interval: *(Optional)* If set, the agent will issue bufferUsage events at this interval, specified in milliseconds
     :param transfer_mode: *(Optional)* Whether to report trace events as series of dataCollected events or to save trace to a stream (defaults to ```ReportEvents````).
     :param stream_format: *(Optional)* Trace data format to use. This only applies when using ````ReturnAsStream```` transfer mode (defaults to ````json````).
-    :param stream_compression: *(Optional)* Compression format to use. This only applies when using ````ReturnAsStream```` transfer mode (defaults to ````none````)
+    :param stream_compression: *(Optional)* Compression format to use. This only applies when using ````ReturnAsStream```` transfer mode (defaults to ````none```)
     :param trace_config: *(Optional)*
-    :param perfetto_config: *(Optional)* Base64-encoded serialized perfetto.protos.TraceConfig protobuf message When specified, the parameters ````categories````, ````options````, ````traceConfig```` are ignored. (Encoded as a base64 string when passed over JSON)
-    :param tracing_backend: *(Optional)* Backend type (defaults to ````auto```)
     '''
     session = get_session_context('tracing.start')
-    return await session.execute(cdp.tracing.start(categories, options, buffer_usage_reporting_interval, transfer_mode, stream_format, stream_compression, trace_config, perfetto_config, tracing_backend))
+    return await session.execute(cdp.tracing.start(categories, options, buffer_usage_reporting_interval, transfer_mode, stream_format, stream_compression, trace_config))
