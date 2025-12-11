@@ -77,16 +77,16 @@ async def request_cached_response(
 
 async def request_entries(
         cache_id: CacheId,
-        skip_count: typing.Optional[int] = None,
-        page_size: typing.Optional[int] = None,
+        skip_count: int,
+        page_size: int,
         path_filter: typing.Optional[str] = None
     ) -> typing.Tuple[typing.List[DataEntry], float]:
     r'''
     Requests data from cache.
 
     :param cache_id: ID of cache to get entries from.
-    :param skip_count: *(Optional)* Number of records to skip.
-    :param page_size: *(Optional)* Number of records to fetch.
+    :param skip_count: Number of records to skip.
+    :param page_size: Number of records to fetch.
     :param path_filter: *(Optional)* If present, only return the entries containing this substring in the path
     :returns: A tuple with the following items:
 

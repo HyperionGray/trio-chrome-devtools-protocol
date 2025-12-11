@@ -34,7 +34,7 @@ async def begin_frame(
     :returns: A tuple with the following items:
 
         0. **hasDamage** - Whether the BeginFrame resulted in damage and, thus, a new frame was committed to the display. Reported for diagnostic uses, may be removed in the future.
-        1. **screenshotData** - *(Optional)* Base64-encoded image data of the screenshot, if one was requested and successfully taken. (Encoded as a base64 string when passed over JSON)
+        1. **screenshotData** - *(Optional)* Base64-encoded image data of the screenshot, if one was requested and successfully taken.
     '''
     session = get_session_context('headless_experimental.begin_frame')
     return await session.execute(cdp.headless_experimental.begin_frame(frame_time_ticks, interval, no_display_updates, screenshot))
