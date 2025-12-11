@@ -3,6 +3,53 @@ Getting Started
 
 .. highlight:: python
 
+Connecting to Chrome
+--------------------
+
+Trio CDP provides flexible ways to connect to a Chrome browser (or any browser that
+supports the Chrome DevTools Protocol).
+
+Starting Chrome with Remote Debugging
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+First, start Chrome with remote debugging enabled::
+
+    $ chrome --remote-debugging-port=9222
+
+You can use any port number you prefer. Chrome will display the debugging URL in the
+console when it starts.
+
+Connecting Programmatically
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The simplest way to connect is by using an HTTP URL::
+
+    from trio_cdp import open_cdp
+
+    async with open_cdp('http://localhost:9222') as conn:
+        # Your code here
+        ...
+
+The library will automatically discover the WebSocket URL from Chrome's HTTP endpoint.
+
+Alternatively, you can use the discovery function explicitly::
+
+    from trio_cdp import find_chrome_debugger_url, open_cdp
+
+    # Discover the WebSocket URL
+    browser_url = find_chrome_debugger_url(port=9222)
+    
+    async with open_cdp(browser_url) as conn:
+        ...
+
+You can also provide a WebSocket URL directly if you already have it::
+
+    async with open_cdp('ws://localhost:9222/devtools/browser/...') as conn:
+        ...
+
+Basic Example
+-------------
+
 The following example shows how to connect to browser, navigate to a specified web page,
 and then extract the page title.
 
@@ -120,6 +167,63 @@ we get the outer HTML of the node. This snippet shows some new APIs, but the
 mechanics of sending commands and getting responses are the same as the previous
 snippets.
 
-A more complete version of this example can be found in ``examples/get_title.py`` in
-the repository. There is also a screenshot example in ``examples/screenshot.py``. The 
-unit tests in ``tests/`` also provide some helpful sample code.
+Listening to Events
+-------------------
+
+Trio CDP provides two patterns for handling browser events:
+
+Using ``wait_for()``
+~~~~~~~~~~~~~~~~~~~~
+
+The ``wait_for()`` method is useful when you need to wait for a single event before
+continuing execution. We've already seen this in the navigation example above, where
+we wait for ``page.LoadEventFired``. Here's the pattern:
+
+.. code::
+
+    async with session.wait_for(page.LoadEventFired) as event_proxy:
+        # Trigger an action that will cause the event
+        await page.navigate(url='https://example.com')
+    # After the context exits, event_proxy.value contains the event
+    print(f"Page loaded at timestamp: {event_proxy.value.timestamp}")
+
+Using ``listen()``
+~~~~~~~~~~~~~~~~~~
+
+The ``listen()`` method returns an async iterator that continuously yields events as
+they occur. This is useful for monitoring ongoing activity, such as network requests:
+
+.. code::
+
+    # Enable network events
+    await network.enable()
+    
+    # Listen for network events
+    async for event in session.listen(
+        network.RequestWillBeSent,
+        network.ResponseReceived
+    ):
+        if isinstance(event, network.RequestWillBeSent):
+            print(f"Request: {event.request.url}")
+        elif isinstance(event, network.ResponseReceived):
+            print(f"Response: {event.response.url} (status: {event.response.status})")
+
+You can listen to multiple event types at once by passing them all to ``listen()``.
+The iterator will yield events of any of the specified types as they occur.
+
+**Important:** Don't forget to enable events for the domain you're interested in!
+For example, call ``await network.enable()`` before listening to network events,
+or ``await page.enable()`` before listening to page events. You can also use the
+context managers ``session.page_enable()`` or ``session.dom_enable()`` for automatic
+cleanup.
+
+Examples
+--------
+
+A more complete version of the basic example can be found in ``examples/get_title.py`` in
+the repository. There are additional examples showing:
+
+- ``examples/screenshot.py`` - Taking screenshots of web pages
+- ``examples/network_events.py`` - Monitoring network events using both ``wait_for()`` and ``listen()``
+
+The unit tests in ``tests/`` also provide helpful sample code.

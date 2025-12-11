@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+* Add ``find_chrome_debugger_url()`` function for programmatic discovery of Chrome's WebSocket URL.
+* ``open_cdp()`` now accepts HTTP URLs (e.g., ``http://localhost:9222``) which are automatically resolved to WebSocket URLs.
+
 0.6.0
 -----
 

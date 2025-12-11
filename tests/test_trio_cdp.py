@@ -7,6 +7,7 @@ import trio
 from trio_websocket import serve_websocket
 
 from . import fail_after
+import trio_cdp
 from trio_cdp import BrowserError, open_cdp, dom as trio_cdp_dom
 
 
@@ -124,7 +125,8 @@ async def test_connection_browser_error(nursery):
 @pytest.fixture
 def session_handler():
     ''' This fixture is used for the session tests below. It expects to receive an
-    "attachToTarget" command followed by a "querySelector" command. '''
+    "attachToTarget" command followed by a "querySelector" command, and optionally a
+    "detachFromTarget" command when the session closes. '''
     async def handler(request):
         # It's tricky to catch exceptions from the server, so exceptions are
         # logged instead.
@@ -161,6 +163,21 @@ def session_handler():
             }
             logging.info('Server sending:  %r', response)
             await ws.send_message(json.dumps(response))
+            
+            # Handle optional "detachFromTarget" command when session closes.
+            try:
+                command = json.loads(await ws.get_message())
+                if command['method'] == 'Target.detachFromTarget':
+                    logging.info('Server received:  %r', command)
+                    response = {
+                        'id': command['id'],
+                        'result': {}
+                    }
+                    logging.info('Server sending:  %r', response)
+                    await ws.send_message(json.dumps(response))
+            except trio.EndOfChannel:
+                # Connection closed before detach command, that's fine
+                pass
         except Exception:
             logging.exception('Server exception')
     return handler
@@ -280,3 +297,96 @@ async def test_listen_for_events(nursery):
             if n == 2:
                 break
             n += 1
+
+
+@fail_after(1)
+async def test_connection_close_stops_listeners(nursery):
+    ''' When a connection is closed, all listen() loops should exit gracefully. '''
+    async def handler(request):
+        try:
+            ws = await request.accept()
+            # Just keep the connection open
+            await trio.sleep(10)
+        except Exception:
+            logging.exception('Server exception')
+    
+    server = await start_server(nursery, handler)
+    
+    async with trio.open_nursery() as test_nursery:
+        conn = await trio_cdp.connect_cdp(test_nursery, server)
+        
+        # Set up a listener in a separate task
+        listener_exited = trio.Event()
+        
+        async def listen_task():
+            try:
+                async for event in conn.listen(page.LoadEventFired):
+                    # This should never receive any events
+                    pass
+            finally:
+                listener_exited.set()
+        
+        test_nursery.start_soon(listen_task)
+        
+        # Give the listener time to start
+        await trio.sleep(0.1)
+        
+        # Close the connection
+        await conn.aclose()
+        
+        # Wait for the listener to exit - it should exit immediately
+        with trio.fail_after(0.5):
+            await listener_exited.wait()
+
+
+@fail_after(1)
+async def test_session_close_stops_listeners(nursery):
+    ''' When a connection is closed, all session listen() loops should exit gracefully. '''
+    async def handler(request):
+        try:
+            ws = await request.accept()
+            
+            # Handle "attachToTarget" command
+            command = json.loads(await ws.get_message())
+            assert command['method'] == 'Target.attachToTarget'
+            response = {
+                'id': command['id'],
+                'result': {
+                    'sessionId': 'session1',
+                }
+            }
+            await ws.send_message(json.dumps(response))
+            
+            # Keep connection open
+            await trio.sleep(10)
+        except Exception:
+            logging.exception('Server exception')
+    
+    server = await start_server(nursery, handler)
+    
+    async with trio.open_nursery() as test_nursery:
+        conn = await trio_cdp.connect_cdp(test_nursery, server)
+        session = await conn.connect_session(target.TargetID('target1'))
+        
+        # Set up a listener in a separate task
+        listener_exited = trio.Event()
+        
+        async def listen_task():
+            try:
+                async for event in session.listen(page.LoadEventFired):
+                    # This should never receive any events
+                    pass
+            finally:
+                listener_exited.set()
+        
+        test_nursery.start_soon(listen_task)
+        
+        # Give the listener time to start
+        await trio.sleep(0.1)
+        
+        # Close the connection
+        await conn.aclose()
+        
+        # Wait for the listener to exit - it should exit immediately
+        with trio.fail_after(0.5):
+            await listener_exited.wait()

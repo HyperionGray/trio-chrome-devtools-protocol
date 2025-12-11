@@ -7,6 +7,8 @@ import itertools
 import json
 import logging
 import typing
+import urllib.request
+import urllib.error
 
 import cdp
 import trio # type: ignore
@@ -192,6 +194,25 @@ class CdpBase:
         if to_remove:
             self.channels[type(event)] -= to_remove
 
+    def _close_channels(self):
+        '''
+        Close all open channels. This will cause any async for loops using
+        listen() to exit gracefully.
+        '''
+        # Collect all unique senders (same sender may be registered for multiple event types)
+        all_senders = set()
+        for senders in self.channels.values():
+            all_senders.update(senders)
+        
+        # Close each sender once
+        for sender in all_senders:
+            try:
+                sender.close()
+            except trio.BrokenResourceError:
+                # Channel may already be closed
+                pass
+        self.channels.clear()
+
 
 class CdpConnection(CdpBase, trio.abc.AsyncResource):
     '''
@@ -224,8 +245,20 @@ class CdpConnection(CdpBase, trio.abc.AsyncResource):
         (``execute()``, ``listen()``, etc.) will raise
         ``CdpConnectionClosed`` after the CDP connection is closed.
 
+        This also closes all open channels in the connection and all sessions,
+        which will cause all ``async for session.listen(...)`` loops to exit
+        gracefully.
+
         It is safe to call this multiple times.
         '''
+        # Close all channels in all sessions
+        for session in self.sessions.values():
+            session._close_channels()
+        
+        # Close all channels in the root connection
+        self._close_channels()
+        
+        # Close the WebSocket connection
         await self.ws.aclose()
 
     @asynccontextmanager
@@ -356,6 +389,38 @@ class CdpSession(CdpBase):
                 await self.execute(cdp.page.disable())
 
 
+def find_chrome_debugger_url(host='localhost', port=9222):
+    '''
+    Discover the WebSocket URL for Chrome DevTools Protocol.
+    
+    When Chrome is started with --remote-debugging-port=<port>, it exposes
+    an HTTP endpoint that provides the WebSocket URL for the browser.
+    
+    :param host: The hostname where Chrome is listening (default: 'localhost')
+    :param port: The debugging port (default: 9222)
+    :returns: The WebSocket URL to use with open_cdp()
+    :raises: urllib.error.URLError if the HTTP endpoint is not reachable
+    :raises: ValueError if the response doesn't contain a valid WebSocket URL
+    
+    Example usage::
+    
+        url = find_chrome_debugger_url(port=9000)
+        async with open_cdp(url) as conn:
+            ...
+    '''
+    http_url = f'http://{host}:{port}/json/version'
+    try:
+        with urllib.request.urlopen(http_url) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            ws_url = data.get('webSocketDebuggerUrl')
+            if not ws_url:
+                raise ValueError(f'No webSocketDebuggerUrl found in response from {http_url}')
+            return ws_url
+    except urllib.error.URLError as e:
+        logger.error(f'Failed to connect to Chrome at {http_url}: {e}')
+        raise
+
+
 @asynccontextmanager
 async def open_cdp(url) -> typing.AsyncIterator[CdpConnection]:
     '''
@@ -363,11 +428,26 @@ async def open_cdp(url) -> typing.AsyncIterator[CdpConnection]:
     ``url`` before entering the block, then closes the connection when the block
     exits.
 
+    The ``url`` parameter can be either:
+    - A WebSocket URL (e.g., ``ws://localhost:9222/devtools/browser/...``)
+    - An HTTP URL (e.g., ``http://localhost:9222``), which will be automatically
+      resolved to the WebSocket URL by querying the ``/json/version`` endpoint
+
     The context manager also sets the connection as the default connection for the
     current task, so that commands like ``await target.get_targets()`` will run on this
     connection automatically. If you want to use multiple connections concurrently, it
     is recommended to open each on in a separate task.
     '''
+    # If URL starts with http://, resolve it to a WebSocket URL
+    if url.startswith('http://') or url.startswith('https://'):
+        # Parse the URL to extract host and port
+        from urllib.parse import urlparse
+        parsed = urlparse(url)
+        host = parsed.hostname or 'localhost'
+        port = parsed.port or 9222
+        url = find_chrome_debugger_url(host, port)
+        logger.info(f'Resolved to WebSocket URL: {url}')
+    
     async with trio.open_nursery() as nursery:
         conn = await connect_cdp(nursery, url)
         try:

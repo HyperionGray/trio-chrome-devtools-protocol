@@ -13,16 +13,11 @@ from cdp.security import (
     CertificateError,
     CertificateErrorAction,
     CertificateId,
-    CertificateSecurityState,
     InsecureContentStatus,
     MixedContentType,
-    SafetyTipInfo,
-    SafetyTipStatus,
     SecurityState,
     SecurityStateChanged,
-    SecurityStateExplanation,
-    VisibleSecurityState,
-    VisibleSecurityStateChanged
+    SecurityStateExplanation
 )
 
 

@@ -34,7 +34,7 @@ async def main():
         targets = await target.get_targets()
 
         for t in targets:
-            if (t.type == 'page' and
+            if (t.type_ == 'page' and
                 not t.url.startswith('devtools://') and
                 not t.attached):
                 target_id = t.target_id

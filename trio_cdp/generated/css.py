@@ -11,7 +11,6 @@ from ..context import get_connection_context, get_session_context
 import cdp.css
 from cdp.css import (
     CSSComputedStyleProperty,
-    CSSContainerQuery,
     CSSKeyframeRule,
     CSSKeyframesRule,
     CSSMedia,
@@ -20,7 +19,6 @@ from cdp.css import (
     CSSStyle,
     CSSStyleSheetHeader,
     FontFace,
-    FontVariationAxis,
     FontsUpdated,
     InheritedStyleEntry,
     MediaQuery,
@@ -221,25 +219,6 @@ async def get_style_sheet_text(
     return await session.execute(cdp.css.get_style_sheet_text(style_sheet_id))
 
 
-async def set_container_query_text(
-        style_sheet_id: StyleSheetId,
-        range_: SourceRange,
-        text: str
-    ) -> CSSContainerQuery:
-    r'''
-    Modifies the expression of a container query.
-
-    **EXPERIMENTAL**
-
-    :param style_sheet_id:
-    :param range_:
-    :param text:
-    :returns: The resulting CSS container query rule after modification.
-    '''
-    session = get_session_context('css.set_container_query_text')
-    return await session.execute(cdp.css.set_container_query_text(style_sheet_id, range_, text))
-
-
 async def set_effective_property_value_for_node(
         node_id: cdp.dom.NodeId,
         property_name: str,
@@ -272,20 +251,6 @@ async def set_keyframe_key(
     '''
     session = get_session_context('css.set_keyframe_key')
     return await session.execute(cdp.css.set_keyframe_key(style_sheet_id, range_, key_text))
-
-
-async def set_local_fonts_enabled(
-        enabled: bool
-    ) -> None:
-    r'''
-    Enables/disables rendering of local CSS fonts (enabled by default).
-
-    **EXPERIMENTAL**
-
-    :param enabled: Whether rendering of local fonts is enabled.
-    '''
-    session = get_session_context('css.set_local_fonts_enabled')
-    return await session.execute(cdp.css.set_local_fonts_enabled(enabled))
 
 
 async def set_media_text(
@@ -369,46 +334,12 @@ async def stop_rule_usage_tracking() -> typing.List[RuleUsage]:
     return await session.execute(cdp.css.stop_rule_usage_tracking())
 
 
-async def take_computed_style_updates() -> typing.List[cdp.dom.NodeId]:
-    r'''
-    Polls the next batch of computed style updates.
-
-    **EXPERIMENTAL**
-
-    :returns: The list of node Ids that have their tracked computed styles updated
-    '''
-    session = get_session_context('css.take_computed_style_updates')
-    return await session.execute(cdp.css.take_computed_style_updates())
-
-
-async def take_coverage_delta() -> typing.Tuple[typing.List[RuleUsage], float]:
+async def take_coverage_delta() -> typing.List[RuleUsage]:
     r'''
     Obtain list of rules that became used since last call to this method (or since start of coverage
     instrumentation)
 
-    :returns: A tuple with the following items:
-
-        0. **coverage** - 
-        1. **timestamp** - Monotonically increasing time, in seconds.
+    :returns: 
     '''
     session = get_session_context('css.take_coverage_delta')
     return await session.execute(cdp.css.take_coverage_delta())
-
-
-async def track_computed_style_updates(
-        properties_to_track: typing.List[CSSComputedStyleProperty]
-    ) -> None:
-    r'''
-    Starts tracking the given computed styles for updates. The specified array of properties
-    replaces the one previously specified. Pass empty array to disable tracking.
-    Use takeComputedStyleUpdates to retrieve the list of nodes that had properties modified.
-    The changes to computed style properties are only tracked for nodes pushed to the front-end
-    by the DOM agent. If no changes to the tracked properties occur after the node has been pushed
-    to the front-end, no updates will be issued for the node.
-
-    **EXPERIMENTAL**
-
-    :param properties_to_track:
-    '''
-    session = get_session_context('css.track_computed_style_updates')
-    return await session.execute(cdp.css.track_computed_style_updates(properties_to_track))
